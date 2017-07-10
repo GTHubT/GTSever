@@ -12,10 +12,9 @@ namespace GT {
         {
         public:
             ~IOCPWrapper() {}
-
+            static IOCPWrapper& GetInstance();
             bool Initialize();
             bool Finalize();
-            static IOCPWrapper& GetInstance();
             bool CreateNewIoCompletionPort();
             bool BindSocketToCompletionPort();
             HANDLE GetCompletionPort() { return completion_port_; }
