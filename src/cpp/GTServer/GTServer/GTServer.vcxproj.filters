@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\NetIO">
+      <UniqueIdentifier>{99e6653b-6007-46a4-bc1d-9001195742a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -27,6 +30,9 @@
     <ClInclude Include="GTServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IOCPWrapper.h">
+      <Filter>Source Files\NetIO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -37,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPWrapper.cpp">
+      <Filter>Source Files\NetIO</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
