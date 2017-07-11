@@ -154,7 +154,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GTServer.h" />
-    <ClInclude Include="IOCPWrapper.h" />
+    <ClInclude Include="GT_ThreadPool.h" />
+    <ClInclude Include="GT_util_osinfo.h" />
+    <ClInclude Include="GT_IOCPWrapper.h" />
+    <ClInclude Include="GT_SockIOContext.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -174,7 +177,9 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GTServer.cpp" />
-    <ClCompile Include="IOCPWrapper.cpp" />
+    <ClCompile Include="GT_ThreadPool.cpp" />
+    <ClCompile Include="GT_util_osinfo.cpp" />
+    <ClCompile Include="GT_IOCPWrapper.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

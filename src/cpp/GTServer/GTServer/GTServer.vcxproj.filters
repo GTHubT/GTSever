@@ -16,6 +16,12 @@
     <Filter Include="Source Files\NetIO">
       <UniqueIdentifier>{99e6653b-6007-46a4-bc1d-9001195742a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utility">
+      <UniqueIdentifier>{52395964-1a81-4728-9286-6d5f33635461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mulitythreads">
+      <UniqueIdentifier>{b089f871-4d33-4184-a5a6-3a9cc71bd0a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -30,8 +36,17 @@
     <ClInclude Include="GTServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IOCPWrapper.h">
+    <ClInclude Include="GT_IOCPWrapper.h">
       <Filter>Source Files\NetIO</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_SockIOContext.h">
+      <Filter>Source Files\NetIO</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_util_osinfo.h">
+      <Filter>Source Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_ThreadPool.h">
+      <Filter>Source Files\mulitythreads</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,8 +59,14 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IOCPWrapper.cpp">
+    <ClCompile Include="GT_IOCPWrapper.cpp">
       <Filter>Source Files\NetIO</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_util_osinfo.cpp">
+      <Filter>Source Files\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_ThreadPool.cpp">
+      <Filter>Source Files\mulitythreads</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
