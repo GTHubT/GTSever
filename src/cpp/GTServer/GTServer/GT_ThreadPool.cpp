@@ -1,5 +1,7 @@
 #include "GT_ThreadPool.h"
 
+#include <chrono>
+
 namespace GT {
 
 	namespace NET {
@@ -20,8 +22,8 @@ namespace GT {
             }
             
             for (int index = 0; index < poolsize; index++) {
-                std::atomic<bool> end_thread_ = false;
-                //workpool_.insert(std::pair<std::thread, std::atomic<bool>>(std::thread(&LongTimeWorker_, this, thread_func, end_thread_), end_thread_));
+                std::atomic<bool> end_thread;
+                workpool_.push_back(thread_tuple(std::thread(&LongTimeWorker_, this, thread_func, std::ref(end_thread)), std::move(end_thread.load())));
             }
         }
 
@@ -33,11 +35,12 @@ namespace GT {
         }
 
         void GT_ThreadPool::Stop() {
-            std::map<std::thread, std::atomic<bool>>::iterator iter = workpool_.begin();
+            auto iter = workpool_.begin();
             while (iter != workpool_.end()) {
-                iter->second = true;
-                if (iter->first.joinable()) {
-                    iter->first->join();
+                iter->end_thread_ = true;
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                if (iter->this_thread_.joinable()) {
+                    iter->this_thread_.join();
                 }
                 iter++;
             }

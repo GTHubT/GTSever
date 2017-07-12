@@ -1,11 +1,16 @@
 #ifndef GT_NET_MULITYTHREADS_H_
 #define GT_NET_MULITYTHREADS_H_
 
-#include <map>
+#include <vector>
 #include <atomic>
 #include <thread>
 namespace GT {
     namespace NET {
+        struct thread_tuple {
+            std::thread this_thread_;
+            std::atomic<bool> end_thread_;
+            thread_tuple::thread_tuple(std::thread t, std::atomic<bool> b) :this_thread_(std::move(t)), end_thread_(std::move(b.load())){}
+        };
 
         class GT_ThreadPool
         {
@@ -21,7 +26,7 @@ namespace GT {
             void LongTimeWorker_(std::function<void()>, std::atomic<bool>);
 
         private:
-            std::map<std::thread, std::atomic<bool>> workpool_;
+            std::vector<thread_tuple> workpool_;
         };
     }
 }
