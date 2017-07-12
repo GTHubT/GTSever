@@ -13,8 +13,11 @@ namespace GT {
             ~GT_ThreadPool();
 
         public:
-            void Start(int poolsize);
+            void Start(size_t poolsize, std::function<void()>);
             void Stop();
+
+        private:
+            void LongTimeWorker_(std::function<void()>);
 
         private:
             std::vector<std::thread> workpool_;

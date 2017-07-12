@@ -96,54 +96,33 @@ namespace GT {
             }
 			return true;
 		}
-
-
-        void GT_IOCPWrapper::StartService() {
-        }
-
-        GT_IOCPWrapper& GT_IOCPWrapper::GetInstance() {
-            static GT_IOCPWrapper iocpinstance;
-            return iocpinstance;
-        }
         
-
         HANDLE GT_IOCPWrapper::CreateNewIoCompletionPort_() {            
             return CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
         }
-
 
         bool GT_IOCPWrapper::BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey) {
             HANDLE temp_port = CreateIoCompletionPort((HANDLE)s, completion_port_, completionkey, 0);
             return temp_port == completion_port_;
         }
 
+        void GT_IOCPWrapper::StartService() {
+            // create thread pool
+            std::function<void()> threadfunc = std::bind(&GetCompletionPortStatus, this);
+            thread_pool_.Start(GT::UTIL::GT_util_osinfo::GetCPUNum() * 2, threadfunc);
+        }
 
-		void GT_IOCPWrapper::GetCompletionPortStatus(Ready_Event_Callback callback) {
+        GT_IOCPWrapper& GT_IOCPWrapper::GetInstance() {
+            static GT_IOCPWrapper iocpinstance;
+            return iocpinstance;
+        }
+
+		void GT_IOCPWrapper::GetCompletionPortStatus() {
 
 		}
 
 
-		SOCKET GT_IOCPWrapper::CreateOverlappedSocket_(int af, int type, int protocl) {
-			return WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED);
-		}
-
-
-        void GT_IOCPWrapper::PostAcceptEvent() {
-
-        }
-
-
-        void GT_IOCPWrapper::PostReadEvent() {
-
-        }
-
-
-        void GT_IOCPWrapper::PostWriteEvent() {
-
-        }
-
-
-        bool GT_IOCPWrapper::Finalize() {
+        bool GT_IOCPWrapper::StopService() {
             return true;
         }
 
@@ -156,5 +135,29 @@ namespace GT {
             write_func_ = write_func;
             is_write_callback_setted_ = true;
         }
+
+		SOCKET GT_IOCPWrapper::CreateOverlappedSocket_(int af, int type, int protocl) {
+			return WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED);
+		}
+
+
+        void GT_IOCPWrapper::ProcessAcceptEvent_() {
+
+        }
+
+
+        void GT_IOCPWrapper::PostReadEvent_() {
+
+        }
+
+
+        void GT_IOCPWrapper::PostWriteEvent_() {
+
+        }
+
+        void GT_IOCPWrapper::PostAcceptEvent_() {
+
+        }
+        
     }
 }

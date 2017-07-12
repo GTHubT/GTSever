@@ -16,7 +16,6 @@ namespace GT {
 
     namespace NET {
 
-		typedef void(*Ready_Event_Callback) (EVENT_TYPE, char* data, int datalen);
         typedef void(*Read_Ready_Event_Callback) (char* data, int datalen);
         typedef void(*Write_Ready_Event_Callback) (char* data, int datalen);
 
@@ -27,10 +26,10 @@ namespace GT {
             static GT_IOCPWrapper& GetInstance();
 
             bool	Initialize();
-            bool	Finalize();
+            bool	StopService();
             void    StartService();
             bool	BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey);
-			void	GetCompletionPortStatus(Ready_Event_Callback callback);
+			void	GetCompletionPortStatus();
 
             void    SetReadEventCallBack(Read_Ready_Event_Callback);
             void    SetWriteEventCallBack(Write_Ready_Event_Callback);
@@ -39,10 +38,11 @@ namespace GT {
             GT_IOCPWrapper();
             HANDLE	CreateNewIoCompletionPort_();
 			SOCKET	CreateOverlappedSocket_(int af, int type, int protocl);
+            void    ProcessAcceptEvent_();
 			bool	InitializeListenSocket_();
-            void    PostAcceptEvent();
-            void    PostReadEvent();
-            void    PostWriteEvent();
+            void    PostAcceptEvent_();
+            void    PostReadEvent_();
+            void    PostWriteEvent_();
 
         private:
             bool            is_inited_;

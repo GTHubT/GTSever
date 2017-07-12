@@ -1,3 +1,7 @@
 
 *.db
 src/cpp/GTServer/.vs/GTServer/v14/.suo
+src/cpp/GTServer/.vs/GTServer/v14/.suo
+*.obj
+*.tlog
+*.tlog
