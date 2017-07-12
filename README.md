@@ -1,2 +1,2 @@
-# CPP_ServerX
-net server by cpp under windows and linux use async mode
+# erverX
+net server with high performance under windows(IOCP) and linux(EPOLL)
