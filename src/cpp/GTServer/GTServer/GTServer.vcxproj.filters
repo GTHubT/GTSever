@@ -42,14 +42,14 @@
     <ClInclude Include="GT_SockIOContext.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
-    <ClInclude Include="GT_util_osinfo.h">
-      <Filter>Source Files\utility</Filter>
-    </ClInclude>
     <ClInclude Include="GT_ThreadPool.h">
       <Filter>Source Files\mulitythreads</Filter>
     </ClInclude>
     <ClInclude Include="GT_Definition.h">
       <Filter>Source Files\NetIO</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_Util_OSInfo.h">
+      <Filter>Source Files\utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -65,11 +65,11 @@
     <ClCompile Include="GT_IOCPWrapper.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
-    <ClCompile Include="GT_util_osinfo.cpp">
-      <Filter>Source Files\utility</Filter>
-    </ClCompile>
     <ClCompile Include="GT_ThreadPool.cpp">
       <Filter>Source Files\mulitythreads</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_Util_OSInfo.cpp">
+      <Filter>Source Files\utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,12 +4,29 @@
 #include <vector>
 #include <atomic>
 #include <thread>
+#include <share.h>
 namespace GT {
     namespace NET {
         struct Thread_Tuple {
             std::thread this_thread_;
             std::atomic<bool> end_thread_;
-            Thread_Tuple::Thread_Tuple(std::thread t, std::atomic<bool> b) :this_thread_(std::move(t)), end_thread_(std::move(b.load())){}
+			Thread_Tuple::Thread_Tuple() :end_thread_(false){}
+			Thread_Tuple::Thread_Tuple(Thread_Tuple& th) {
+				this_thread_ = std::move(th.this_thread_);
+				end_thread_ = std::move(th.end_thread_.load());
+			}
+			Thread_Tuple& Thread_Tuple::operator=(Thread_Tuple& th) {
+				this_thread_ = std::move(th.this_thread_);
+				end_thread_ = std::move(th.end_thread_.load());
+				return *this;
+			}
+			Thread_Tuple::Thread_Tuple(Thread_Tuple&& th) {
+				this_thread_ = std::move(th.this_thread_);
+				end_thread_ = std::move(th.end_thread_.load());
+			}
+			Thread_Tuple::Thread_Tuple(std::thread& th):end_thread_(false) {
+				this_thread_ = std::move(th);
+			}
         };
 
         class GT_ThreadPool
@@ -21,12 +38,14 @@ namespace GT {
         public:
             void Start(size_t poolsize, std::function<void()>);
             void Stop();
+			size_t GetPoolSize() { return poolsize_; }
 
         private:
             void LongTimeWorker_(std::function<void()>, std::atomic<bool>);
 
         private:
-            std::vector<Thread_Tuple> workpool_;
+            std::vector<std::shared_ptr<Thread_Tuple>> workpool_;
+			size_t	poolsize_;
         };
     }
 }

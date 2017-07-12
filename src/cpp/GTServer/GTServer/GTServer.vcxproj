@@ -156,7 +156,7 @@
     <ClInclude Include="GTServer.h" />
     <ClInclude Include="GT_Definition.h" />
     <ClInclude Include="GT_ThreadPool.h" />
-    <ClInclude Include="GT_util_osinfo.h" />
+    <ClInclude Include="GT_Util_OSInfo.h" />
     <ClInclude Include="GT_IOCPWrapper.h" />
     <ClInclude Include="GT_SockIOContext.h" />
     <ClInclude Include="stdafx.h" />
@@ -179,7 +179,7 @@
     </ClCompile>
     <ClCompile Include="GTServer.cpp" />
     <ClCompile Include="GT_ThreadPool.cpp" />
-    <ClCompile Include="GT_util_osinfo.cpp" />
+    <ClCompile Include="GT_Util_OSInfo.cpp" />
     <ClCompile Include="GT_IOCPWrapper.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-#include "GT_util_osinfo.h"
+#include "GT_Util_OSInfo.h"
 
 #ifdef _WIN
 #include <Windows.h>
@@ -8,7 +8,7 @@ namespace GT {
 
     namespace UTIL {
 
-        int GT_util_osinfo::GetCPUNum() {
+        int GT_Util_OSInfo::GetCPUNum() {
             int cpu_num = 0;
 
 #ifdef _WIN

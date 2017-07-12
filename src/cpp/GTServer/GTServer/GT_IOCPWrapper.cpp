@@ -1,6 +1,6 @@
 #include "GT_IOCPWrapper.h"
 #include "GT_Definition.h"
-#include "GT_util_osinfo.h"
+#include "GT_Util_OSInfo.h"
 
 #include <stdio.h>
 
@@ -108,8 +108,8 @@ namespace GT {
 
         void GT_IOCPWrapper::StartService() {
             // create thread pool
-            std::function<void()> threadfunc = std::bind(&GetCompletionPortStatus, this);
-            thread_pool_.Start(GT::UTIL::GT_util_osinfo::GetCPUNum() * 2, threadfunc);
+            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortStatus, this);
+            thread_pool_.Start(GT::UTIL::GT_Util_OSInfo::GetCPUNum() * 2, threadfunc);
         }
 
         GT_IOCPWrapper& GT_IOCPWrapper::GetInstance() {
