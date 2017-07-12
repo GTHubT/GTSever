@@ -6,10 +6,10 @@
 #include <thread>
 namespace GT {
     namespace NET {
-        struct thread_tuple {
+        struct Thread_Tuple {
             std::thread this_thread_;
             std::atomic<bool> end_thread_;
-            thread_tuple::thread_tuple(std::thread t, std::atomic<bool> b) :this_thread_(std::move(t)), end_thread_(std::move(b.load())){}
+            Thread_Tuple::Thread_Tuple(std::thread t, std::atomic<bool> b) :this_thread_(std::move(t)), end_thread_(std::move(b.load())){}
         };
 
         class GT_ThreadPool
@@ -26,7 +26,7 @@ namespace GT {
             void LongTimeWorker_(std::function<void()>, std::atomic<bool>);
 
         private:
-            std::vector<thread_tuple> workpool_;
+            std::vector<Thread_Tuple> workpool_;
         };
     }
 }

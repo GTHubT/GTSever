@@ -23,7 +23,7 @@ namespace GT {
             
             for (int index = 0; index < poolsize; index++) {
                 std::atomic<bool> end_thread;
-                workpool_.push_back(thread_tuple(std::thread(&LongTimeWorker_, this, thread_func, std::ref(end_thread)), std::move(end_thread.load())));
+                workpool_.push_back(Thread_Tuple(std::thread(&LongTimeWorker_, this, thread_func, std::ref(end_thread)), std::move(end_thread.load()))); // to be fix: end_thread move
             }
         }
 
