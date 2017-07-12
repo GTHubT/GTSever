@@ -6,6 +6,7 @@
 #endif
 
 #include "GT_SockIOContext.h"
+#include "GT_ThreadPool.h"
 
 #include <Windows.h>
 #include <WinSock2.h>
@@ -15,7 +16,10 @@ namespace GT {
 
     namespace NET {
 
-		typedef void(*Ready_Event_Callback) (EVENT_TYPE, int datalen, char* data);
+		typedef void(*Ready_Event_Callback) (EVENT_TYPE, char* data, int datalen);
+        typedef void(*Read_Ready_Event_Callback) (char* data, int datalen);
+        typedef void(*Write_Ready_Event_Callback) (char* data, int datalen);
+
         class GT_IOCPWrapper
         {
         public:
@@ -24,22 +28,34 @@ namespace GT {
 
             bool	Initialize();
             bool	Finalize();
+            void    StartService();
             bool	BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey);
 			void	GetCompletionPortStatus(Ready_Event_Callback callback);
+
+            void    SetReadEventCallBack(Read_Ready_Event_Callback);
+            void    SetWriteEventCallBack(Write_Ready_Event_Callback);
 
         private:
             GT_IOCPWrapper();
             HANDLE	CreateNewIoCompletionPort_();
 			SOCKET	CreateOverlappedSocket_(int af, int type, int protocl);
 			bool	InitializeListenSocket_();
+            void    PostAcceptEvent();
+            void    PostReadEvent();
+            void    PostWriteEvent();
 
         private:
-            HANDLE completion_port_;
-            SOCKET listen_socket_;
-            SOCKADDR_IN serveraddr;
+            bool            is_inited_;
+            HANDLE          completion_port_;
+            SOCKET          listen_socket_;
+            SOCKADDR_IN     serveraddr;
+            GT_ThreadPool   thread_pool_;
 
         private:
-            bool is_inited_;
+            bool    is_read_callback_setted_;
+            bool    is_write_callback_setted_;
+            Read_Ready_Event_Callback   read_func_;
+            Write_Ready_Event_Callback  write_func_;
 
         };
     }

@@ -7,10 +7,6 @@ namespace GT {
         class GT_util_osinfo
         {
         public:
-            GT_util_osinfo();
-            ~GT_util_osinfo();
-
-        public:
             static int GetCPUNum();
         };
     }

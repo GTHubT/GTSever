@@ -1,49 +1,75 @@
 #include "GT_IOCPWrapper.h"
 #include "GT_Definition.h"
+#include "GT_util_osinfo.h"
 
 #include <stdio.h>
 
 namespace GT {
 
     namespace NET {
+        
+        GT_IOCPWrapper::GT_IOCPWrapper() :
+            is_inited_(false),
+            is_read_callback_setted_(false),
+            is_write_callback_setted_(false)
+        {
+            listen_socket_ = INVALID_SOCKET;
+            completion_port_ = INVALID_HANDLE_VALUE;
+        }
 
         bool GT_IOCPWrapper::Initialize() {
+            bool ret = false;
+            do {
+                // init socket environment
+                WORD version;
+                WSADATA wsadata;
+                int err = -1;
+                version = MAKEWORD(2, 2);
+                err = WSAStartup(version, &wsadata);
+                if (err != 0) {
+                    printf("socket environment init failed! \n");
+                    break;
+                }
 
-			// init socket environment
-			WORD version;
-			WSADATA wsadata;
-			int err = -1;
-			version = MAKEWORD(2, 2);
-			err = WSAStartup(version, &wsadata);
-			if (err != 0) {
-				printf("socket environment init failed! \n");
-				WSACleanup();
-				return false;
-			}
+                // check WINSOCK dll support version 2.2 
+                if (LOBYTE(wsadata.wVersion) != 2 || HIBYTE(wsadata.wVersion) != 2) {
+                    printf("WINSOCK dll do not support version 2.2 ! \n");
+                    break;
+                }
 
-			// check WINSOCK dll support version 2.2 
-			if (LOBYTE(wsadata.wVersion) != 2 || HIBYTE(wsadata.wVersion) != 2) {
-				printf("WINSOCK dll do not support version 2.2 ! \n");
-				WSACleanup();
-				return false;
-			}
+                // init listen socket
+                bool ret = InitializeListenSocket_();
+                if (!ret) {
+                    printf("init listen socket failed! \n");
+                    break;
+                }
 
-			// init listen socket
-			bool ret = InitializeListenSocket_();
-			if (!ret) {
-				printf("init listen socket failed! \n");
-				return ret;
-			}
+                // init completion port
+                completion_port_ = CreateNewIoCompletionPort_();
+                if (INVALID_HANDLE_VALUE == completion_port_) {
+                    printf("create new IOCP port failed! \n");
+                    break;
+                }
 
-			// init completion port
-            completion_port_ = CreateNewIoCompletionPort_();
-            if (INVALID_HANDLE_VALUE == completion_port_) {
-                printf("create new IOCP port failed! \n");
-                return ret;
+                // bind listen socket to completion port
+                //ret = BindSocketToCompletionPort(listen_socket_);
+                if (!ret) {
+                    printf("bind listen socket to completion port failed! \n");
+                    break;
+                }
+
+                ret = true;
+            } while (0);
+
+            if (!ret) {
+                WSACleanup();
+                printf("IOCP init failed! \n");
+            } else {
+                is_inited_ = true;
             }
-            
-            return true;
+            return ret;
         }
+
 
 		bool GT_IOCPWrapper::InitializeListenSocket_() {
             listen_socket_ = (TCP_MODE_ENABLE ? CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP) : CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP));
@@ -66,41 +92,69 @@ namespace GT {
                     int err = WSAGetLastError();
                     printf("bind to local failed error code = %d \n", err);
                     return false;
-                }
-                
+                }                
             }
 			return true;
 		}
 
-        bool GT_IOCPWrapper::Finalize() {
-            return true;
+
+        void GT_IOCPWrapper::StartService() {
         }
 
         GT_IOCPWrapper& GT_IOCPWrapper::GetInstance() {
             static GT_IOCPWrapper iocpinstance;
             return iocpinstance;
         }
-
-		GT_IOCPWrapper::GT_IOCPWrapper() :is_inited_(false) {
-			listen_socket_      = INVALID_SOCKET;
-            completion_port_    = INVALID_HANDLE_VALUE;
-		}
+        
 
         HANDLE GT_IOCPWrapper::CreateNewIoCompletionPort_() {            
             return CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
         }
 
+
         bool GT_IOCPWrapper::BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey) {
-            return true;
+            HANDLE temp_port = CreateIoCompletionPort((HANDLE)s, completion_port_, completionkey, 0);
+            return temp_port == completion_port_;
         }
+
 
 		void GT_IOCPWrapper::GetCompletionPortStatus(Ready_Event_Callback callback) {
 
 		}
 
+
 		SOCKET GT_IOCPWrapper::CreateOverlappedSocket_(int af, int type, int protocl) {
 			return WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED);
 		}
 
+
+        void GT_IOCPWrapper::PostAcceptEvent() {
+
+        }
+
+
+        void GT_IOCPWrapper::PostReadEvent() {
+
+        }
+
+
+        void GT_IOCPWrapper::PostWriteEvent() {
+
+        }
+
+
+        bool GT_IOCPWrapper::Finalize() {
+            return true;
+        }
+
+        void GT_IOCPWrapper::SetReadEventCallBack(Read_Ready_Event_Callback read_func) {
+            read_func_ = read_func;
+            is_read_callback_setted_ = true;
+        }
+
+        void GT_IOCPWrapper::SetWriteEventCallBack(Write_Ready_Event_Callback write_func) {
+            write_func_ = write_func;
+            is_write_callback_setted_ = true;
+        }
     }
 }

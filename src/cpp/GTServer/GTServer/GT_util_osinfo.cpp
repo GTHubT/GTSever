@@ -1,21 +1,24 @@
 #include "GT_util_osinfo.h"
 
+#ifdef _WIN
+#include <Windows.h>
+#endif
+
 namespace GT {
 
     namespace UTIL {
 
-        GT_util_osinfo::GT_util_osinfo()
-        {
-        }
-
-
-        GT_util_osinfo::~GT_util_osinfo()
-        {
-        }
-
-
         int GT_util_osinfo::GetCPUNum() {
-            return 0;
+            int cpu_num = 0;
+
+#ifdef _WIN
+            SYSTEM_INFO si;
+            GetSystemInfo(&si);
+            cpu_num = si.dwNumberOfProcessors;
+#endif
+
+            return cpu_num;
         }
+
     }
 }
