@@ -36,26 +36,39 @@ namespace GT {
 			}
 
 			// init completion port
-
-
+            completion_port_ = CreateNewIoCompletionPort_();
+            if (INVALID_HANDLE_VALUE == completion_port_) {
+                printf("create new IOCP port failed! \n");
+                return ret;
+            }
+            
             return true;
         }
 
 		bool GT_IOCPWrapper::InitializeListenSocket_() {
-			if (TCP_MODE_ENABLE) {
-				listen_socket_ = CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-				if (INVALID_SOCKET == listen_socket_) {
-					printf("create overlapped listen socket failed! \n");
-					return false;
-				}
-			}
-			else {
-				listen_socket_ = CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-				if (INVALID_SOCKET == listen_socket_) {
-					printf("create overlapped listen socket failed! \n");
-					return false;
-				}
-			}
+            listen_socket_ = (TCP_MODE_ENABLE ? CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP) : CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP));
+            if (TCP_MODE_ENABLE && listen_socket_ != INVALID_SOCKET) {
+
+                // create socket addr
+                serveraddr.sin_family   = AF_INET;
+                serveraddr.sin_port     = htons(BIND_PORT);
+                serveraddr.sin_addr.S_un.S_addr = inet_addr(BIND_ADDRESS);
+
+                // bind socket to server IP
+                if (!bind(listen_socket_, (SOCKADDR*)(&serveraddr), sizeof(SOCKADDR_IN))) {
+                    int err = WSAGetLastError();
+                    printf("bind to local failed error code = %d \n", err);
+                    return false;
+                }
+
+                // set listen num
+                if (!listen(listen_socket_, SOMAXCONN)) {
+                    int err = WSAGetLastError();
+                    printf("bind to local failed error code = %d \n", err);
+                    return false;
+                }
+                
+            }
 			return true;
 		}
 
@@ -69,11 +82,12 @@ namespace GT {
         }
 
 		GT_IOCPWrapper::GT_IOCPWrapper() :is_inited_(false) {
-			listen_socket_ = INVALID_SOCKET;
+			listen_socket_      = INVALID_SOCKET;
+            completion_port_    = INVALID_HANDLE_VALUE;
 		}
 
-        bool GT_IOCPWrapper::CreateNewIoCompletionPort() {
-            return true;
+        HANDLE GT_IOCPWrapper::CreateNewIoCompletionPort_() {            
+            return CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
         }
 
         bool GT_IOCPWrapper::BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey) {

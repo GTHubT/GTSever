@@ -24,18 +24,19 @@ namespace GT {
 
             bool	Initialize();
             bool	Finalize();
-            bool	CreateNewIoCompletionPort();
             bool	BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey);
 			void	GetCompletionPortStatus(Ready_Event_Callback callback);
 
         private:
-			GT_IOCPWrapper();
+            GT_IOCPWrapper();
+            HANDLE	CreateNewIoCompletionPort_();
 			SOCKET	CreateOverlappedSocket_(int af, int type, int protocl);
 			bool	InitializeListenSocket_();
 
         private:
             HANDLE completion_port_;
             SOCKET listen_socket_;
+            SOCKADDR_IN serveraddr;
 
         private:
             bool is_inited_;
