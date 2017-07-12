@@ -1,7 +1,8 @@
 #ifndef GT_NET_MULITYTHREADS_H_
 #define GT_NET_MULITYTHREADS_H_
 
-#include <vector>
+#include <map>
+#include <atomic>
 #include <thread>
 namespace GT {
     namespace NET {
@@ -17,10 +18,10 @@ namespace GT {
             void Stop();
 
         private:
-            void LongTimeWorker_(std::function<void()>);
+            void LongTimeWorker_(std::function<void()>, std::atomic<bool>);
 
         private:
-            std::vector<std::thread> workpool_;
+            std::map<std::thread, std::atomic<bool>> workpool_;
         };
     }
 }

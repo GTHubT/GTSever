@@ -19,31 +19,29 @@ namespace GT {
                 return;
             }
             
-
             for (int index = 0; index < poolsize; index++) {
-                workpool_.push_back(std::thread(thread_func));
+                std::atomic<bool> end_thread_ = false;
+                //workpool_.insert(std::pair<std::thread, std::atomic<bool>>(std::thread(&LongTimeWorker_, this, thread_func, end_thread_), end_thread_));
             }
         }
 
-        void GT_ThreadPool::LongTimeWorker_(std::function<void()> f) {
-            while (true)
-            {
-                try {
-                    
-                }
-                catch (...) {
-
-                }
+        void GT_ThreadPool::LongTimeWorker_(std::function<void()> f, std::atomic<bool> end_thread) {
+            while (!end_thread) {
+                f();
             }
+            printf("thread %d exit! \n", std::this_thread::get_id());
         }
 
         void GT_ThreadPool::Stop() {
-            auto iter = workpool_.begin();
+            std::map<std::thread, std::atomic<bool>>::iterator iter = workpool_.begin();
             while (iter != workpool_.end()) {
-                if (iter->joinable()) {
-                    iter->join();
+                iter->second = true;
+                if (iter->first.joinable()) {
+                    iter->first->join();
                 }
+                iter++;
             }
+            printf("all worker exit! \n");
         }
 	}
 }
