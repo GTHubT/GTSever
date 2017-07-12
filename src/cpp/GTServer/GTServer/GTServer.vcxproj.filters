@@ -48,6 +48,9 @@
     <ClInclude Include="GT_ThreadPool.h">
       <Filter>Source Files\mulitythreads</Filter>
     </ClInclude>
+    <ClInclude Include="GT_Definition.h">
+      <Filter>Source Files\NetIO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GTServer.h" />
+    <ClInclude Include="GT_Definition.h" />
     <ClInclude Include="GT_ThreadPool.h" />
     <ClInclude Include="GT_util_osinfo.h" />
     <ClInclude Include="GT_IOCPWrapper.h" />

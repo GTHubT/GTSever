@@ -2,15 +2,15 @@
 
 namespace GT {
 
-    namespace NET {
+	namespace NET {
 
-        GT_ThreadPool::GT_ThreadPool()
-        {
-        }
+		GT_ThreadPool::GT_ThreadPool()
+		{
+		}
 
 
-        GT_ThreadPool::~GT_ThreadPool()
-        {
-        }
-    }
+		GT_ThreadPool::~GT_ThreadPool()
+		{
+		}
+	}
 }

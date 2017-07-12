@@ -2,6 +2,10 @@
 #define GT_NET_IOCONTEXT_H_
 
 
+enum EVENT_TYPE {
+	EVENT_ERROR	= -1,
+};
+
 struct PER_SOCKET_CONTEXT {
 
 };

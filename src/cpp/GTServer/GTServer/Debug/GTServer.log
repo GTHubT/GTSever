@@ -1,4 +1,5 @@
-﻿  GT_util_osinfo.cpp
-     Creating library H:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.lib and object H:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.exp
-  GTServer.vcxproj -> H:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.dll
-  GTServer.vcxproj -> H:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.pdb (Full PDB)
+﻿  GT_IOCPWrapper.cpp
+  LINK : C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.dll not found or not built by the last incremental link; performing full link
+     Creating library C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.lib and object C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.exp
+  GTServer.vcxproj -> C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.dll
+  GTServer.vcxproj -> C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.pdb (Full PDB)

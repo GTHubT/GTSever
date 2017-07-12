@@ -5,6 +5,8 @@
 #define WIN32_LEAN_AND_MEAN         // https://msdn.microsoft.com/en-us/library/windows/desktop/ms737629(v=vs.85).aspx
 #endif
 
+#include "GT_SockIOContext.h"
+
 #include <Windows.h>
 #include <WinSock2.h>
 #pragma comment(lib, "Ws2_32.lib")
@@ -13,18 +15,23 @@ namespace GT {
 
     namespace NET {
 
+		typedef void(*Ready_Event_Callback) (EVENT_TYPE, int datalen, char* data);
         class GT_IOCPWrapper
         {
         public:
             ~GT_IOCPWrapper() {}
             static GT_IOCPWrapper& GetInstance();
-            bool Initialize();
-            bool Finalize();
-            bool CreateNewIoCompletionPort();
-            bool BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey);
+
+            bool	Initialize();
+            bool	Finalize();
+            bool	CreateNewIoCompletionPort();
+            bool	BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey);
+			void	GetCompletionPortStatus(Ready_Event_Callback callback);
 
         private:
-            GT_IOCPWrapper():is_inited_(false){}
+			GT_IOCPWrapper();
+			SOCKET	CreateOverlappedSocket_(int af, int type, int protocl);
+			bool	InitializeListenSocket_();
 
         private:
             HANDLE completion_port_;
