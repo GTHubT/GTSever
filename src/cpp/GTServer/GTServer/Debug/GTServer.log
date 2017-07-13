@@ -1,5 +1,51 @@
-﻿  GT_IOCPWrapper.cpp
-  LINK : C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.dll not found or not built by the last incremental link; performing full link
-     Creating library C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.lib and object C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.exp
-  GTServer.vcxproj -> C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.dll
-  GTServer.vcxproj -> C:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.pdb (Full PDB)
+﻿  GT_ThreadPool.cpp
+c:\github\gtsever\src\cpp\gtserver\gtserver\gt_threadpool.cpp(24): warning C4018: '<': signed/unsigned mismatch
+c:\github\gtsever\src\cpp\gtserver\gtserver\gt_threadpool.cpp(28): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'std::thread::id'
+c:\github\gtsever\src\cpp\gtserver\gtserver\gt_threadpool.cpp(37): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'std::thread::id'
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(240): error C2672: 'std::invoke': no matching overloaded function found
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(249): note: see reference to function template instantiation 'void std::_LaunchPad<_Target>::_Execute<0,1,2,3>(std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>> &,std::integer_sequence<std::_Ty,0,1,2,3>)' being compiled
+          with
+          [
+              _Target=std::unique_ptr<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>,std::default_delete<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>>>,
+              _Ty=std::size_t
+          ]
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(247): note: see reference to function template instantiation 'void std::_LaunchPad<_Target>::_Execute<0,1,2,3>(std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>> &,std::integer_sequence<std::_Ty,0,1,2,3>)' being compiled
+          with
+          [
+              _Target=std::unique_ptr<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>,std::default_delete<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>>>,
+              _Ty=std::size_t
+          ]
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(244): note: while compiling class template member function 'void std::_LaunchPad<_Target>::_Run(std::_LaunchPad<_Target> *) noexcept'
+          with
+          [
+              _Target=std::unique_ptr<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>,std::default_delete<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>>>
+          ]
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(232): note: see reference to function template instantiation 'void std::_LaunchPad<_Target>::_Run(std::_LaunchPad<_Target> *) noexcept' being compiled
+          with
+          [
+              _Target=std::unique_ptr<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>,std::default_delete<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>>>
+          ]
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(259): note: see reference to class template instantiation 'std::_LaunchPad<_Target>' being compiled
+          with
+          [
+              _Target=std::unique_ptr<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>,std::default_delete<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>>>
+          ]
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thread(50): note: see reference to function template instantiation 'void std::_Launch<std::unique_ptr<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>,std::default_delete<_Ty>>>(_Thrd_t *,_Target &&)' being compiled
+          with
+          [
+              _Ty=std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>,
+              _Target=std::unique_ptr<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>,std::default_delete<std::tuple<void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool *,std::function<void (void)>,std::reference_wrapper<std::atomic<bool>>>>>
+          ]
+  c:\github\gtsever\src\cpp\gtserver\gtserver\gt_threadpool.cpp(26): note: see reference to function template instantiation 'std::thread::thread<void(__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>),GT::NET::GT_ThreadPool*const ,std::function<void (void)>&,std::reference_wrapper<std::atomic<bool>>,void>(_Fn &&,GT::NET::GT_ThreadPool *const &&,std::function<void (void)> &,std::reference_wrapper<std::atomic<bool>> &&)' being compiled
+          with
+          [
+              _Fn=void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>)
+          ]
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(240): error C2893: Failed to specialize function template 'unknown-type std::invoke(_Callable &&,_Types &&...)'
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(240): note: With the following template arguments:
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(240): note: '_Callable=void (__thiscall GT::NET::GT_ThreadPool::* )(std::function<void (void)>,std::atomic<bool>)'
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\thr\xthread(240): note: '_Types={GT::NET::GT_ThreadPool *, std::function<void (void)>, std::reference_wrapper<std::atomic<bool>>}'
+  Generating Code...
+  Compiling...
+  GT_IOCPWrapper.cpp
+  Generating Code...
