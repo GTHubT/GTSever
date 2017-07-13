@@ -6,8 +6,9 @@ namespace GT {
 
 	namespace NET {
 
-		GT_ThreadPool::GT_ThreadPool():poolsize_(0)
+		GT_ThreadPool::GT_ThreadPool():poolsize_(0), workpool_started_(false)
 		{
+			workpool_.clear();
 		}
 
 
@@ -27,20 +28,14 @@ namespace GT {
                 workpool_.push_back(thread_tuple);
                 printf("create thread TID = %d \n", thread_tuple->this_thread_.get_id());
 			}
+			workpool_started_ = true;
         }
 
-        void GT_ThreadPool::LongTimeWorker_(std::function<void()> f, std::atomic<bool>& end_thread) {
-            while (!end_thread) {
-                f();
-            }
-            printf("thread TID = %d exit! \n", std::this_thread::get_id());
-        }
 
         void GT_ThreadPool::Stop() {
             auto iter = workpool_.begin();
             while (iter != workpool_.end()) {
                 (*iter)->end_thread_ = true;
-                //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                 if ((*iter)->this_thread_.joinable()) {
 					(*iter)->this_thread_.join();
                 }
@@ -49,5 +44,18 @@ namespace GT {
             }
             printf("all worker exit! \n");
         }
+
+
+        void GT_ThreadPool::LongTimeWorker_(std::function<void()> f, std::atomic<bool>& end_thread) {
+            while (!end_thread) {
+                f();
+            }
+            printf("thread TID = %d exit! \n", std::this_thread::get_id());
+        }
+
+
+		size_t GT_ThreadPool::GetPoolSize() {
+			return workpool_started_ ? poolsize_ : 0;
+		}
 	}
 }

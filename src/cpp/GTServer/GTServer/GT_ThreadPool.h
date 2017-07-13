@@ -38,14 +38,15 @@ namespace GT {
         public:
             void Start(size_t poolsize, std::function<void()>);
             void Stop();
-			size_t GetPoolSize() { return poolsize_; }
+			size_t GetPoolSize();
 
         private:
             void LongTimeWorker_(std::function<void()>, std::atomic<bool>&);
 
         private:
-            std::vector<Thread_Tuple*> workpool_;
 			size_t	poolsize_;
+			bool	workpool_started_;
+            std::vector<Thread_Tuple*> workpool_;
         };
     }
 }
