@@ -41,10 +41,10 @@ namespace GT {
 			size_t GetPoolSize() { return poolsize_; }
 
         private:
-            void LongTimeWorker_(std::function<void()>, std::atomic<bool>);
+            void LongTimeWorker_(std::function<void()>, std::atomic<bool>&);
 
         private:
-            std::vector<std::shared_ptr<Thread_Tuple>> workpool_;
+            std::vector<Thread_Tuple*> workpool_;
 			size_t	poolsize_;
         };
     }
