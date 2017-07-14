@@ -3,6 +3,7 @@
 #include "GT_Util_OSInfo.h"
 
 #include <stdio.h>
+#include <glog/logging.h>
 
 namespace GT {
 

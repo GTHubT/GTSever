@@ -42,7 +42,7 @@
     <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\Build\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)\Build\thirdparty</OutDir>
     <IntDir>$(Configuration)\temp</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
