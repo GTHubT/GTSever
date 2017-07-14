@@ -5,3 +5,9 @@ src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.obj
 *.tlog
 *.tlog
+*.log
+*.idb
+src/cpp/GTServer/GTServer/Debug/vc140.pdb
+src/cpp/GTServer/GTServer/Debug/GTServer.tlog/GTServer.lastbuildstate
+src/cpp/GTServer/.vs/GTServer/v14/.suo
+*.db
