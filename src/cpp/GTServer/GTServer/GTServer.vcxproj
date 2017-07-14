@@ -97,13 +97,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GTSERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)third_party\GLog\GLog\src\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;$(SolutionDir)Build\thirdparty\libglog.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -114,13 +114,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;GTSERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)third_party\GLog\GLog\src\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;$(SolutionDir)Build\thirdparty\libglog.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtility.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtility.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

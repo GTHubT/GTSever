@@ -21,6 +21,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libglog", "third_party\GLog\GLog\vsprojects\libglog\libglog.vcxproj", "{34BD04BD-BC1D-4BFC-AAFC-ED02D9E960F1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GTUtlity", "GTUtlity\GTUtlity.vcxproj", "{E5251BA6-605E-450C-83CB-EA85B494C979}"
+	ProjectSection(ProjectDependencies) = postProject
+		{34BD04BD-BC1D-4BFC-AAFC-ED02D9E960F1} = {34BD04BD-BC1D-4BFC-AAFC-ED02D9E960F1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
