@@ -1,12 +1,16 @@
 #include "GT_Util_GlogWrapper.h"
 
 
+namespace GT {
 
-GT_Util_GlogWrapper::GT_Util_GlogWrapper()
-{
-}
+    namespace UTIL {
 
+        GT_Util_GlogWrapper::GT_Util_GlogWrapper()
+        {
+        }
 
-GT_Util_GlogWrapper::~GT_Util_GlogWrapper()
-{
+        GT_Util_GlogWrapper::~GT_Util_GlogWrapper()
+        {
+        }
+    }
 }

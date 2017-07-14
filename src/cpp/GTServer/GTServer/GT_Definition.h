@@ -2,19 +2,16 @@
 #define GT_NET_DEFINITION_H_
 
 
-/* ERROR CODE */
-
 enum GT_ERROR_CODE {
+    GT_ERROR_FAILED = -1,
     GT_ERROR_SUCCESS = 0,
 };
 
-/* THIS FILE CAN BE REPLACE BY JSON */
-
-#define BUF_SIZE		    4*1024
-
-
-#define TCP_MODE_ENABLE		1
-#define BIND_ADDRESS	    "127.0.0.1"
-#define BIND_PORT		    7777
+enum GT_LOG_LEVEL {
+    GT_LOG_LEVEL_INFO = 0,
+    GT_LOG_LEVEL_WARNING,
+    GT_LOG_LEVEL_ERROR,
+    GT_LOG_LEVEL_ALL = GT_LOG_LEVEL_INFO
+};
 
 #endif // GT_NET_DEFINITION_H_

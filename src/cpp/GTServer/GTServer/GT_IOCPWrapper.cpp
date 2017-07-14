@@ -1,8 +1,13 @@
 #include "GT_IOCPWrapper.h"
 #include "GT_Definition.h"
-#include "GT_Util_OSInfo.h"
+#include "GTUtlity/GT_Util_OSInfo.h"
+#include "GT_Cfg.h"
 
 #include <stdio.h>
+
+#ifndef GLOG_NO_ABBREVIATED_SEVERITIES
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#endif
 #include <glog/logging.h>
 
 namespace GT {

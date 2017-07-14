@@ -97,12 +97,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GTSERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\GLog\GLog\src\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)third_party\GLog\GLog\src\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/FS</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Build\thirdparty\libglog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;$(SolutionDir)Build\thirdparty\libglog.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -113,12 +114,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;GTSERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\GLog\GLog\src\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)third_party\GLog\GLog\src\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/FS</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Build\thirdparty\libglog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;$(SolutionDir)Build\thirdparty\libglog.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtility.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -162,9 +164,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GTServer.h" />
+    <ClInclude Include="GT_Cfg.h" />
     <ClInclude Include="GT_Definition.h" />
     <ClInclude Include="GT_ThreadPool.h" />
-    <ClInclude Include="GT_Util_OSInfo.h" />
     <ClInclude Include="GT_IOCPWrapper.h" />
     <ClInclude Include="GT_SockIOContext.h" />
     <ClInclude Include="stdafx.h" />
@@ -187,7 +189,6 @@
     </ClCompile>
     <ClCompile Include="GTServer.cpp" />
     <ClCompile Include="GT_ThreadPool.cpp" />
-    <ClCompile Include="GT_Util_OSInfo.cpp" />
     <ClCompile Include="GT_IOCPWrapper.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

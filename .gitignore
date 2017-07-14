@@ -47,3 +47,7 @@ src/cpp/GTServer/.vs/GTServer/v14/.suo
 src/cpp/GTServer/GTServer.VC.VC.opendb
 src/cpp/GTServer/.vs/GTServer/v14/.suo
 src/cpp/GTServer/GTServer.VC.db
+*.ilk
+*.exp
+*.ilk
+src/cpp/GTServer/.vs/GTServer/v14/.suo
