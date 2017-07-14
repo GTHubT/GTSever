@@ -5,9 +5,24 @@ src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.obj
 *.tlog
 *.tlog
+<<<<<<< HEAD
 *.log
 *.idb
 src/cpp/GTServer/GTServer/Debug/vc140.pdb
 src/cpp/GTServer/GTServer/Debug/GTServer.tlog/GTServer.lastbuildstate
 src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.db
+=======
+*.tlog
+*.tlog
+*.obj
+*.log
+*.pdb
+*.idb
+*.db
+*.obj
+*.log
+*.idb
+*.pdb
+src/cpp/GTServer/.vs/GTServer/v14/.suo
+>>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece

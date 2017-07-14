@@ -117,10 +117,6 @@ namespace GT {
             return iocpinstance;
         }
 
-		void GT_IOCPWrapper::GetCompletionPortStatus() {
-
-		}
-
 
         bool GT_IOCPWrapper::StopService() {
             return true;
@@ -158,6 +154,10 @@ namespace GT {
         void GT_IOCPWrapper::PostAcceptEvent_() {
 
         }
-        
+
+		void GT_IOCPWrapper::GetCompletionPortStatus() {
+
+		}
+
     }
 }
