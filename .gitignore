@@ -6,6 +6,7 @@ src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.tlog
 *.tlog
 <<<<<<< HEAD
+<<<<<<< HEAD
 *.log
 *.idb
 src/cpp/GTServer/GTServer/Debug/vc140.pdb
@@ -13,6 +14,8 @@ src/cpp/GTServer/GTServer/Debug/GTServer.tlog/GTServer.lastbuildstate
 src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.db
 =======
+=======
+>>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece
 *.tlog
 *.tlog
 *.obj
@@ -25,4 +28,7 @@ src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.idb
 *.pdb
 src/cpp/GTServer/.vs/GTServer/v14/.suo
+<<<<<<< HEAD
+>>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece
+=======
 >>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece
