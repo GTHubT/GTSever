@@ -10,13 +10,27 @@
 #define GTSERVER_API __declspec(dllimport)
 #endif
 
+
+#include "GT_Definition.h"
+
+#include <string>
+
 // This class is exported from the GTServer.dll
-class GTSERVER_API CGTServer {
-public:
-	CGTServer(void);
-	// TODO: add your methods here.
-};
+//class GTSERVER_API CGTServer {
+//public:
+//	CGTServer(void);
+//	// TODO: add your methods here.
+//};
+//
+//extern GTSERVER_API int nGTServer;
+//
+//GTSERVER_API int fnGTServer(void);
 
-extern GTSERVER_API int nGTServer;
+GTSERVER_API GT_ERROR_CODE GTServer_Initialize(std::string cfg_path);
 
-GTSERVER_API int fnGTServer(void);
+GTSERVER_API GT_ERROR_CODE GTServer_Uninitialize();
+
+GTSERVER_API GT_ERROR_CODE GTServer_RefisterEventCallBack();
+
+
+
