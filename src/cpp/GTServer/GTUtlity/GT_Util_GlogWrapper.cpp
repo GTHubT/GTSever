@@ -1,6 +1,4 @@
 #include "GT_Util_GlogWrapper.h"
-#include <algorithm>
-
 
 
 namespace GT {
@@ -20,16 +18,19 @@ namespace GT {
         }
 
 		GT_Util_GlogWrapper& GT_Util_GlogWrapper::GetInstance() {
+			std::lock_guard<std::mutex> lk(log_mutex_);
+
 			static GT_Util_GlogWrapper log_instance_;
 			return log_instance_;
 		}
 
 		bool GT_Util_GlogWrapper::GT_LogInitialize(std::string logname, GT_LOG_LEVEL level, int maxlogsize) {
 			std::lock_guard<std::mutex> lk(log_mutex_);
+
 			if (is_log_initted_)
 				return true;
 
-			if (level == GT_LOG_LEVEL::GT_LOG_LEVEL_OFF || maxlogsize <= 0)
+			if (level == GT_LOG_LEVEL_OFF || maxlogsize <= 0)
 				return is_log_initted_;
 
 			per_log_size_ = maxlogsize;
@@ -49,8 +50,8 @@ namespace GT {
 
 		void GT_Util_GlogWrapper::GT_SetLoglevelDestination_() {
 			google::SetLogDestination(GT_Loglevel2GoogleLoglevel_(log_level_), log_path_.c_str());
-			// set other log level destination
-			for (auto le = 0; le <= GT_LOG_LEVEL_OFF; le++) {
+			// set other log level destination this should be set, otherwise other log level will not be record
+			for (auto le = int(GT_LOG_LEVEL_INFO); le <= GT_LOG_LEVEL_OFF; le++) {
 				if (le != log_level_)
 					google::SetLogDestination(le, "");
 			}
@@ -66,6 +67,7 @@ namespace GT {
 
 		bool GT_Util_GlogWrapper::GT_LogUnintialize() {
 			std::lock_guard<std::mutex> lk(log_mutex_);
+
 			if (is_log_initted_)
 				google::ShutdownGoogleLogging();
 			is_log_initted_ = false;
@@ -74,6 +76,7 @@ namespace GT {
 
 		bool GT_Util_GlogWrapper::GT_SetLoglevel(GT_LOG_LEVEL level) {
 			std::lock_guard<std::mutex> lk(log_mutex_);
+
 			google::LogSeverity loglevel_ = GT_Loglevel2GoogleLoglevel_(level);
 			if (NULL == loglevel_ || !is_log_initted_)
 				return is_log_initted_;
@@ -85,12 +88,10 @@ namespace GT {
 		google::LogSeverity GT_Util_GlogWrapper::GT_Loglevel2GoogleLoglevel_(GT_LOG_LEVEL level) {
 			google::LogSeverity googleloglevel_ = google::GLOG_INFO;
 			switch (level) {
-			case GT_LOG_LEVEL::GT_LOG_LEVEL_INFO:
-				break;
-			case GT_LOG_LEVEL::GT_LOG_LEVEL_WARNING:
+			case GT_LOG_LEVEL_WARNING:
 				googleloglevel_ = google::GLOG_WARNING;
 				break;
-			case GT_LOG_LEVEL::GT_LOG_LEVEL_ERROR:
+			case GT_LOG_LEVEL_ERROR:
 				googleloglevel_ = google::GLOG_ERROR;
 				break;
 			default:
@@ -102,22 +103,23 @@ namespace GT {
 
 
 		void GT_Util_GlogWrapper::GT_WriteLog(std::string logevent, GT_LOG_LEVEL level, const char* filename, int line) {
-			std::lock_guard<std::mutex> lk(log_mutex_);
-			if (!is_log_initted_ || level < log_level_ || log_level_ == GT_LOG_LEVEL::GT_LOG_LEVEL_OFF) {
+			if (!is_log_initted_ || level < log_level_ || log_level_ == GT_LOG_LEVEL_OFF) {
 				return;
 			}
+
 			char line_[32];
 			_itoa_s(line, line_, 10);
 			logevent = logevent + " [" + std::string(filename) + ":" + std::string(line_) + "]";
+
 			switch (level)
 			{
-			case GT_LOG_LEVEL::GT_LOG_LEVEL_INFO:
+			case GT_LOG_LEVEL_INFO:
 				LOG(INFO) << logevent.c_str();
 				break;
-			case GT_LOG_LEVEL::GT_LOG_LEVEL_WARNING:
+			case GT_LOG_LEVEL_WARNING:
 				LOG(WARNING) << logevent.c_str();
 				break;
-			case GT_LOG_LEVEL::GT_LOG_LEVEL_ERROR:
+			case GT_LOG_LEVEL_ERROR:
 				LOG(ERROR) << logevent.c_str();
 				break;
 			default:

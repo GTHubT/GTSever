@@ -17,7 +17,7 @@
 int main()
 {
 	GT::UTIL::GT_Util_GlogWrapper gt = GT::UTIL::GT_Util_GlogWrapper::GetInstance();
-	gt.GT_LogInitialize("test", GT_LOG_LEVEL_ALL, 1);
+	gt.GT_LogInitialize("test", GT_LOG_LEVEL_WARNING, 1);
 	GT_TRACE_FUNCTION
 	int i = 0;
 	while (i < 5000) {

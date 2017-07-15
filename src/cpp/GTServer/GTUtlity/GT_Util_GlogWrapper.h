@@ -33,7 +33,7 @@ namespace GT {
             GT_Util_GlogWrapper();
 			void	GT_SetGlogFlags_();
 			void	GT_SetLoglevelDestination_();
-			google::LogSeverity GT_Loglevel2GoogleLoglevel_(GT_LOG_LEVEL);
+			static  google::LogSeverity GT_Loglevel2GoogleLoglevel_(GT_LOG_LEVEL);
 
 		private:
 			int						per_log_size_;
