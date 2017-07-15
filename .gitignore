@@ -55,3 +55,5 @@ src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.dll
 *.exp
 *.ilk
+*.exe
+src/cpp/GTServer/.vs/GTServer/v14/.suo
