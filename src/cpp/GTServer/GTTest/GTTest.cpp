@@ -7,11 +7,13 @@
 #include "GT_Util_GlogWrapper.h"
 #include "GTServer/GT_Definition.h"
 
-void GT_WriteLog(std::ostream& os) {
-	std::string str = "ERROR";
-	printf("%s", str.c_str());
-	//LOG(INFO) << os;
-}
+//void GT_WriteLog(std::istringstream os) {
+//	std::string str = os.str();
+//	printf("%s", str.c_str());
+//	LOG(INFO) << str;
+//}
+
+#define LOG_TRACE(logEvent) printf("%s", "testttttttttt\n")
 
 int main()
 {
@@ -20,15 +22,13 @@ int main()
 	int i = 0;
 	while (i < 1) {
 		i++;
-		//GT_WriteLog("TEST FOR TEST TEST");
-		//std::basic_ostream<std::ostream> os;
-		std::ostream str(NULL);
-		str<< "this is test = " << 1 << " value";
+		//GT_WriteLog("TEST FOR TEST TEST"<<"");
 		std::ostringstream sst;
 		sst << "this is test = " << 1 << " value";
 		std::string st = sst.str();
 		LOG(ERROR) << "this is test = " << 1 << " value";
-
+		LOG_TRACE("this is test = " << 1 << " value");
+		GT_LOG_INFO("GT" << "GTTEST" << 1);
 	}
 	char c = 'c';
 	std::cin >> c;
