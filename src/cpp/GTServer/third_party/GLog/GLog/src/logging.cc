@@ -1075,8 +1075,8 @@ void LogFileObject::Write(bool force_flush,
                        << setw(2) << tm_time.tm_sec << '\n'
                        << "Running on machine: "
                        << LogDestination::hostname() << '\n'
-                       << "Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu "
-                       << "threadid file:line] msg" << '\n';
+                       << "Log line format: [INFO|WARN|ERRO]mmdd hh:mm:ss.uuuuuu "
+                       << "threadid] msg [file:line]" << '\n';
     const string& file_header_string = file_header_stream.str();
 
     const int header_len = file_header_string.size();
