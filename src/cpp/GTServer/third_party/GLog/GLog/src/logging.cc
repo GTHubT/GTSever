@@ -378,7 +378,7 @@ int64 LogMessage::num_messages_[NUM_SEVERITIES] = {0, 0, 0, 0};
 static bool stop_writing = false;
 
 const char*const LogSeverityNames[NUM_SEVERITIES] = {
-  "INFO", "WARNING", "ERROR", "FATAL"
+  "INFO", "WARN", "ERRO", "FATA"
 };
 
 // Has the user called SetExitOnDFatal(true)?
@@ -1236,19 +1236,21 @@ void LogMessage::Init(const char* file,
   //    (log level, GMT month, date, time, thread_id, file basename, line)
   // We exclude the thread_id for the default thread.
   if (FLAGS_log_prefix && (line != kNoLogPrefix)) {
-    stream() << LogSeverityNames[severity][0]
-             << setw(2) << 1+data_->tm_time_.tm_mon
-             << setw(2) << data_->tm_time_.tm_mday
-             << ' '
-             << setw(2) << data_->tm_time_.tm_hour  << ':'
-             << setw(2) << data_->tm_time_.tm_min   << ':'
-             << setw(2) << data_->tm_time_.tm_sec   << "."
-             << setw(6) << usecs
-             << ' '
-             << setfill(' ') << setw(5)
-             << static_cast<unsigned int>(GetTID()) << setfill('0')
-             << ' '
-             << data_->basename_ << ':' << data_->line_ << "] ";
+	  stream() <<'['
+		  << LogSeverityNames[severity]
+		  << ' '
+		  << setw(2) << 1 + data_->tm_time_.tm_mon
+		  << setw(2) << data_->tm_time_.tm_mday
+		  << ' '
+		  << setw(2) << data_->tm_time_.tm_hour << ':'
+		  << setw(2) << data_->tm_time_.tm_min << ':'
+		  << setw(2) << data_->tm_time_.tm_sec << "."
+		  << setw(6) << usecs
+		  << ' '
+		  << setfill(' ') << setw(5)
+		  << static_cast<unsigned int>(GetTID()) << setfill('0')
+		  << "] ";
+             //<< data_->basename_ << ':' << data_->line_ << "] ";
   }
   data_->num_prefix_chars_ = data_->stream_.pcount();
 

@@ -1,16 +1,18 @@
 #include "GT_Util_GlogWrapper.h"
-
+#include <algorithm>
 
 
 
 namespace GT {
 
     namespace UTIL {
-		bool GT_Util_GlogWrapper::is_log_initted_ = false;
+		bool         GT_Util_GlogWrapper::is_log_initted_ = false;
 		GT_LOG_LEVEL GT_Util_GlogWrapper::log_level_ = GT_LOG_LEVEL_OFF;
-        GT_Util_GlogWrapper::GT_Util_GlogWrapper()
+		std::mutex	 GT_Util_GlogWrapper::log_mutex_;
+
+        GT_Util_GlogWrapper::GT_Util_GlogWrapper():per_log_size_(50)
         {
-			log_path_ = "./GT_server.log";
+			log_path_ = "./temp.log";
         }
 
         GT_Util_GlogWrapper::~GT_Util_GlogWrapper()
@@ -22,31 +24,48 @@ namespace GT {
 			return log_instance_;
 		}
 
-		bool GT_Util_GlogWrapper::GT_LogInitialize(std::string logname, GT_LOG_LEVEL level) {
+		bool GT_Util_GlogWrapper::GT_LogInitialize(std::string logname, GT_LOG_LEVEL level, int maxlogsize) {
+			std::lock_guard<std::mutex> lk(log_mutex_);
 			if (is_log_initted_)
 				return true;
 
-			if (level == GT_LOG_LEVEL::GT_LOG_LEVEL_OFF)
+			if (level == GT_LOG_LEVEL::GT_LOG_LEVEL_OFF || maxlogsize <= 0)
 				return is_log_initted_;
 
+			per_log_size_ = maxlogsize;
 			log_level_ = level;
-			google::LogSeverity loglevel_ = GTLoglevel2GoogleLoglevel(level);
+			google::LogSeverity loglevel_ = GT_Loglevel2GoogleLoglevel_(level);
 
 			log_path_ = "./" + logname + ".log_";
 			google::InitGoogleLogging("GTServer");
-			google::SetLogDestination(GTLoglevel2GoogleLoglevel(log_level_),log_path_.c_str());
-			FLAGS_log_prefix = true;								// include the time and thread id
-			FLAGS_logbufsecs = 0;									// flush log to file frequency
-			FLAGS_max_log_size = 50;								// max log size (MB)
-			FLAGS_stop_logging_if_full_disk = true;					// if log is full stop write log
-			FLAGS_colorlogtostderr = true;							// if have fatal or error log will put it to terminal with color
+			
+			GT_SetLoglevelDestination_();
+			GT_SetGlogFlags_();
 
 			is_log_initted_ = true;
 			printf("GLOG Environment Init Success!\n");
 			return is_log_initted_;
 		}
 
+		void GT_Util_GlogWrapper::GT_SetLoglevelDestination_() {
+			google::SetLogDestination(GT_Loglevel2GoogleLoglevel_(log_level_), log_path_.c_str());
+			// set other log level destination
+			for (auto le = 0; le <= GT_LOG_LEVEL_OFF; le++) {
+				if (le != log_level_)
+					google::SetLogDestination(le, "");
+			}
+		}
+
+		void GT_Util_GlogWrapper::GT_SetGlogFlags_() {
+			FLAGS_log_prefix = true;								// include the time and thread id
+			FLAGS_logbufsecs = 0;									// flush log to file frequency
+			FLAGS_max_log_size = per_log_size_;						// max log size (MB)
+			FLAGS_stop_logging_if_full_disk = true;					// if log is full stop write log
+			FLAGS_colorlogtostderr = true;							// if have fatal or error log will put it to terminal with color
+		}
+
 		bool GT_Util_GlogWrapper::GT_LogUnintialize() {
+			std::lock_guard<std::mutex> lk(log_mutex_);
 			if (is_log_initted_)
 				google::ShutdownGoogleLogging();
 			is_log_initted_ = false;
@@ -54,14 +73,16 @@ namespace GT {
 		}
 
 		bool GT_Util_GlogWrapper::GT_SetLoglevel(GT_LOG_LEVEL level) {
-			google::LogSeverity loglevel_ = GTLoglevel2GoogleLoglevel(level);
+			std::lock_guard<std::mutex> lk(log_mutex_);
+			google::LogSeverity loglevel_ = GT_Loglevel2GoogleLoglevel_(level);
 			if (NULL == loglevel_ || !is_log_initted_)
 				return is_log_initted_;
-			google::SetLogDestination(log_level_, log_path_.c_str());
+			log_level_ = level;
+			GT_SetLoglevelDestination_();
 			return true;
 		}
 
-		google::LogSeverity GT_Util_GlogWrapper::GTLoglevel2GoogleLoglevel(GT_LOG_LEVEL level) {
+		google::LogSeverity GT_Util_GlogWrapper::GT_Loglevel2GoogleLoglevel_(GT_LOG_LEVEL level) {
 			google::LogSeverity googleloglevel_ = google::GLOG_INFO;
 			switch (level) {
 			case GT_LOG_LEVEL::GT_LOG_LEVEL_INFO:
@@ -80,23 +101,23 @@ namespace GT {
 		}
 
 
-		void GT_Util_GlogWrapper::GT_WriteLog(std::string logevent, GT_LOG_LEVEL level) {
-			if (!is_log_initted_ || level > log_level_ || log_level_ == GT_LOG_LEVEL::GT_LOG_LEVEL_OFF) {
+		void GT_Util_GlogWrapper::GT_WriteLog(std::string logevent, GT_LOG_LEVEL level, const char* filename, int line) {
+			std::lock_guard<std::mutex> lk(log_mutex_);
+			if (!is_log_initted_ || level < log_level_ || log_level_ == GT_LOG_LEVEL::GT_LOG_LEVEL_OFF) {
 				return;
 			}
-
+			char line_[32];
+			_itoa_s(line, line_, 10);
+			logevent = logevent + " [" + std::string(filename) + ":" + std::string(line_) + "]";
 			switch (level)
 			{
 			case GT_LOG_LEVEL::GT_LOG_LEVEL_INFO:
-				logevent = "[INFO] " + logevent;
 				LOG(INFO) << logevent.c_str();
 				break;
 			case GT_LOG_LEVEL::GT_LOG_LEVEL_WARNING:
-				logevent = "[WARN] " + logevent;
 				LOG(WARNING) << logevent.c_str();
 				break;
 			case GT_LOG_LEVEL::GT_LOG_LEVEL_ERROR:
-				logevent = "[ERROR] " + logevent;
 				LOG(ERROR) << logevent.c_str();
 				break;
 			default:

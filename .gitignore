@@ -51,3 +51,7 @@ src/cpp/GTServer/GTServer.VC.db
 *.exp
 *.ilk
 src/cpp/GTServer/.vs/GTServer/v14/.suo
+*.lib
+*.dll
+*.exp
+*.ilk

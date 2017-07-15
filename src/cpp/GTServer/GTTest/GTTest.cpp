@@ -13,22 +13,24 @@
 //	LOG(INFO) << str;
 //}
 
-#define LOG_TRACE(logEvent) printf("%s", "testttttttttt\n")
 
 int main()
 {
 	GT::UTIL::GT_Util_GlogWrapper gt = GT::UTIL::GT_Util_GlogWrapper::GetInstance();
-	gt.GT_LogInitialize("test", GT_LOG_LEVEL_ALL);
+	gt.GT_LogInitialize("test", GT_LOG_LEVEL_ALL, 1);
+	GT_TRACE_FUNCTION
 	int i = 0;
-	while (i < 1) {
+	while (i < 5000) {
 		i++;
 		//GT_WriteLog("TEST FOR TEST TEST"<<"");
 		std::ostringstream sst;
 		sst << "this is test = " << 1 << " value";
 		std::string st = sst.str();
-		LOG(ERROR) << "this is test = " << 1 << " value";
-		LOG_TRACE("this is test = " << 1 << " value");
+		//LOG(ERROR) << "this is test = " << 1 << " value";
 		GT_LOG_INFO("GT" << "GTTEST" << 1);
+		GT_LOG_ERROR("I AM GT" << " NO." << 1);
+		GT_LOG_WARN("I AM GT" << " NO." << 1);
+		
 	}
 	char c = 'c';
 	std::cin >> c;
