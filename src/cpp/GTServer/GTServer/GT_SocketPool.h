@@ -2,6 +2,7 @@
 #define GT_NET_SOCKETPOOL_H_
 
 #include <deque>
+#include <vector>
 #include <mutex>
 #include <WinSock2.h>
 
@@ -21,9 +22,9 @@ namespace GT {
 			~GT_SocketPool();
 			static	GT_SocketPool& GetInstance();
 			bool	PreAllocateSocket();						
-			SOCKET  GetNextUnuseSocket();
+			SOCKET&  GetNextUnuseSocket();
 			void	DestroyPool();
-			void	CloseSockAndPush2ReusedPool(SOCKET);	
+			void	CloseSockAndPush2ReusedPool(SOCKET&);	
 
 		private:
 			GT_SocketPool();
