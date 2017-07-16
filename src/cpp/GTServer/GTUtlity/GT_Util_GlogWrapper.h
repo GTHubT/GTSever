@@ -18,6 +18,8 @@ namespace GT {
     
     namespace UTIL {
 
+#define IS_INVALID_LOGLEVEL(level) ((level) >= GT_LOG_LEVEL_OFF || (level) < GT_LOG_LEVEL_INFO)
+
         class GT_Util_GlogWrapper
         {
         public:

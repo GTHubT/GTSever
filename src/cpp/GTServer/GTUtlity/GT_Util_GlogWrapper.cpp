@@ -30,7 +30,7 @@ namespace GT {
 			if (is_log_initted_)
 				return true;
 
-			if (level == GT_LOG_LEVEL_OFF || maxlogsize <= 0)
+			if (IS_INVALID_LOGLEVEL(level) || maxlogsize <= 0)
 				return is_log_initted_;
 
 			per_log_size_ = maxlogsize;
@@ -78,7 +78,7 @@ namespace GT {
 			std::lock_guard<std::mutex> lk(log_mutex_);
 
 			google::LogSeverity loglevel_ = GT_Loglevel2GoogleLoglevel_(level);
-			if (NULL == loglevel_ || !is_log_initted_)
+			if (IS_INVALID_LOGLEVEL(level) || !is_log_initted_)
 				return is_log_initted_;
 			log_level_ = level;
 			GT_SetLoglevelDestination_();
