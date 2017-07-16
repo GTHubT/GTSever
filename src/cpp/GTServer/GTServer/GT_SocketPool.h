@@ -1,6 +1,8 @@
 #ifndef GT_NET_SOCKETPOOL_H_
 #define GT_NET_SOCKETPOOL_H_
 
+#include <thread>
+#include <atomic>
 #include <deque>
 #include <vector>
 #include <mutex>
@@ -20,23 +22,27 @@ namespace GT {
 
 		public:
 			~GT_SocketPool();
-			static	GT_SocketPool& GetInstance();
-			bool	PreAllocateSocket();						
-			SOCKET&  GetNextUnuseSocket();
-			void	DestroyPool();
-			void	CloseSockAndPush2ReusedPool(SOCKET&);	
+			static		GT_SocketPool& GetInstance();
+			bool		Initilize();					
+			SOCKET&		GetNextUnuseSocket();
+			void		DestroyPool();
+			void		CloseSockAndPush2ReusedPool(SOCKET&);
 
 		private:
 			GT_SocketPool();
-			void	UpdateSocketPool_();
-			void	ReAllocateSocket4Pool_();
+			void		UpdateSocketPool_();
+			bool		PreAllocateSocket_();	
+			void		ReAllocateSocket4Pool_();
+			void		LongTimeWork4CleanClosedSocket_(std::atomic<bool>& , std::mutex& , std::deque<SOCKET>& );
 
 		private:
+			std::thread			clean_thread_;
+			size_t				poolsize_;
 			static  std::mutex	socket_pool_mutex_;
-			size_t	poolsize_;
-			std::deque<SOCKET> socket_pool_;
-			std::deque<SOCKET> socket_inuse_pool_;
-			std::deque<SOCKET> tobereuse_socket_pool_;
+			std::deque<SOCKET>	socket_pool_;
+			std::deque<SOCKET>	socket_inuse_pool_;
+			std::deque<SOCKET>	tobereuse_socket_pool_;
+			std::atomic<bool>	end_socket_clean_thread_;
 
 
 		};
