@@ -55,11 +55,13 @@ namespace GT {
 			if (socket_pool_.size() < SIZEOF_USEFULL_SOCKET) {
 				UpdateSocketPool_();
 			}
-
-			if (socket_pool_.size() > 0)
-				return socket_pool_.pop_front();
-			else
-				return INVALID_SOCKET;
+			SOCKET s = INVALID_SOCKET;
+			if (socket_pool_.size() > 0) {
+				s = socket_pool_.front();
+				socket_pool_.pop_front();
+			}
+				
+			return s;
 		}
 
 		/* if the socket pool is not enough, there two action to be done:1. move reuse pool to socket pool back  
@@ -67,7 +69,7 @@ namespace GT {
 		void GT_SocketPool::UpdateSocketPool_() {
 			GT_TRACE_FUNCTION;
 
-			std::for_each(tobereuse_socket_pool_.begin(), tobereuse_socket_pool_.end(), [](auto iter) {socket_pool_.push_back(*iter); });
+			std::for_each(tobereuse_socket_pool_.begin(), tobereuse_socket_pool_.end(), [=](auto iter) {socket_pool_.push_back(iter); });
 
 			if (tobereuse_socket_pool_.size() < SIZEOF_USEFULL_SOCKET) {
 				ReAllocateSocket4Pool_();
