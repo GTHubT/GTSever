@@ -4,6 +4,9 @@
 namespace GT {
 
     namespace UTIL {
+
+#define LOG_LOCK_THIS_SCOPE std::lock_guard<std::mutex> lk(log_mutex_);
+
 		bool         GT_Util_GlogWrapper::is_log_initted_ = false;
 		GT_LOG_LEVEL GT_Util_GlogWrapper::log_level_ = GT_LOG_LEVEL_OFF;
 		std::mutex	 GT_Util_GlogWrapper::log_mutex_;
@@ -18,14 +21,14 @@ namespace GT {
         }
 
 		GT_Util_GlogWrapper& GT_Util_GlogWrapper::GetInstance() {
-			std::lock_guard<std::mutex> lk(log_mutex_);
+			LOG_LOCK_THIS_SCOPE;
 
 			static GT_Util_GlogWrapper log_instance_;
 			return log_instance_;
 		}
 
 		bool GT_Util_GlogWrapper::GT_LogInitialize(std::string logname, GT_LOG_LEVEL level, int maxlogsize) {
-			std::lock_guard<std::mutex> lk(log_mutex_);
+			LOG_LOCK_THIS_SCOPE;
 
 			if (is_log_initted_)
 				return true;
@@ -66,7 +69,7 @@ namespace GT {
 		}
 
 		bool GT_Util_GlogWrapper::GT_LogUnintialize() {
-			std::lock_guard<std::mutex> lk(log_mutex_);
+			LOG_LOCK_THIS_SCOPE;
 
 			if (is_log_initted_)
 				google::ShutdownGoogleLogging();
@@ -75,7 +78,7 @@ namespace GT {
 		}
 
 		bool GT_Util_GlogWrapper::GT_SetLoglevel(GT_LOG_LEVEL level) {
-			std::lock_guard<std::mutex> lk(log_mutex_);
+			LOG_LOCK_THIS_SCOPE;
 
 			google::LogSeverity loglevel_ = GT_Loglevel2GoogleLoglevel_(level);
 			if (IS_INVALID_LOGLEVEL(level) || !is_log_initted_)

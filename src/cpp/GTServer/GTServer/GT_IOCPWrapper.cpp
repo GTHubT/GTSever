@@ -1,7 +1,8 @@
 #include "GT_IOCPWrapper.h"
 #include "GT_Definition.h"
-#include "GTUtlity/GT_Util_OSInfo.h"
 #include "GT_Cfg.h"
+#include "GTUtlity/GT_Util_OSInfo.h"
+#include "GTUtlity/GT_Util_GlogWrapper.h"
 
 #include <stdio.h>
 
@@ -20,55 +21,48 @@ namespace GT {
         }
 
         bool GT_IOCPWrapper::Initialize() {
+			GT_TRACE_FUNCTION;
             bool ret = false;
             do {
-                // init socket environment
                 WORD version;
                 WSADATA wsadata;
                 int err = -1;
                 version = MAKEWORD(2, 2);
                 err = WSAStartup(version, &wsadata);
                 if (err != 0) {
-                    printf("socket environment init failed! \n");
+					GT_LOG_ERROR("socket environment init failed!");
                     break;
                 }
 
-                // check WINSOCK dll support version 2.2 
                 if (LOBYTE(wsadata.wVersion) != 2 || HIBYTE(wsadata.wVersion) != 2) {
-                    printf("WINSOCK dll do not support version 2.2 ! \n");
+                    GT_LOG_ERROR("WINSOCK dll do not support version 2.2!");
                     break;
                 }
 
-                // init listen socket
                 bool ret = InitializeListenSocket_();
                 if (!ret) {
-                    printf("init listen socket failed! \n");
+                    GT_LOG_ERROR("init listen socket failed!");
                     break;
                 }
 
-                // init completion port
+				PostAcceptEvent_();
+
                 completion_port_ = CreateNewIoCompletionPort_();
                 if (INVALID_HANDLE_VALUE == completion_port_) {
-                    printf("create new IOCP port failed! \n");
+                    GT_LOG_ERROR("create new IOCP port failed!");
                     break;
                 }
 
-                // bind listen socket to completion port
                 //ret = BindSocketToCompletionPort(listen_socket_);
                 if (!ret) {
-                    printf("bind listen socket to completion port failed! \n");
+                    GT_LOG_ERROR("bind listen socket to completion port failed!");
                     break;
                 }
 
                 ret = true;
             } while (0);
 
-            if (!ret) {
-                WSACleanup();
-                printf("IOCP init failed! \n");
-            } else {
-                is_inited_ = true;
-            }
+			ret ? is_inited_ = ret : WSACleanup();
             return ret;
         }
 
@@ -85,14 +79,14 @@ namespace GT {
                 // bind socket to server IP
                 if (!bind(listen_socket_, (SOCKADDR*)(&serveraddr), sizeof(SOCKADDR_IN))) {
                     int err = WSAGetLastError();
-                    printf("bind to local failed error code = %d \n", err);
+                    GT_LOG_ERROR("bind to local failed error code = " << err);
                     return false;
                 }
 
                 // set listen num
                 if (!listen(listen_socket_, SOMAXCONN)) {
                     int err = WSAGetLastError();
-                    printf("bind to local failed error code = %d \n", err);
+                    GT_LOG_ERROR("bind to local failed error code = " << err);
                     return false;
                 }                
             }
@@ -109,6 +103,7 @@ namespace GT {
         }
 
         void GT_IOCPWrapper::StartService() {
+			GT_TRACE_FUNCTION;
             // create thread pool
             std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortStatus, this);
             thread_pool_.Start(GT::UTIL::GT_Util_OSInfo::GetCPUNum() * 2, threadfunc);
@@ -138,16 +133,13 @@ namespace GT {
 			return WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED);
 		}
 
-
         void GT_IOCPWrapper::ProcessAcceptEvent_() {
 
         }
 
-
         void GT_IOCPWrapper::PostReadEvent_() {
 
         }
-
 
         void GT_IOCPWrapper::PostWriteEvent_() {
 

@@ -97,7 +97,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GTSERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)third_party\GLog\GLog\src\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -114,7 +114,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;GTSERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)third_party\GLog\GLog\src\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -166,6 +166,7 @@
     <ClInclude Include="GTServer.h" />
     <ClInclude Include="GT_Cfg.h" />
     <ClInclude Include="GT_Definition.h" />
+    <ClInclude Include="GT_SocketPool.h" />
     <ClInclude Include="GT_ThreadPool.h" />
     <ClInclude Include="GT_IOCPWrapper.h" />
     <ClInclude Include="GT_SockIOContext.h" />
@@ -188,6 +189,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GTServer.cpp" />
+    <ClCompile Include="GT_SoketPool.cpp" />
     <ClCompile Include="GT_ThreadPool.cpp" />
     <ClCompile Include="GT_IOCPWrapper.cpp" />
     <ClCompile Include="stdafx.cpp" />
