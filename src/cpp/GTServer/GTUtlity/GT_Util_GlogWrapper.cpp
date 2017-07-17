@@ -1,4 +1,5 @@
 #include "GT_Util_GlogWrapper.h"
+#include "GT_Util_OSInfo.h"
 
 
 namespace GT {
@@ -40,7 +41,7 @@ namespace GT {
 			log_level_ = level;
 			google::LogSeverity loglevel_ = GT_Loglevel2GoogleLoglevel_(level);
 
-			log_path_ = "./" + logname + ".log_";
+			log_path_ = GT_Util_OSInfo::GetCurrentFolder() + logname;
 			google::InitGoogleLogging("GTServer");
 			
 			GT_SetLoglevelDestination_();

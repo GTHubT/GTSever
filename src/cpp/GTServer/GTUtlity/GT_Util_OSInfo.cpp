@@ -25,7 +25,7 @@ namespace GT {
 			char path[MAX_PATH];
 			GetModuleFileNameA(NULL, path, MAX_PATH);
 			path_ = std::string(path);
-			path_ = path_.substr(0,path_.rfind("\\"));
+			path_ = path_.substr(0,path_.rfind("\\")) + "\\";
 #endif
 			return path_;
 		}
