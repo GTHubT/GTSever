@@ -1,10 +1,11 @@
 #include "GTUtlity/GT_Util_GlogWrapper.h"
+#include "GTUtlity/GT_Util_CfgHelper.h"
 #include "GT_SocketPool.h"
-#include "GT_Cfg.h"
 
 #include <chrono>
 #include <algorithm>
 
+using namespace GT::UTIL;
 namespace GT {
 
 	namespace NET {
@@ -50,14 +51,15 @@ namespace GT {
 		bool GT_SocketPool::PreAllocateSocket_() {
 			GT_TRACE_FUNCTION;
 
-			if (PRE_ALLOCATE_SOCKET_NUM <= 0) {
+			int pre_allocate_num = GT_READ_CFG_INT("socket_pool_cfg", "pre_allocate_socket_num", 3000);
+			if (pre_allocate_num <= 0) {
 				GT_LOG_ERROR("illegal pool size!");
 				return false;
 			}
 			
-			while (poolsize_ < PRE_ALLOCATE_SOCKET_NUM) {
-				TCP_MODE_ENABLE ? socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))) :
-								  socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, WSA_FLAG_OVERLAPPED)));
+			while (poolsize_ < pre_allocate_num) {
+				GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))) :
+																	   socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, WSA_FLAG_OVERLAPPED)));
 				++ poolsize_;
 			}
 
@@ -68,7 +70,7 @@ namespace GT {
 		SOCKET& GT_SocketPool::GetNextUnuseSocket() {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
 
-			if (socket_pool_.size() < SIZEOF_USEFULL_SOCKET) {
+			if (socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
 				UpdateSocketPool_();
 			}
 			if (socket_pool_.size() > 0) {
@@ -90,7 +92,7 @@ namespace GT {
 
 			std::for_each(tobereuse_socket_pool_.begin(), tobereuse_socket_pool_.end(), [=](auto iter) {socket_pool_.push_back(std::move(iter)); });
 
-			if (tobereuse_socket_pool_.size() < SIZEOF_USEFULL_SOCKET) {
+			if (tobereuse_socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
 				ReAllocateSocket4Pool_();
 			}
 
@@ -101,10 +103,10 @@ namespace GT {
 		void GT_SocketPool::ReAllocateSocket4Pool_() {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
 
-			size_t newsize_ = poolsize_ + REALLOCATE_SOKET_PER_SIZE;
+			size_t newsize_ = poolsize_ + GT_READ_CFG_INT("socket_pool_cfg", "reallocate_socket_num_pertime", 300);
 			while (poolsize_ < newsize_) {
-				TCP_MODE_ENABLE ? socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))) :
-								  socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, WSA_FLAG_OVERLAPPED)));
+				GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))) :
+																	   socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, WSA_FLAG_OVERLAPPED)));
 				++ poolsize_;
 			}
 		}

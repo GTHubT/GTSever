@@ -94,7 +94,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\GTUtlity;$(SolutionDir);$(SolutionDir)third_party\GLog\GLog\src\windows</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GTUtlity;$(SolutionDir);$(SolutionDir)third_party\JSONParser\jsoncpp-1.8.1\include;$(SolutionDir)third_party\GLog\GLog\src\windows</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -113,7 +113,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\GTUtlity;$(SolutionDir);$(SolutionDir)third_party\GLog\GLog\src\windows</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GTUtlity;$(SolutionDir);$(SolutionDir)third_party\JSONParser\jsoncpp-1.8.1\include;$(SolutionDir)third_party\GLog\GLog\src\windows</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>

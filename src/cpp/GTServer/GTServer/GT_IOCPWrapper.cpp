@@ -1,12 +1,12 @@
 #include "GT_IOCPWrapper.h"
 #include "GT_Definition.h"
-#include "GT_Cfg.h"
 #include "GTUtlity/GT_Util_OSInfo.h"
 #include "GTUtlity/GT_Util_GlogWrapper.h"
+#include "GTUtlity/GT_Util_CfgHelper.h"
 
 #include <stdio.h>
 
-
+using namespace GT::UTIL;
 namespace GT {
 
     namespace NET {
@@ -68,13 +68,13 @@ namespace GT {
 
 
 		bool GT_IOCPWrapper::InitializeListenSocket_() {
-            listen_socket_ = (TCP_MODE_ENABLE ? CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP) : CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP));
-            if (TCP_MODE_ENABLE && listen_socket_ != INVALID_SOCKET) {
+            listen_socket_ = (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP) : CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP));
+            if (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) && listen_socket_ != INVALID_SOCKET) {
 
                 // create socket addr
                 serveraddr.sin_family   = AF_INET;
-                serveraddr.sin_port     = htons(BIND_PORT);
-                serveraddr.sin_addr.S_un.S_addr = inet_addr(BIND_ADDRESS);
+                serveraddr.sin_port     = htons(GT_READ_CFG_INT("server_cfg","server_port",5555));
+                serveraddr.sin_addr.S_un.S_addr = inet_addr(GT_READ_CFG_STRING("server_cfg", "server_address", "127.0.0.2").c_str());
 
                 // bind socket to server IP
                 if (!bind(listen_socket_, (SOCKADDR*)(&serveraddr), sizeof(SOCKADDR_IN))) {

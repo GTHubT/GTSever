@@ -2,6 +2,8 @@
 #define GT_UTIL_CFGHELPER_H_
 
 #include <string>
+#include <json/json.h>
+
 namespace GT {
 
     namespace UTIL {
@@ -21,6 +23,7 @@ namespace GT {
 
         private:
             static std::string  cfg_content_;
+			static Json::Value	cfg_root_;
         };
 
 #define GT_READ_CFG_BOOL        GT_Util_CfgHelper::ReadBoolCfg

@@ -1,6 +1,7 @@
 #ifndef GT_UTIL_OSINFO_H_
 #define GT_UTIL_OSINFO_H_
 
+#include <string>
 namespace GT {
     namespace UTIL {
 
@@ -8,6 +9,7 @@ namespace GT {
         {
         public:
             static int GetCPUNum();
+			static std::string GetCurrentFolder();
         };
     }
 }

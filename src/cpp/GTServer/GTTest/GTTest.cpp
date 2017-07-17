@@ -6,10 +6,13 @@
 #include "GT_Util_GlogWrapper.h"
 #include "GTServer/GT_Definition.h"
 #include "GT_Util_FileHelper.h"
+#include "GT_Util_OSInfo.h"
+#include "GT_Util_CfgHelper.h"
 #include <vector>
 #include <thread>
 #include <deque>
 
+using namespace GT::UTIL;
 void thredfunc() {
 	while (1);
 }
@@ -31,8 +34,12 @@ void testmove() {
 }
 
 void testreadfile() {
-    std::string content = GT::UTIL::GT_Util_FileHelper::ReadFileContent("H:\\sie_b_1.0.1084_p101017_40\\result\\final.cfg");
-    GT_LOG_ERROR("size = " << content.size());
+	std::string path = GT::UTIL::GT_Util_OSInfo::GetCurrentFolder();
+    std::string content = GT::UTIL::GT_Util_FileHelper::ReadFileContent(path + "\\GTServer.cfg");
+	GT_Util_CfgHelper::LoadCfg(path + "\\GTServer.cfg");
+	std::string serverip = GT_READ_CFG_STRING("server_cfg", "server_address", "10.204.16.28");
+    GT_LOG_ERROR(content.c_str() << "size = " << content.size());
+	GT_LOG_ERROR("SERVER IP = " << serverip.c_str());
 }
 
 int main()
