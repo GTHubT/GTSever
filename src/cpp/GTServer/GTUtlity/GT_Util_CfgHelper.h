@@ -18,6 +18,9 @@ namespace GT {
             static int          ReadIntCfg(std::string section, std::string key, int defaultvalue);
             static double       ReadDoubleCfg(std::string section, std::string key, double defaultvalue);
             static std::string  ReadStringCfg(std::string section, std::string key, std::string defaultvalue);
+
+        private:
+            static std::string  cfg_content_;
         };
 
 #define GT_READ_CFG_BOOL        GT_Util_CfgHelper::ReadBoolCfg

@@ -1,6 +1,7 @@
 #ifndef GT_UTIL_FILEHELPER_h_
 #define GT_UTIL_FILEHELPER_h_
 
+#include <string>
 namespace GT {
 
     namespace UTIL {
@@ -12,8 +13,7 @@ namespace GT {
             ~GT_Util_FileHelper();
 
         public:
-            template<class T>
-            static T ReadFileContent(T path);
+            static std::string ReadFileContent(std::string path);
         };
     }
 }
