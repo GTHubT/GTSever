@@ -167,7 +167,6 @@
     <ClInclude Include="GT_Cfg.h" />
     <ClInclude Include="GT_Definition.h" />
     <ClInclude Include="GT_SocketPool.h" />
-    <ClInclude Include="GT_ThreadPool.h" />
     <ClInclude Include="GT_IOCPWrapper.h" />
     <ClInclude Include="GT_SockIOContext.h" />
     <ClInclude Include="stdafx.h" />
@@ -190,7 +189,6 @@
     </ClCompile>
     <ClCompile Include="GTServer.cpp" />
     <ClCompile Include="GT_SoketPool.cpp" />
-    <ClCompile Include="GT_ThreadPool.cpp" />
     <ClCompile Include="GT_IOCPWrapper.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

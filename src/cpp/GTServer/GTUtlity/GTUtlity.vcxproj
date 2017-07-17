@@ -86,13 +86,13 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\GLog\GLog\src\windows;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\JSONParser\jsoncpp-1.8.1\include;$(SolutionDir)third_party\GLog\GLog\src\windows;$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>$(SolutionDir)Build\thirdparty\libglog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\thirdparty\libglog.lib;$(SolutionDir)\Build\$(Platform)\$(Configuration)\lib_json.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -104,13 +104,13 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\GLog\GLog\src\windows;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\JSONParser\jsoncpp-1.8.1\include;$(SolutionDir)third_party\GLog\GLog\src\windows;$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>$(SolutionDir)Build\thirdparty\libglog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\thirdparty\libglog.lib;$(SolutionDir)\Build\$(Platform)\$(Configuration)\lib_json.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -151,10 +151,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GT_Util_CfgHelper.h" />
+    <ClInclude Include="GT_Util_FileHelper.h" />
+    <ClInclude Include="GT_Util_ThreadPool.h" />
     <ClInclude Include="GT_Util_GlogWrapper.h" />
     <ClInclude Include="GT_Util_OSInfo.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GT_Util_CfgHelper.cpp" />
+    <ClCompile Include="GT_Util_FileHelper.cpp" />
+    <ClCompile Include="GT_Util_ThreadPool.cpp" />
     <ClCompile Include="GT_Util_GlogWrapper.cpp" />
     <ClCompile Include="GT_Util_OSInfo.cpp" />
   </ItemGroup>

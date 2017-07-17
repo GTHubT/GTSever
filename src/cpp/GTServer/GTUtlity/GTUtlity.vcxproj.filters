@@ -10,6 +10,15 @@
     <Filter Include="sysinfo">
       <UniqueIdentifier>{35793421-1ba4-40cd-a95f-be8328f788f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mulitythreads">
+      <UniqueIdentifier>{0bc84981-004c-4daf-b51b-3d8470f98e83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cfg_helper">
+      <UniqueIdentifier>{fbc5d1ef-46cf-4f45-bfad-838a3417ad8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="file_helper">
+      <UniqueIdentifier>{6dd248d1-b1ec-4817-b500-b01c22c5d32b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GT_Util_GlogWrapper.h">
@@ -18,6 +27,15 @@
     <ClInclude Include="GT_Util_OSInfo.h">
       <Filter>sysinfo</Filter>
     </ClInclude>
+    <ClInclude Include="GT_Util_ThreadPool.h">
+      <Filter>mulitythreads</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_Util_CfgHelper.h">
+      <Filter>cfg_helper</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_Util_FileHelper.h">
+      <Filter>file_helper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GT_Util_GlogWrapper.cpp">
@@ -25,6 +43,15 @@
     </ClCompile>
     <ClCompile Include="GT_Util_OSInfo.cpp">
       <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_Util_ThreadPool.cpp">
+      <Filter>mulitythreads</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_Util_CfgHelper.cpp">
+      <Filter>cfg_helper</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_Util_FileHelper.cpp">
+      <Filter>file_helper</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -9,9 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Source Files\mulitythreads">
-      <UniqueIdentifier>{b089f871-4d33-4184-a5a6-3a9cc71bd0a6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\NetIO">
       <UniqueIdentifier>{99e6653b-6007-46a4-bc1d-9001195742a8}</UniqueIdentifier>
     </Filter>
@@ -35,9 +32,6 @@
     <ClInclude Include="GT_SockIOContext.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
-    <ClInclude Include="GT_ThreadPool.h">
-      <Filter>Source Files\mulitythreads</Filter>
-    </ClInclude>
     <ClInclude Include="GT_Definition.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
@@ -51,9 +45,6 @@
   <ItemGroup>
     <ClCompile Include="GT_IOCPWrapper.cpp">
       <Filter>Source Files\NetIO</Filter>
-    </ClCompile>
-    <ClCompile Include="GT_ThreadPool.cpp">
-      <Filter>Source Files\mulitythreads</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="dllmain.cpp">

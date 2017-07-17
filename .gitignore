@@ -30,3 +30,6 @@ src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.tlog
 *.log
 *.idb
+*.lib
+*.dll
+*.exe

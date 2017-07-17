@@ -6,7 +6,7 @@
 #endif
 
 #include "GT_SockIOContext.h"
-#include "GT_ThreadPool.h"
+#include "GTUtlity/GT_Util_ThreadPool.h"
 
 #include <vector>
 #include <Windows.h>
@@ -39,7 +39,6 @@ namespace GT {
             GT_IOCPWrapper();
             HANDLE	CreateNewIoCompletionPort_();
 			SOCKET	CreateOverlappedSocket_(int af, int type, int protocl);
-			void	PreAllocateSocket4Accept_();
             void    ProcessAcceptEvent_();
 			bool	InitializeListenSocket_();
             void    PostAcceptEvent_();
@@ -51,11 +50,9 @@ namespace GT {
             HANDLE          completion_port_;
             SOCKET          listen_socket_;
             SOCKADDR_IN     serveraddr;
-            GT_ThreadPool   thread_pool_;
+            GT::UTIL::GT_Util_ThreadPool   thread_pool_;
 
         private:
-			std::vector<SOCKET> connectted_sockets_;
-			std::vector<SOCKET>	allocated_socket_;		// sockets pool for AcceptEX wait new connection
 			int		index_allocated_used_;
             bool    is_read_callback_setted_;
             bool    is_write_callback_setted_;
