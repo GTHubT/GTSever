@@ -5,6 +5,7 @@
 #include <iostream>
 #include "GT_Util_GlogWrapper.h"
 #include "GTServer/GT_Definition.h"
+#include "GT_Util_FileHelper.h"
 #include <vector>
 #include <thread>
 #include <deque>
@@ -28,6 +29,12 @@ void testmove() {
 	GT_LOG_ERROR("after pop que size = " << threadque_.size());
 	threadpool_[0].detach();
 }
+
+void testreadfile() {
+    std::string content = GT::UTIL::GT_Util_FileHelper::ReadFileContent("H:\\sie_b_1.0.1084_p101017_40\\result\\final.cfg");
+    GT_LOG_ERROR(content.c_str());
+}
+
 int main()
 {
 	
@@ -37,6 +44,7 @@ int main()
 	GT_LOG_INFO("this is a test " << 1);
 	GT_LOG_ERROR("this is a test " << 2);
 	GT_LOG_WARN("this is a test " << 3);
+    testreadfile();
 	testmove();
 	char c = 'c';
 	std::cin >> c;

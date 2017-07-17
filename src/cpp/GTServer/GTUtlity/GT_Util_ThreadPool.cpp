@@ -1,22 +1,22 @@
-#include "GT_ThreadPool.h"
+#include "GT_Util_ThreadPool.h"
 
 #include <chrono>
 
 namespace GT {
 
-	namespace NET {
+	namespace UTIL {
 
-		GT_ThreadPool::GT_ThreadPool():poolsize_(0), workpool_started_(false)
+		GT_Util_ThreadPool::GT_Util_ThreadPool():poolsize_(0), workpool_started_(false)
 		{
 			workpool_.clear();
 		}
 
 
-		GT_ThreadPool::~GT_ThreadPool()
+		GT_Util_ThreadPool::~GT_Util_ThreadPool()
 		{
 		}
 
-        void GT_ThreadPool::Start(size_t poolsize, std::function<void()> thread_func) { // if you want call thread pool please bind you thread function to std::function<void()>
+        void GT_Util_ThreadPool::Start(size_t poolsize, std::function<void()> thread_func) { // if you want call thread pool please bind you thread function to std::function<void()>
             if (poolsize <= 0) {
                 printf("pool size unreasonable! \n");
                 return;
@@ -24,7 +24,7 @@ namespace GT {
 			poolsize_ = poolsize;
 			for (int index = 0; index < poolsize; index++) {
 				Thread_Tuple* thread_tuple = new Thread_Tuple();
-                thread_tuple->this_thread_ = std::move(std::thread(&GT_ThreadPool::LongTimeWorker_, this, thread_func, std::ref(thread_tuple->end_thread_)));
+                thread_tuple->this_thread_ = std::move(std::thread(&GT_Util_ThreadPool::LongTimeWorker_, this, thread_func, std::ref(thread_tuple->end_thread_)));
                 workpool_.push_back(thread_tuple);
                 printf("create thread TID = %d \n", thread_tuple->this_thread_.get_id());
 			}
@@ -32,7 +32,7 @@ namespace GT {
         }
 
 
-        void GT_ThreadPool::Stop() {
+        void GT_Util_ThreadPool::Stop() {
             auto iter = workpool_.begin();
             while (iter != workpool_.end()) {
                 (*iter)->end_thread_ = true;
@@ -46,7 +46,7 @@ namespace GT {
         }
 
 
-        void GT_ThreadPool::LongTimeWorker_(std::function<void()> f, std::atomic<bool>& end_thread) {
+        void GT_Util_ThreadPool::LongTimeWorker_(std::function<void()> f, std::atomic<bool>& end_thread) {
             while (!end_thread) {
                 f();
             }
@@ -54,7 +54,7 @@ namespace GT {
         }
 
 
-		size_t GT_ThreadPool::GetPoolSize() {
+		size_t GT_Util_ThreadPool::GetPoolSize() {
 			return workpool_started_ ? poolsize_ : 0;
 		}
 	}

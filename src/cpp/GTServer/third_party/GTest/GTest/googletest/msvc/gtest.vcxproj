@@ -68,6 +68,9 @@
     <Lib>
       <OutputFile>$(OutDir)gtestd.lib</OutputFile>
     </Lib>
+    <BuildLog>
+      <Path>$(SolutionDir)temp\$(MSBuildProjectName).log</Path>
+    </BuildLog>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

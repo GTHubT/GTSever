@@ -6,7 +6,8 @@
 #include <thread>
 #include <share.h>
 namespace GT {
-    namespace NET {
+    namespace UTIL {
+
         struct Thread_Tuple {
             std::thread this_thread_;
             std::atomic<bool> end_thread_;
@@ -29,11 +30,11 @@ namespace GT {
 			}
         };
 
-        class GT_ThreadPool
+        class GT_Util_ThreadPool
         {
         public:
-            GT_ThreadPool();
-            ~GT_ThreadPool();
+            GT_Util_ThreadPool();
+            ~GT_Util_ThreadPool();
 
         public:
             void Start(size_t poolsize, std::function<void()>);
