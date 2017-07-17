@@ -1,43 +1,3 @@
-
-*.db
-src/cpp/GTServer/.vs/GTServer/v14/.suo
-src/cpp/GTServer/.vs/GTServer/v14/.suo
-*.obj
-*.tlog
-*.tlog
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-*.log
-*.idb
-src/cpp/GTServer/GTServer/Debug/vc140.pdb
-src/cpp/GTServer/GTServer/Debug/GTServer.tlog/GTServer.lastbuildstate
-src/cpp/GTServer/.vs/GTServer/v14/.suo
-*.db
-=======
-=======
->>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece
-=======
->>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece
-*.tlog
-*.tlog
-*.obj
-*.log
-*.pdb
-*.idb
-*.db
-*.obj
-*.log
-*.idb
-*.pdb
-src/cpp/GTServer/.vs/GTServer/v14/.suo
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece
-=======
->>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece
-=======
->>>>>>> 47a37c9b2f5af02a870afec57501079f096bdece
 src/cpp/GTServer/GTServer/Debug/vc140.pdb
 src/cpp/GTServer/GTServer/Debug/vc140.idb
 src/cpp/GTServer/GTServer/Debug/GTServer.tlog/GTServer.lastbuildstate
@@ -65,3 +25,8 @@ src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.dll
 src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.exp
+*.pdb
+*.obj
+*.tlog
+*.log
+*.idb
