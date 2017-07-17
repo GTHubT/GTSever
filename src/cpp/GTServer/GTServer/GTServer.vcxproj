@@ -103,7 +103,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <BuildLog>
       <Path>$(SolutionDir)temp\$(MSBuildProjectName).log</Path>
@@ -123,7 +123,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtility.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\GTUtlity.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <BuildLog>
       <Path>$(SolutionDir)temp\$(MSBuildProjectName).log</Path>

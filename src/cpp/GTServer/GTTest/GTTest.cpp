@@ -32,7 +32,7 @@ void testmove() {
 
 void testreadfile() {
     std::string content = GT::UTIL::GT_Util_FileHelper::ReadFileContent("H:\\sie_b_1.0.1084_p101017_40\\result\\final.cfg");
-    GT_LOG_ERROR(content.c_str());
+    GT_LOG_ERROR("size = " << content.size());
 }
 
 int main()

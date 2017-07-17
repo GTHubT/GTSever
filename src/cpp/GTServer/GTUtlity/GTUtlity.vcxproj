@@ -92,7 +92,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>$(SolutionDir)Build\thirdparty\libglog.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\lib_json.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\libglog.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\lib_json.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <BuildLog>
       <Path>$(SolutionDir)temp\$(MSBuildProjectName).log</Path>
@@ -113,7 +113,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>$(SolutionDir)Build\thirdparty\libglog.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\lib_json.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\$(Platform)\$(Configuration)\libglog.lib;$(SolutionDir)Build\$(Platform)\$(Configuration)\lib_json.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <BuildLog>
       <Path>$(SolutionDir)temp\$(MSBuildProjectName).log</Path>

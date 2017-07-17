@@ -4,12 +4,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="log">
-      <UniqueIdentifier>{265bb511-b0ef-48ab-a0ac-f8464eb91434}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sysinfo">
-      <UniqueIdentifier>{35793421-1ba4-40cd-a95f-be8328f788f6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="mulitythreads">
       <UniqueIdentifier>{0bc84981-004c-4daf-b51b-3d8470f98e83}</UniqueIdentifier>
     </Filter>
@@ -19,13 +13,19 @@
     <Filter Include="file_helper">
       <UniqueIdentifier>{6dd248d1-b1ec-4817-b500-b01c22c5d32b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="log_helper">
+      <UniqueIdentifier>{265bb511-b0ef-48ab-a0ac-f8464eb91434}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sys_helper">
+      <UniqueIdentifier>{35793421-1ba4-40cd-a95f-be8328f788f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GT_Util_GlogWrapper.h">
-      <Filter>log</Filter>
+      <Filter>log_helper</Filter>
     </ClInclude>
     <ClInclude Include="GT_Util_OSInfo.h">
-      <Filter>sysinfo</Filter>
+      <Filter>sys_helper</Filter>
     </ClInclude>
     <ClInclude Include="GT_Util_ThreadPool.h">
       <Filter>mulitythreads</Filter>
@@ -39,10 +39,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GT_Util_GlogWrapper.cpp">
-      <Filter>log</Filter>
+      <Filter>log_helper</Filter>
     </ClCompile>
     <ClCompile Include="GT_Util_OSInfo.cpp">
-      <Filter>sysinfo</Filter>
+      <Filter>sys_helper</Filter>
     </ClCompile>
     <ClCompile Include="GT_Util_ThreadPool.cpp">
       <Filter>mulitythreads</Filter>
