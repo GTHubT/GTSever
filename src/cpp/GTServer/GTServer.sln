@@ -26,6 +26,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GTUtlity", "GTUtlity\GTUtli
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GTTest", "GTTest\GTTest.vcxproj", "{C5D53BD5-AB99-4560-8C02-EB9BDFBB12CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E5251BA6-605E-450C-83CB-EA85B494C979} = {E5251BA6-605E-450C-83CB-EA85B494C979}
+		{34BD04BD-BC1D-4BFC-AAFC-ED02D9E960F1} = {34BD04BD-BC1D-4BFC-AAFC-ED02D9E960F1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
