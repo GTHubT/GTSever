@@ -6,6 +6,8 @@
 #endif
 
 #include "GT_SockIOContext.h"
+#include "GT_SocketPool.h"
+#include "GT_Definition.h"
 #include "GTUtlity/GT_Util_ThreadPool.h"
 
 #include <vector>
@@ -17,8 +19,10 @@ namespace GT {
 
     namespace NET {
 
-        typedef void(*Read_Ready_Event_Callback) (char* data, int datalen);
-        typedef void(*Write_Ready_Event_Callback) (char* data, int datalen);
+        typedef void(*Read_Complete_Event_Callback) (char* data, int datalen);
+        typedef void(*Write_Complete_Event_Callback) (char* data, int datalen);
+        typedef void(*Read_Request_Event_Callback) (char* data, int datalen);
+        typedef void(*Write_Request_Event_Callback) (char* data, int datalen);
 
         class GT_IOCPWrapper
         {
@@ -31,9 +35,13 @@ namespace GT {
             void    StartService();
             bool	BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey);
 			void	GetCompletionPortStatus();
+            void    GetUnuseIOContext();
+            void    DispatchEvent2CallBack(IO_EVENT_TYPE event_type);
 
-            void    SetReadEventCallBack(Read_Ready_Event_Callback);
-            void    SetWriteEventCallBack(Write_Ready_Event_Callback);
+            void    SetReadCompleteEventCallBack(Read_Complete_Event_Callback);
+            void    SetReadRequestEventCallBack();
+            void    SetWriteCompleteEventCallBack(Write_Complete_Event_Callback);
+            void    SetWriteRequestEventCallBack();
 
         private:
             GT_IOCPWrapper();
@@ -46,18 +54,19 @@ namespace GT {
             void    PostWriteEvent_();
 
         private:
-            bool            is_inited_;
-            HANDLE          completion_port_;
-            SOCKET          listen_socket_;
-            SOCKADDR_IN     serveraddr;
+            bool                           is_inited_;
+            bool                           socket_pool_enable_;
+            HANDLE                         completion_port_;
+            SOCKET                         listen_socket_;
+            SOCKADDR_IN                    serveraddr_;
             GT::UTIL::GT_Util_ThreadPool   thread_pool_;
 
         private:
 			int		index_allocated_used_;
             bool    is_read_callback_setted_;
             bool    is_write_callback_setted_;
-            Read_Ready_Event_Callback   read_func_;
-            Write_Ready_Event_Callback  write_func_;
+            Read_Complete_Event_Callback   read_func_;
+            Write_Complete_Event_Callback  write_func_;
 
         };
     }

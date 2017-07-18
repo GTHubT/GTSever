@@ -42,7 +42,7 @@ namespace GT {
 												std::ref(socket_pool_mutex_), 
 												std::ref(socket_inuse_pool_));
 			clean_thread_ = std::thread(threadfunc);
-
+            GT_LOG_INFO("socket pool initialize success!");
 			return true;
 		}
 
