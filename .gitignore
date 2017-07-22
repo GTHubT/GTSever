@@ -25,3 +25,5 @@ src/cpp/GTServer/GTest/Release/
 *.lib
 *.dll
 *.exe
+src/cpp/GTServer/Build/x64/Debug/GTUnitTest.exe
+src/cpp/GTServer/Build/x64/Debug/GTUtlity.lib
