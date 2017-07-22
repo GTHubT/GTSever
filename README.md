@@ -1,2 +1,3 @@
 # Server
-Net server with high performance under windows(IOCP & select) and linux(EPOLL & select)
+Net server with high performance under windows and linux
+IOCP, select, epoll network programming model.
