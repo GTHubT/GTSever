@@ -20,6 +20,7 @@ namespace GT {
 			paccpetex_ = nullptr;
             listen_socket_ = INVALID_SOCKET;
             completion_port_ = INVALID_HANDLE_VALUE;
+			pgetacceptex_sockaddrs_ = nullptr;
         }
 
         bool GT_IOCPWrapper::Initialize() {
@@ -52,6 +53,12 @@ namespace GT {
 				ret = GetAcceptEXFuncAddress_();
 				if (!ret) {
 					GT_LOG_ERROR("Get acceptex func address failed!");
+					break;
+				}
+
+				ret = GetAcceptExSockAddrsFuncAddress_();
+				if (!ret) {
+					GT_LOG_ERROR("Get acceptexsockaddrsfunc address failed!");
 					break;
 				}
 
@@ -93,6 +100,24 @@ namespace GT {
 				NULL);
 
 			return nullptr == paccpetex_ ? false : true;
+		}
+
+		bool GT_IOCPWrapper::GetAcceptExSockAddrsFuncAddress_() {
+			GUID GuidGetAcceptExSockAddrs = WSAID_GETACCEPTEXSOCKADDRS;
+			DWORD dwBytes = 0;
+
+			WSAIoctl(
+				listen_socket_,
+				SIO_GET_EXTENSION_FUNCTION_POINTER,
+				&GuidGetAcceptExSockAddrs,
+				sizeof(GuidGetAcceptExSockAddrs),
+				&pgetacceptex_sockaddrs_,
+				sizeof(pgetacceptex_sockaddrs_),
+				&dwBytes,
+				NULL,
+				NULL);
+
+			return pgetacceptex_sockaddrs_ == nullptr ? false : true;
 		}
 
 		bool GT_IOCPWrapper::InitializeListenSocket_() {

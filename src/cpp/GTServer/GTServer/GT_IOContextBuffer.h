@@ -17,7 +17,8 @@ namespace GT {
 	namespace NET {
 
 		enum IO_EVENT_TYPE {
-			IO_EVENT_ACCEPT_COMPLETE = 0,
+			IO_EVENT_NULL = -1,
+			IO_EVENT_ACCEPT_COMPLETE,
 			IO_EVENT_READ_COMPLETE,
 			IO_EVENT_READ_REQUEST,
 			IO_EVENT_WRITE_COMPLETE,
@@ -31,14 +32,16 @@ namespace GT {
 			~GT_IOContextBuffer();
 
 			bool AllocateIOBuffer();
-			void SetIOBufferSocket(SOCKET s);
+			void SetIOBufferSocket(SOCKET& s);
+			void SetIOBufferEventType(IO_EVENT_TYPE type);
 			void ResetBuffer();
 
 		private:
-			SOCKET	io_socket_;
-			WSABUF	io_wsa_buf_;
-			char*	io_buffer_;
-			size_t	io_buffer_size_;
+			SOCKET			io_socket_;
+			WSABUF			io_wsa_buf_;
+			char*			io_buffer_;
+			size_t			io_buffer_size_;
+			IO_EVENT_TYPE	event_type_;
 		};
 	}
 }

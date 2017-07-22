@@ -11,8 +11,9 @@
 namespace GT {
 
     namespace NET {
+#ifndef IO_BUFFER_PTR
 #define IO_BUFFER_PTR	std::shared_ptr<GT_IOContextBuffer>
-
+#endif
         class GT_IOBuffer_Manager
         {
         public:

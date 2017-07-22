@@ -5,11 +5,11 @@
 #define WIN32_LEAN_AND_MEAN         // https://msdn.microsoft.com/en-us/library/windows/desktop/ms737629(v=vs.85).aspx
 #endif
 
-#include "GT_SocketContext_Manager.h"
+#include "GTUtlity/GT_Util_ThreadPool.h"
 #include "GT_IOContextBuffer_Manager.h"
+#include "GT_SocketContext_Manager.h"
 #include "GT_SocketPool.h"
 #include "GT_Definition.h"
-#include "GTUtlity/GT_Util_ThreadPool.h"
 
 #include <vector>
 #include <Windows.h>
@@ -58,6 +58,7 @@ namespace GT {
             void    PostReadEvent_();
             void    PostWriteEvent_();
 			bool	GetAcceptEXFuncAddress_();
+			bool	GetAcceptExSockAddrsFuncAddress_();
 
         private:
             bool                           is_inited_;
@@ -74,6 +75,7 @@ namespace GT {
             Read_Complete_Event_Callback   read_func_;
             Write_Complete_Event_Callback  write_func_;
 			LPFN_ACCEPTEX	paccpetex_;
+			LPFN_GETACCEPTEXSOCKADDRS	pgetacceptex_sockaddrs_;
 
         };
     }
