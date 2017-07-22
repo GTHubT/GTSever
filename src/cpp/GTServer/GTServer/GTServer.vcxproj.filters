@@ -41,19 +41,19 @@
     <ClInclude Include="GT_SocketPool.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
-    <ClInclude Include="GT_IOBuffer_Manager.h">
-      <Filter>Source Files\NetIO</Filter>
-    </ClInclude>
     <ClInclude Include="GT_ServerManager.h">
       <Filter>Source Files\ServerManager</Filter>
     </ClInclude>
-    <ClInclude Include="GT_SocketIOContext_Manager.h">
+    <ClInclude Include="GT_SocketContext_Manager.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
-    <ClInclude Include="GT_SocketIOContext.h">
+    <ClInclude Include="GT_SocketContext.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
-    <ClInclude Include="GT_IOBuffer.h">
+    <ClInclude Include="GT_IOContextBuffer.h">
+      <Filter>Source Files\NetIO</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_IOContextBuffer_Manager.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,19 +71,19 @@
     <ClCompile Include="GT_SoketPool.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
-    <ClCompile Include="GT_IOBuffer_Manager.cpp">
-      <Filter>Source Files\NetIO</Filter>
-    </ClCompile>
     <ClCompile Include="GT_ServerManager.cpp">
       <Filter>Source Files\ServerManager</Filter>
     </ClCompile>
-    <ClCompile Include="GT_SocketIOContext.cpp">
+    <ClCompile Include="GT_SocketContext_Manager.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
-    <ClCompile Include="GT_SocketIOContext_Manager.cpp">
+    <ClCompile Include="GT_SocketContext.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
-    <ClCompile Include="GT_IOBuffer.cpp">
+    <ClCompile Include="GT_IOContextBuffer.cpp">
+      <Filter>Source Files\NetIO</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_IOContextBuffer_Manager.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
   </ItemGroup>

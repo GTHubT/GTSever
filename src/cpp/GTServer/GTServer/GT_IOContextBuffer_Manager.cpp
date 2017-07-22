@@ -1,4 +1,4 @@
-#include "GT_IOBuffer_Manager.h"
+#include "GT_IOContextBuffer_Manager.h"
 #include "GTUtlity/GT_Util_CfgHelper.h"
 #include "GTUtlity/GT_Util_GlogWrapper.h"
 
@@ -58,7 +58,7 @@ namespace GT {
 			GT_LOG_INFO("pre allocate some io buffer size = "<< pre_allocate_size_ <<", each buffer size = " << io_buffer_size_);
 
 			for (size_t buffer_size = 0; buffer_size < pre_allocate_size_; buffer_size++) {
-				IO_BUFFER_PTR temp_ptr = IO_BUFFER_PTR(new GT_IOBuffer(io_buffer_size_));
+				IO_BUFFER_PTR temp_ptr = IO_BUFFER_PTR(new GT_IOContextBuffer(io_buffer_size_));
 				if (temp_ptr->AllocateIOBuffer())
 					io_buffer_cache_.push_back(temp_ptr);
 				else
@@ -70,7 +70,7 @@ namespace GT {
 		bool GT_IOBuffer_Manager::ReAllocateSomeIOBuffer_() {
 			GT_LOG_INFO("io buffer cache size is not enough, reallocate some io buffers, reallocate size = "<< re_allocate_size_);
 			for (size_t s = 0; s < re_allocate_size_; s++) {
-				IO_BUFFER_PTR temp_ptr = IO_BUFFER_PTR(new GT_IOBuffer(io_buffer_size_));
+				IO_BUFFER_PTR temp_ptr = IO_BUFFER_PTR(new GT_IOContextBuffer(io_buffer_size_));
 				if (temp_ptr->AllocateIOBuffer())
 					io_buffer_cache_.push_back(temp_ptr);
 				else

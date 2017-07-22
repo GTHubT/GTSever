@@ -5,8 +5,8 @@
 #define WIN32_LEAN_AND_MEAN         // https://msdn.microsoft.com/en-us/library/windows/desktop/ms737629(v=vs.85).aspx
 #endif
 
-#include "GT_SocketIOContext_Manager.h"
-#include "GT_IOBuffer_Manager.h"
+#include "GT_SocketContext_Manager.h"
+#include "GT_IOContextBuffer_Manager.h"
 #include "GT_SocketPool.h"
 #include "GT_Definition.h"
 #include "GTUtlity/GT_Util_ThreadPool.h"

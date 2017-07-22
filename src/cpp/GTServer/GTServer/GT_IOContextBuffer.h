@@ -24,11 +24,11 @@ namespace GT {
 			IO_EVENT_WRITE_REQUEST
 		};
 
-		class GT_IOBuffer: public OVERLAPPED {
+		class GT_IOContextBuffer: public OVERLAPPED {
 
 		public:
-			GT_IOBuffer(size_t len);
-			~GT_IOBuffer();
+			GT_IOContextBuffer(size_t len);
+			~GT_IOContextBuffer();
 
 			bool AllocateIOBuffer();
 			void SetIOBufferSocket(SOCKET s);

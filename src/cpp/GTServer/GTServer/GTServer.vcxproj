@@ -188,13 +188,13 @@
     <ClInclude Include="GTServer.h" />
     <ClInclude Include="GT_Cfg.h" />
     <ClInclude Include="GT_Definition.h" />
-    <ClInclude Include="GT_IOBuffer.h" />
-    <ClInclude Include="GT_IOBuffer_Manager.h" />
+    <ClInclude Include="GT_IOContextBuffer.h" />
+    <ClInclude Include="GT_IOContextBuffer_Manager.h" />
     <ClInclude Include="GT_ServerManager.h" />
-    <ClInclude Include="GT_SocketIOContext_Manager.h" />
+    <ClInclude Include="GT_SocketContext_Manager.h" />
     <ClInclude Include="GT_SocketPool.h" />
     <ClInclude Include="GT_IOCPWrapper.h" />
-    <ClInclude Include="GT_SocketIOContext.h" />
+    <ClInclude Include="GT_SocketContext.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -214,11 +214,11 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GTServer.cpp" />
-    <ClCompile Include="GT_IOBuffer.cpp" />
-    <ClCompile Include="GT_IOBuffer_Manager.cpp" />
+    <ClCompile Include="GT_IOContextBuffer.cpp" />
+    <ClCompile Include="GT_IOContextBuffer_Manager.cpp" />
     <ClCompile Include="GT_ServerManager.cpp" />
-    <ClCompile Include="GT_SocketIOContext.cpp" />
-    <ClCompile Include="GT_SocketIOContext_Manager.cpp" />
+    <ClCompile Include="GT_SocketContext.cpp" />
+    <ClCompile Include="GT_SocketContext_Manager.cpp" />
     <ClCompile Include="GT_SoketPool.cpp" />
     <ClCompile Include="GT_IOCPWrapper.cpp" />
     <ClCompile Include="stdafx.cpp" />

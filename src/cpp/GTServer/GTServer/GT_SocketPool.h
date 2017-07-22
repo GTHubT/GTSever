@@ -23,10 +23,10 @@ namespace GT {
 		public:
 			~GT_SocketPool();
 			static		GT_SocketPool& GetInstance();
-			bool		Initilize();					
-			SOCKET&		GetNextUnuseSocket();
+			bool		Initilize();		
 			void		DestroyPool();
 			void		CloseSockAndPush2ReusedPool(SOCKET&);
+			SOCKET&		GetNextUnuseSocket();
 
 		private:
 			GT_SocketPool();
@@ -36,8 +36,8 @@ namespace GT {
 			void		LongTimeWork4CleanClosedSocket_(std::atomic<bool>& , std::mutex& , std::deque<SOCKET>& );
 
 		private:
-			std::thread			clean_thread_;
 			size_t				poolsize_;
+			std::thread			clean_thread_;
 			static  std::mutex	socket_pool_mutex_;
 			std::deque<SOCKET>	socket_pool_;
 			std::deque<SOCKET>	socket_inuse_pool_;

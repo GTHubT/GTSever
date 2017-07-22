@@ -1,7 +1,7 @@
 #ifndef GT_NET_IOBUFFER_MANAGER_H_
 #define GT_NET_IOBUFFER_MANAGER_H_
 
-#include "GT_IOBuffer.h"
+#include "GT_IOContextBuffer.h"
 
 
 #include <memory>
@@ -11,7 +11,7 @@
 namespace GT {
 
     namespace NET {
-#define IO_BUFFER_PTR	std::shared_ptr<GT_IOBuffer>
+#define IO_BUFFER_PTR	std::shared_ptr<GT_IOContextBuffer>
 
         class GT_IOBuffer_Manager
         {
