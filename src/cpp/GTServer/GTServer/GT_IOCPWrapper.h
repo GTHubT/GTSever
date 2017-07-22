@@ -6,6 +6,7 @@
 #endif
 
 #include "GT_SocketIOContext_Manager.h"
+#include "GT_IOBuffer_Manager.h"
 #include "GT_SocketPool.h"
 #include "GT_Definition.h"
 #include "GTUtlity/GT_Util_ThreadPool.h"
@@ -13,7 +14,11 @@
 #include <vector>
 #include <Windows.h>
 #include <WinSock2.h>
+#include <MSWSock.h>
+
+
 #pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "Mswsock.lib")
 
 namespace GT {
 
@@ -52,6 +57,7 @@ namespace GT {
             void    PostAcceptEvent_();
             void    PostReadEvent_();
             void    PostWriteEvent_();
+			bool	GetAcceptEXFuncAddress_();
 
         private:
             bool                           is_inited_;
@@ -67,6 +73,7 @@ namespace GT {
             bool    is_write_callback_setted_;
             Read_Complete_Event_Callback   read_func_;
             Write_Complete_Event_Callback  write_func_;
+			LPFN_ACCEPTEX	paccpetex_;
 
         };
     }

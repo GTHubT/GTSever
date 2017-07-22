@@ -17,6 +17,7 @@ namespace GT {
             is_write_callback_setted_(false),
             socket_pool_enable_(false)
         {
+			paccpetex_ = nullptr;
             listen_socket_ = INVALID_SOCKET;
             completion_port_ = INVALID_HANDLE_VALUE;
         }
@@ -47,7 +48,13 @@ namespace GT {
                     GT_LOG_ERROR("init listen socket failed!");
                     break;
                 }
-                
+
+				ret = GetAcceptEXFuncAddress_();
+				if (!ret) {
+					GT_LOG_ERROR("Get acceptex func address failed!");
+					break;
+				}
+
                 completion_port_ = CreateNewIoCompletionPort_();
                 if (INVALID_HANDLE_VALUE == completion_port_) {
                     GT_LOG_ERROR("create new IOCP port failed!");
@@ -69,6 +76,24 @@ namespace GT {
             return ret;
         }
 
+
+		bool GT_IOCPWrapper::GetAcceptEXFuncAddress_() {
+			GUID GuidAcceptEx = WSAID_ACCEPTEX;  
+			DWORD dwBytes = 0;
+
+			WSAIoctl(
+				listen_socket_,
+				SIO_GET_EXTENSION_FUNCTION_POINTER,
+				&GuidAcceptEx,
+				sizeof(GuidAcceptEx),
+				&paccpetex_,
+				sizeof(paccpetex_),
+				&dwBytes,
+				NULL,
+				NULL);
+
+			return nullptr == paccpetex_ ? false : true;
+		}
 
 		bool GT_IOCPWrapper::InitializeListenSocket_() {
             listen_socket_ = (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP) : CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP));
