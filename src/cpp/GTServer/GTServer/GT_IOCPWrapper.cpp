@@ -108,7 +108,7 @@ namespace GT {
         void GT_IOCPWrapper::StartService() {
 			GT_TRACE_FUNCTION;
             // create thread pool
-            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortStatus, this);
+            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this);
             thread_pool_.Start(GT::UTIL::GT_Util_OSInfo::GetCPUNum() * 2, threadfunc);
         }
 
@@ -152,7 +152,7 @@ namespace GT {
 
         }
 
-		void GT_IOCPWrapper::GetCompletionPortStatus() {
+		void GT_IOCPWrapper::GetCompletionPortEventStatus() {
 
 		}
 
