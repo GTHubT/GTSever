@@ -27,10 +27,12 @@ namespace GT {
 		class GT_IOBuffer: public OVERLAPPED {
 
 		public:
-			GT_IOBuffer(SOCKET s, size_t len);
+			GT_IOBuffer(size_t len);
 			~GT_IOBuffer();
 
-			bool Allocate_GT_IOBuffer();
+			bool AllocateIOBuffer();
+			void SetIOBufferSocket(SOCKET s);
+			void ResetBuffer();
 
 		private:
 			SOCKET	io_socket_;

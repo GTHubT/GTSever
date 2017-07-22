@@ -6,21 +6,39 @@
 
 #include <memory>
 #include <deque>
+#include <mutex>
 
 namespace GT {
 
     namespace NET {
+#define IO_BUFFER_PTR	std::shared_ptr<GT_IOBuffer>
 
         class GT_IOBuffer_Manager
         {
         public:
-            GT_IOBuffer_Manager();
             ~GT_IOBuffer_Manager();
 
-			bool PreAllocateSomeIOBuffer();
+			bool			Initialize();
+			void			Finalize();
+			IO_BUFFER_PTR	GetNextIOBufferPtr();
+			void			ReleaseIOBuffer(IO_BUFFER_PTR buffer_ptr);
+			static GT_IOBuffer_Manager& GetInstance();
 
 		private:
-			std::deque<std::shared_ptr<GT_IOBuffer>> io_buffer_cache_;
+			GT_IOBuffer_Manager();
+			bool			PreAllocateSomeIOBuffer_();
+			bool			ReAllocateSomeIOBuffer_();
+			void			CleanIOBufferCache_();
+
+		private:
+			bool			io_buffer_manager_inited_;
+			size_t			io_buffer_size_;
+			size_t			pre_allocate_size_;
+			size_t			re_allocate_size_;
+			size_t			size_need_reallocate_;
+			std::deque<IO_BUFFER_PTR> io_buffer_cache_;
+			std::deque<IO_BUFFER_PTR> io_buffer_in_use_;
+			static std::mutex		io_buffer_manager_mutex_;
         };
     }
 }

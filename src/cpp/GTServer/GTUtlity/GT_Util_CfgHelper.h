@@ -26,11 +26,12 @@ namespace GT {
 			static Json::Value	cfg_root_;
         };
 
-#define GT_READ_CFG_BOOL        GT_Util_CfgHelper::ReadBoolCfg
-#define GT_READ_CFG_INT         GT_Util_CfgHelper::ReadIntCfg
-#define GT_READ_CFG_DOUBLE      GT_Util_CfgHelper::ReadDoubleCfg
-#define GT_READ_CFG_STRING      GT_Util_CfgHelper::ReadStringCfg
     }
 }
+
+#define GT_READ_CFG_BOOL        GT::UTIL::GT_Util_CfgHelper::ReadBoolCfg
+#define GT_READ_CFG_INT         GT::UTIL::GT_Util_CfgHelper::ReadIntCfg
+#define GT_READ_CFG_DOUBLE      GT::UTIL::GT_Util_CfgHelper::ReadDoubleCfg
+#define GT_READ_CFG_STRING      GT::UTIL::GT_Util_CfgHelper::ReadStringCfg
 #endif //GT_UTIL_CFGHELPER_H_
 
