@@ -11,6 +11,7 @@
 
 #include <Windows.h>
 #include <WinSock2.h>
+#include <memory>
 
 namespace GT {
 
@@ -32,16 +33,16 @@ namespace GT {
 			~GT_IOContextBuffer();
 
 			bool AllocateIOBuffer();
-			void SetIOBufferSocket(SOCKET& s);
+			void SetIOBufferSocket(std::shared_ptr<SOCKET> s);
 			void SetIOBufferEventType(IO_EVENT_TYPE type);
 			void ResetBuffer();
 
 		private:
-			SOCKET			io_socket_;
-			WSABUF			io_wsa_buf_;
-			char*			io_buffer_;
-			size_t			io_buffer_size_;
-			IO_EVENT_TYPE	event_type_;
+			std::shared_ptr<SOCKET>		io_socket_ptr_;
+			WSABUF						io_wsa_buf_;
+			char*						io_buffer_;
+			size_t						io_buffer_size_;
+			IO_EVENT_TYPE				event_type_;
 		};
 	}
 }

@@ -67,21 +67,18 @@ namespace GT {
 		}
 
 
-		SOCKET& GT_SocketPool::GetNextUnuseSocket() {
+		std::shared_ptr<SOCKET> GT_SocketPool::GetNextUnuseSocket() {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
 
 			if (socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
 				UpdateSocketPool_();
 			}
 			if (socket_pool_.size() > 0) {
-				socket_inuse_pool_.push_back(std::move(socket_pool_.front()));
+				socket_inuse_pool_.push_back(std::shared_ptr<SOCKET>(new SOCKET(std::move(socket_pool_.front()))));
 				socket_pool_.pop_front();	
 				return socket_inuse_pool_.back();
 			}
-			else {
-				SOCKET s = INVALID_SOCKET;
-				return s;
-			}
+			return nullptr;
 			
 		}
 
@@ -90,7 +87,7 @@ namespace GT {
 		void GT_SocketPool::UpdateSocketPool_() {
 			GT_TRACE_FUNCTION;
 
-			std::for_each(tobereuse_socket_pool_.begin(), tobereuse_socket_pool_.end(), [=](auto iter) {socket_pool_.push_back(std::move(iter)); });
+			std::for_each(tobereuse_socket_pool_.begin(), tobereuse_socket_pool_.end(), [&](auto iter) {socket_pool_.push_back(std::move(iter)); });
 
 			if (tobereuse_socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
 				ReAllocateSocket4Pool_();
@@ -120,27 +117,27 @@ namespace GT {
 				clean_thread_.join();
 			}
 
-			std::for_each(socket_inuse_pool_.begin(), socket_inuse_pool_.end(), [=] (auto iter){ closesocket(iter); });
+			std::for_each(socket_inuse_pool_.begin(), socket_inuse_pool_.end(), [] (auto iter){ closesocket(*iter); });
 
 			socket_pool_.clear();
 			socket_inuse_pool_.clear();
 			tobereuse_socket_pool_.clear();
 		}
 
-		void GT_SocketPool::CloseSockAndPush2ReusedPool(SOCKET& sock) {
+		void GT_SocketPool::CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET> sock_ptr) {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
-			closesocket(sock);
-			tobereuse_socket_pool_.push_back(std::move(sock));
-			sock = INVALID_SOCKET;											// a assumption, I think start a new thread to clean the INVAID_SOCKET maybe a way for performance
+			closesocket(*sock_ptr);
+			tobereuse_socket_pool_.push_back(std::move(*sock_ptr));
+			*sock_ptr = INVALID_SOCKET;											// a assumption, I think start a new thread to clean the INVAID_SOCKET maybe a way for performance
 			//socket_inuse_pool_.erase(sock);								// FIX ME: for performance it is not reasonable for search whole inuse pool to delete the closed sock
 		}
 
 
-		void GT_SocketPool::LongTimeWork4CleanClosedSocket_(std::atomic<bool>& end_thread_,std::mutex& socket_lock_, std::deque<SOCKET>& inuse_pool_) {
+		void GT_SocketPool::LongTimeWork4CleanClosedSocket_(std::atomic<bool>& end_thread_,std::mutex& socket_lock_, std::deque<std::shared_ptr<SOCKET>>& inuse_pool_) {
 			while (!end_thread_) {
 				std::this_thread::sleep_for(std::chrono::milliseconds(30000));
 				for (auto iter = inuse_pool_.begin(); iter < inuse_pool_.end();) {
-					if (*iter == INVALID_SOCKET) {
+					if (**iter == INVALID_SOCKET) {
 						std::lock_guard<std::mutex> lk(socket_lock_);
 						iter = inuse_pool_.erase(iter);
 					}

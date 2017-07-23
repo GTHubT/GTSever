@@ -6,6 +6,7 @@
 #include <deque>
 #include <vector>
 #include <mutex>
+#include <memory>
 #include <WinSock2.h>
 
 /***************************************************************************************************/
@@ -22,26 +23,26 @@ namespace GT {
 
 		public:
 			~GT_SocketPool();
-			static		GT_SocketPool& GetInstance();
-			bool		Initilize();		
-			void		DestroyPool();
-			void		CloseSockAndPush2ReusedPool(SOCKET&);
-			SOCKET&		GetNextUnuseSocket();
+			static						GT_SocketPool& GetInstance();
+			bool						Initilize();		
+			void						DestroyPool();
+			void						CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET>);
+			std::shared_ptr<SOCKET>		GetNextUnuseSocket();
 
 		private:
 			GT_SocketPool();
 			void		UpdateSocketPool_();
 			bool		PreAllocateSocket_();	
 			void		ReAllocateSocket4Pool_();
-			void		LongTimeWork4CleanClosedSocket_(std::atomic<bool>& , std::mutex& , std::deque<SOCKET>& );
+			void		LongTimeWork4CleanClosedSocket_(std::atomic<bool>&, std::mutex&, std::deque < std::shared_ptr< SOCKET> > &);
 
 		private:
 			size_t				poolsize_;
 			std::thread			clean_thread_;
 			static  std::mutex	socket_pool_mutex_;
 			std::deque<SOCKET>	socket_pool_;
-			std::deque<SOCKET>	socket_inuse_pool_;
 			std::deque<SOCKET>	tobereuse_socket_pool_;
+			std::deque<std::shared_ptr<SOCKET>>	socket_inuse_pool_;
 			std::atomic<bool>	end_socket_clean_thread_;
 
 

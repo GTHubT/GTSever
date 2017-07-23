@@ -10,6 +10,7 @@
 namespace GT {
 
 	namespace NET {
+
 #ifndef IO_BUFFER_PTR
 #define IO_BUFFER_PTR	std::shared_ptr<GT_IOContextBuffer>
 #endif
@@ -18,14 +19,14 @@ namespace GT {
 			GT_SocketConetxt();
 			~GT_SocketConetxt();
 
-			void SetContextSocket(SOCKET& sock) { s = sock; }
-			void SetContextSocketAddr(SOCKADDR_IN sockaddr) { s_add = sockaddr; }
+			void SetContextSocket(std::shared_ptr<SOCKET> sock_ptr) { socket_shared_ptr_ = sock_ptr; }
+			void SetContextSocketAddr(SOCKADDR_IN sockaddr) { socket_add_ = sockaddr; }
 			void AddIOContext2Cache(IO_BUFFER_PTR io_ptr);
 
 		private:
-			SOCKET			s;
-			SOCKADDR_IN		s_add;
-			std::vector<IO_BUFFER_PTR> socket_io_buffer_cache_;
+			std::shared_ptr<SOCKET>			socket_shared_ptr_;
+			SOCKADDR_IN						socket_add_;
+			std::vector<IO_BUFFER_PTR>		socket_io_buffer_cache_;
 		};
 	}
 }

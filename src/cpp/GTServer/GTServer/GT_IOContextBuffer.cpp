@@ -12,6 +12,7 @@ namespace GT {
 			io_wsa_buf_.buf = io_buffer_;
 			io_wsa_buf_.len = io_buffer_size_;
 			event_type_ = IO_EVENT_NULL;
+			io_socket_ptr_ = nullptr;
 		}
 
 		GT_IOContextBuffer::~GT_IOContextBuffer() {
@@ -23,8 +24,8 @@ namespace GT {
 			return io_buffer_ == nullptr ? false : true;
 		}
 
-		void GT_IOContextBuffer::SetIOBufferSocket(SOCKET& s) {
-			io_socket_ = s;
+		void GT_IOContextBuffer::SetIOBufferSocket(std::shared_ptr<SOCKET> s_ptr) {
+			io_socket_ptr_ = s_ptr;
 		}
 
 		void GT_IOContextBuffer::SetIOBufferEventType(IO_EVENT_TYPE type) {
