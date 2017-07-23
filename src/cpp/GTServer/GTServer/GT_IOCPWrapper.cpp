@@ -11,11 +11,15 @@ namespace GT {
 
     namespace NET {
         
+#ifndef		GTSERVER_RESOURCE_MANAGER
+#define		GTSERVER_RESOURCE_MANAGER		GT_SocketContext_IOContext_Manager::GetInstance()
+#endif
+
         GT_IOCPWrapper::GT_IOCPWrapper() :
             is_inited_(false),
             is_read_callback_setted_(false),
             is_write_callback_setted_(false),
-            socket_pool_enable_(false)
+            completionkey_ioevent_manager_enable_(false)
         {
 			paccpetex_ = nullptr;
             listen_socket_ = INVALID_SOCKET;
@@ -47,7 +51,7 @@ namespace GT {
                     break;
                 }
 
-                socket_pool_enable_ = GT_SocketPool::GetInstance().Initilize();
+                completionkey_ioevent_manager_enable_ = GTSERVER_RESOURCE_MANAGER.Initialize();
 
                 bool ret = InitializeListenSocket_();
                 if (!ret) {

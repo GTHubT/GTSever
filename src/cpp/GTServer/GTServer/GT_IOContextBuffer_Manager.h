@@ -1,9 +1,7 @@
 #ifndef GT_NET_IOBUFFER_MANAGER_H_
 #define GT_NET_IOBUFFER_MANAGER_H_
 
-#include "GT_IOContextBuffer_Manager.h"
-#include "GT_SocketContext.h"
-#include "GT_SocketPool.h"
+#include "GT_IOContextBuffer.h"
 
 
 #include <memory>

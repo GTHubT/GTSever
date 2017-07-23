@@ -1,8 +1,10 @@
 #ifndef GT_SOCKET_IOCONTEXT_MANAGER_H_
 #define GT_SOCKET_IOCONTEXT_MANAGER_H_
 
+#include "GT_SocketPool.h"
 #include "GT_SocketContext.h"
-#include "GT_IOContextBuffer.h"
+#include "GT_IOContextBuffer_Manager.h"
+
 
 #include <set>
 
@@ -19,23 +21,30 @@ namespace GT {
 #endif
 
 #ifndef SOCKET_SHAREPTR
-#define SOCKET_SHAREPTR	std::shared_ptr<GT_IOContextBuffer>
+#define SOCKET_SHAREPTR	std::shared_ptr<SOCKET>
 #endif
 		class GT_SocketContext_IOContext_Manager {
 
 		public:
 			~GT_SocketContext_IOContext_Manager();
-			GT_SocketContext_IOContext_Manager& GetInstance();
 
-			SOCKETCONTEXT_SHAREPTR CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr);
-			void	PushIOEvent2Cache(IOCONTEXT_SHAREPTR ptr);
-			void	ReleaseIOBufferFromSockContextAndIOEventCache(IOCONTEXT_SHAREPTR ptr);
+			bool								Initialize();
+			void								Finalize();
+			void								ReleaseIOBuffer(IOCONTEXT_SHAREPTR ptr);
+			void								PushIOEvent2Cache(SOCKETCONTEXT_SHAREPTR sock_ptr, IOCONTEXT_SHAREPTR io_ptr);
+
+			SOCKET_SHAREPTR						GetSoket();
+			IOCONTEXT_SHAREPTR					GetIOContextBuffer();
+			SOCKETCONTEXT_SHAREPTR				CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr);
+			static GT_SocketContext_IOContext_Manager& GetInstance();
 
 		private:
 			GT_SocketContext_IOContext_Manager();
+			void								ReleaseIOBufferFromSockContextAndIOEventCache(IOCONTEXT_SHAREPTR ptr);
 
 
 		private:
+			bool is_enabled_;
 			std::set<SOCKETCONTEXT_SHAREPTR> completion_key_ptr_cache_;
 		};
 	}

@@ -6,9 +6,7 @@
 #endif
 
 #include "GTUtlity/GT_Util_ThreadPool.h"
-#include "GT_IOContextBuffer_Manager.h"
 #include "GT_SocketContext_IOContext_Manager.h"
-#include "GT_SocketPool.h"
 #include "GT_Definition.h"
 
 #include <vector>
@@ -55,7 +53,7 @@ namespace GT {
 
         private:
             bool                           is_inited_;
-            bool                           socket_pool_enable_;
+            bool                           completionkey_ioevent_manager_enable_;
             HANDLE                         completion_port_;
             SOCKET                         listen_socket_;
             SOCKADDR_IN                    serveraddr_;
