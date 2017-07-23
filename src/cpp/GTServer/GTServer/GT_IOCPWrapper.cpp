@@ -21,6 +21,11 @@ namespace GT {
             listen_socket_ = INVALID_SOCKET;
             completion_port_ = INVALID_HANDLE_VALUE;
 			pgetacceptex_sockaddrs_ = nullptr;
+
+			read_complete_func_ = nullptr;
+			read_request_func_	= nullptr;
+			write_compete_func_ = nullptr;
+			write_request_func_ = nullptr;
         }
 
         bool GT_IOCPWrapper::Initialize() {
@@ -172,16 +177,6 @@ namespace GT {
             return true;
         }
 
-        void GT_IOCPWrapper::SetReadCompleteEventCallBack(Read_Complete_Event_Callback read_func) {
-            read_func_ = read_func;
-            is_read_callback_setted_ = true;
-        }
-
-        void GT_IOCPWrapper::SetWriteCompleteEventCallBack(Write_Complete_Event_Callback write_func) {
-            write_func_ = write_func;
-            is_write_callback_setted_ = true;
-        }
-
 		SOCKET GT_IOCPWrapper::CreateOverlappedSocket_(int af, int type, int protocl) {
 			return WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED);
 		}
@@ -204,6 +199,32 @@ namespace GT {
 
 		void GT_IOCPWrapper::GetCompletionPortEventStatus() {
 
+		}
+
+		void GT_IOCPWrapper::SetCallBackFunc(IO_EVENT_TYPE type, Server_Event_Callback_Func func) {
+			GT_LOG_INFO("Set service calllback!");
+			switch (type)
+			{
+			case IO_EVENT_READ_COMPLETE:
+				GT_LOG_INFO("set read complete callback func success!");
+				read_complete_func_ = func;
+				break;
+			case IO_EVENT_READ_REQUEST:
+				GT_LOG_INFO("set read request callback func success!");
+				read_request_func_ = func;
+				break;
+			case IO_EVENT_WRITE_COMPLETE:
+				GT_LOG_INFO("set write complete callback func success!");
+				write_compete_func_ = func;
+				break;
+			case IO_EVENT_WRITE_REQUEST:
+				GT_LOG_INFO("set write request callback func success!");
+				write_request_func_ = func;
+				break;
+			default:
+				GT_LOG_INFO("unknow io event type!");
+				break;
+			}
 		}
 
     }

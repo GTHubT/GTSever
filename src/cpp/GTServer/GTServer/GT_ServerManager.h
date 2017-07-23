@@ -5,6 +5,9 @@
 /* this class serve as the only interface for dll interface call IOCP Service and other module */
 /***********************************************************************************************/
 
+#include "GT_Definition.h"
+#include "GT_IOCPWrapper.h"
+
 namespace GT {
 
     namespace NET {
@@ -14,6 +17,8 @@ namespace GT {
         public:
             GT_ServerManager();
             ~GT_ServerManager();
+
+			void RegisterServerCallBack(IO_EVENT_TYPE type, void(*func)(char*, int));
         };
     }
 }

@@ -24,10 +24,7 @@ namespace GT {
 
     namespace NET {
 
-        typedef void(*Read_Complete_Event_Callback) (char* data, int datalen);
-        typedef void(*Write_Complete_Event_Callback) (char* data, int datalen);
-        typedef void(*Read_Request_Event_Callback) (char* data, int datalen);
-        typedef void(*Write_Request_Event_Callback) (char* data, int datalen);
+		typedef void(*Server_Event_Callback_Func) (char* data, int bufferlen);
 
         class GT_IOCPWrapper
         {
@@ -42,11 +39,7 @@ namespace GT {
 			void	GetCompletionPortEventStatus();
             void    GetUnuseIOContext();
             void    DispatchEvent2CallBack(IO_EVENT_TYPE event_type);
-
-            void    SetReadCompleteEventCallBack(Read_Complete_Event_Callback);
-            void    SetReadRequestEventCallBack();
-            void    SetWriteCompleteEventCallBack(Write_Complete_Event_Callback);
-            void    SetWriteRequestEventCallBack();
+			void	SetCallBackFunc(IO_EVENT_TYPE type, Server_Event_Callback_Func func);
 
         private:
             GT_IOCPWrapper();
@@ -69,13 +62,15 @@ namespace GT {
             GT::UTIL::GT_Util_ThreadPool   thread_pool_;
 
         private:
-			int		index_allocated_used_;
-            bool    is_read_callback_setted_;
-            bool    is_write_callback_setted_;
-            Read_Complete_Event_Callback   read_func_;
-            Write_Complete_Event_Callback  write_func_;
-			LPFN_ACCEPTEX	paccpetex_;
+			int							index_allocated_used_;
+            bool						is_read_callback_setted_;
+            bool						is_write_callback_setted_;
+			LPFN_ACCEPTEX				paccpetex_;
 			LPFN_GETACCEPTEXSOCKADDRS	pgetacceptex_sockaddrs_;
+            Server_Event_Callback_Func  read_request_func_;
+			Server_Event_Callback_Func	read_complete_func_;
+			Server_Event_Callback_Func	write_compete_func_;
+            Server_Event_Callback_Func  write_request_func_;
 
         };
     }
