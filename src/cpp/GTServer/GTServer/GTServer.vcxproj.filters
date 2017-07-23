@@ -44,9 +44,6 @@
     <ClInclude Include="GT_ServerManager.h">
       <Filter>Source Files\ServerManager</Filter>
     </ClInclude>
-    <ClInclude Include="GT_SocketContext_Manager.h">
-      <Filter>Source Files\NetIO</Filter>
-    </ClInclude>
     <ClInclude Include="GT_SocketContext.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
@@ -54,6 +51,9 @@
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
     <ClInclude Include="GT_IOContextBuffer_Manager.h">
+      <Filter>Source Files\NetIO</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_SocketContext_IOContext_Manager.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,9 +74,6 @@
     <ClCompile Include="GT_ServerManager.cpp">
       <Filter>Source Files\ServerManager</Filter>
     </ClCompile>
-    <ClCompile Include="GT_SocketContext_Manager.cpp">
-      <Filter>Source Files\NetIO</Filter>
-    </ClCompile>
     <ClCompile Include="GT_SocketContext.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
@@ -84,6 +81,9 @@
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
     <ClCompile Include="GT_IOContextBuffer_Manager.cpp">
+      <Filter>Source Files\NetIO</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_SocketContext_IOContext_Manager.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
   </ItemGroup>

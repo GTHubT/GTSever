@@ -73,7 +73,7 @@ namespace GT {
                     break;
                 }
 
-                ret = BindSocketToCompletionPort(listen_socket_);
+                //ret = BindSocketToCompletionPort(listen_socket_);
                 if (!ret) {
                     GT_LOG_ERROR("bind listen socket to completion port failed!");
                     break;
