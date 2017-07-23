@@ -11,9 +11,14 @@ namespace GT {
 
 		public:
 			~GT_SocketContext_Manager();
+			GT_SocketContext_Manager& GetInstance();
+
+			GT_SocketConetxt CreateNewSocketContext(std::shared_ptr<SOCKET> sock_ptr);
+
+
+		private:
 			GT_SocketContext_Manager();
 
-			void CreateNewSocketContext(std::shared_ptr<SOCKET> sock_ptr);
 		};
 	}
 }

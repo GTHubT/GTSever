@@ -73,7 +73,7 @@ namespace GT {
                     break;
                 }
 
-                //ret = BindSocketToCompletionPort(listen_socket_);
+                ret = BindSocketToCompletionPort(listen_socket_);
                 if (!ret) {
                     GT_LOG_ERROR("bind listen socket to completion port failed!");
                     break;
@@ -155,8 +155,8 @@ namespace GT {
             return CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
         }
 
-        bool GT_IOCPWrapper::BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey) {
-            HANDLE temp_port = CreateIoCompletionPort((HANDLE)s, completion_port_, completionkey, 0);
+        bool GT_IOCPWrapper::BindSocketToCompletionPort(SOCKET s, ULONG_PTR sockcontext_completionkey) {
+            HANDLE temp_port = CreateIoCompletionPort((HANDLE)s, completion_port_, sockcontext_completionkey, 0);
             return temp_port == completion_port_;
         }
 

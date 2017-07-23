@@ -15,7 +15,7 @@ namespace GT {
 
 
 		void GT_ServerManager::RegisterServerCallBack(IO_EVENT_TYPE type, void(*func)(char*, int)) {
-			GT_IOCPWrapper::SetCallBackFunc(type, func);
+			GT_IOCPWrapper::GetInstance().SetCallBackFunc(type, func);
 		}
     }
 }
