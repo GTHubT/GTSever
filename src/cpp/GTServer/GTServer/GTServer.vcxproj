@@ -191,7 +191,7 @@
     <ClInclude Include="GT_IOContextBuffer.h" />
     <ClInclude Include="GT_IOContextBuffer_Manager.h" />
     <ClInclude Include="GT_ServerManager.h" />
-    <ClInclude Include="GT_SocketContext_IOContext_Manager.h" />
+    <ClInclude Include="GT_Resource_Manager.h" />
     <ClInclude Include="GT_SocketPool.h" />
     <ClInclude Include="GT_IOCPWrapper.h" />
     <ClInclude Include="GT_SocketContext.h" />
@@ -218,7 +218,7 @@
     <ClCompile Include="GT_IOContextBuffer_Manager.cpp" />
     <ClCompile Include="GT_ServerManager.cpp" />
     <ClCompile Include="GT_SocketContext.cpp" />
-    <ClCompile Include="GT_SocketContext_IOContext_Manager.cpp" />
+    <ClCompile Include="GT_Resource_Manager.cpp" />
     <ClCompile Include="GT_SoketPool.cpp" />
     <ClCompile Include="GT_IOCPWrapper.cpp" />
     <ClCompile Include="stdafx.cpp" />

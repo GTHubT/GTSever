@@ -23,10 +23,10 @@ namespace GT {
 #ifndef SOCKET_SHAREPTR
 #define SOCKET_SHAREPTR	std::shared_ptr<SOCKET>
 #endif
-		class GT_SocketContext_IOContext_Manager {
+		class GT_Resource_Manager {
 
 		public:
-			~GT_SocketContext_IOContext_Manager();
+			~GT_Resource_Manager();
 
 			bool								Initialize();
 			void								Finalize();
@@ -36,10 +36,10 @@ namespace GT {
 			SOCKET_SHAREPTR						GetSoket();
 			IOCONTEXT_SHAREPTR					GetIOContextBuffer();
 			SOCKETCONTEXT_SHAREPTR				CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr);
-			static GT_SocketContext_IOContext_Manager& GetInstance();
+			static GT_Resource_Manager& GetInstance();
 
 		private:
-			GT_SocketContext_IOContext_Manager();
+			GT_Resource_Manager();
 			void								ReleaseIOBufferFromSockContextAndIOEventCache(IOCONTEXT_SHAREPTR ptr);
 
 

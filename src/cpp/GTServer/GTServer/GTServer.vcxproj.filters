@@ -53,7 +53,7 @@
     <ClInclude Include="GT_IOContextBuffer_Manager.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
-    <ClInclude Include="GT_SocketContext_IOContext_Manager.h">
+    <ClInclude Include="GT_Resource_Manager.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClCompile Include="GT_IOContextBuffer_Manager.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
-    <ClCompile Include="GT_SocketContext_IOContext_Manager.cpp">
+    <ClCompile Include="GT_Resource_Manager.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
   </ItemGroup>
