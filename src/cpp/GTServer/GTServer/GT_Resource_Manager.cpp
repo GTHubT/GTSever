@@ -47,7 +47,7 @@ namespace GT {
 				/* init Resource Collector Worker */
 				resource_collect_cycle_time_ = GT_READ_CFG_INT("resource_control", "resource_collect_cycle_time", 30000); /* (ms) */
 				resource_collector_thread_ = std::move(std::thread(&GT_Resource_Manager::Resource_Collect_Worker_, this, 
-														std::bind(&GT_Resource_Manager::Resource_Collect_Func_), 
+														std::bind(&GT_Resource_Manager::Resource_Collect_Func_, this), 
 														std::ref(end_resource_collector_),
 														std::ref(resource_mutex_),
 														std::ref(resource_cv_),
