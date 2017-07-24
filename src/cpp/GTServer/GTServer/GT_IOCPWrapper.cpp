@@ -12,7 +12,7 @@ namespace GT {
     namespace NET {
         
 #ifndef		GTSERVER_RESOURCE_MANAGER
-#define		GTSERVER_RESOURCE_MANAGER		GT_SocketContext_IOContext_Manager::GetInstance()
+#define		GTSERVER_RESOURCE_MANAGER		GT_Resource_Manager::GetInstance()
 #endif
 
         GT_IOCPWrapper::GT_IOCPWrapper() :

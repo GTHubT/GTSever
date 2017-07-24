@@ -192,7 +192,7 @@
     <ClInclude Include="GT_IOContextBuffer_Manager.h" />
     <ClInclude Include="GT_ServerManager.h" />
     <ClInclude Include="GT_Resource_Manager.h" />
-    <ClInclude Include="GT_SocketPool.h" />
+    <ClInclude Include="GT_SocketPool_Manager.h" />
     <ClInclude Include="GT_IOCPWrapper.h" />
     <ClInclude Include="GT_SocketContext.h" />
     <ClInclude Include="stdafx.h" />

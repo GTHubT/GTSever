@@ -38,9 +38,6 @@
     <ClInclude Include="GT_Cfg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GT_SocketPool.h">
-      <Filter>Source Files\NetIO</Filter>
-    </ClInclude>
     <ClInclude Include="GT_ServerManager.h">
       <Filter>Source Files\ServerManager</Filter>
     </ClInclude>
@@ -54,6 +51,9 @@
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
     <ClInclude Include="GT_Resource_Manager.h">
+      <Filter>Source Files\NetIO</Filter>
+    </ClInclude>
+    <ClInclude Include="GT_SocketPool_Manager.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
   </ItemGroup>

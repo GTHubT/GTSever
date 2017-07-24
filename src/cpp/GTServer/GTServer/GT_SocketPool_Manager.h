@@ -19,18 +19,18 @@ namespace GT {
 
 	namespace NET {
 		
-		class GT_SocketPool {
+		class GT_SocketPool_Manager {
 
 		public:
-			~GT_SocketPool();
-			static						GT_SocketPool& GetInstance();
+			~GT_SocketPool_Manager();
+			static						GT_SocketPool_Manager& GetInstance();
 			bool						Initilize();		
 			void						DestroyPool();
 			void						CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET>);
 			std::shared_ptr<SOCKET>		GetNextUnuseSocket();
 
 		private:
-			GT_SocketPool();
+			GT_SocketPool_Manager();
 			void		UpdateSocketPool_();
 			bool		PreAllocateSocket_();	
 			void		ReAllocateSocket4Pool_();

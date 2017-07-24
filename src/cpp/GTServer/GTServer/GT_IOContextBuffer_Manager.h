@@ -14,19 +14,19 @@ namespace GT {
 #ifndef IO_BUFFER_PTR
 #define IO_BUFFER_PTR	std::shared_ptr<GT_IOContextBuffer>
 #endif
-        class GT_IOBuffer_Manager
+        class GT_IOContextBuffer_Manager
         {
         public:
-            ~GT_IOBuffer_Manager();
+            ~GT_IOContextBuffer_Manager();
 
 			bool			Initialize();
 			void			Finalize();
 			IO_BUFFER_PTR	GetNextIOBufferPtr();
 			void			ReleaseIOBuffer(IO_BUFFER_PTR buffer_ptr);
-			static GT_IOBuffer_Manager& GetInstance();
+			static GT_IOContextBuffer_Manager& GetInstance();
 
 		private:
-			GT_IOBuffer_Manager();
+			GT_IOContextBuffer_Manager();
 			bool			PreAllocateSomeIOBuffer_();
 			bool			ReAllocateSomeIOBuffer_();
 			void			CleanIOBufferCache_();
