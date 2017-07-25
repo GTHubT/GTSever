@@ -168,7 +168,7 @@ namespace GT {
 			GT_TRACE_FUNCTION;
             // create thread pool
             std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this);
-            thread_pool_.Start(GT::UTIL::GT_Util_OSInfo::GetCPUNum() * 2, threadfunc);
+            thread_pool_.Start(std::thread::hardware_concurrency() * 2, threadfunc);
         }
 
         GT_IOCPWrapper& GT_IOCPWrapper::GetInstance() {

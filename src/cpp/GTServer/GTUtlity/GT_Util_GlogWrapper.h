@@ -1,7 +1,7 @@
 #ifndef GT_UTIL_LOG_WRAPPER_
 #define GT_UTIL_LOG_WRAPPER_
 
-#include "GTServer/GT_Definition.h"
+#include "GT_IOCP/GT_Definition.h"
 
 
 #ifndef GLOG_NO_ABBREVIATED_SEVERITIES

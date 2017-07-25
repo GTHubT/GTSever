@@ -1,7 +1,0 @@
-﻿  GT_ThreadPool.cpp
-h:\github\gtsever\src\cpp\gtserver\gtserver\gt_threadpool.cpp(24): warning C4018: '<': signed/unsigned mismatch
-h:\github\gtsever\src\cpp\gtserver\gtserver\gt_threadpool.cpp(28): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'std::thread::id'
-h:\github\gtsever\src\cpp\gtserver\gtserver\gt_threadpool.cpp(36): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'std::thread::id'
-     Creating library H:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.lib and object H:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.exp
-  GTServer.vcxproj -> H:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.dll
-  GTServer.vcxproj -> H:\GitHub\GTSever\src\cpp\GTServer\Debug\iocp.pdb (Full PDB)
