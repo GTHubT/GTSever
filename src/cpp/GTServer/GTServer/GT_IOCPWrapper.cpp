@@ -205,6 +205,7 @@ namespace GT {
 
 		}
 
+		/* this function can be transfer to GT_Server_Manager, it may be better design */
 		void GT_IOCPWrapper::SetCallBackFunc(IO_EVENT_TYPE type, Server_Event_Callback_Func func) {
 			GT_LOG_INFO("Set service calllback!");
 			switch (type)
