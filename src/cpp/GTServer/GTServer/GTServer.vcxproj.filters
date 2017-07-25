@@ -68,9 +68,6 @@
     <ClCompile Include="GTServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GT_SoketPool.cpp">
-      <Filter>Source Files\NetIO</Filter>
-    </ClCompile>
     <ClCompile Include="GT_ServerManager.cpp">
       <Filter>Source Files\ServerManager</Filter>
     </ClCompile>
@@ -84,6 +81,9 @@
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
     <ClCompile Include="GT_Resource_Manager.cpp">
+      <Filter>Source Files\NetIO</Filter>
+    </ClCompile>
+    <ClCompile Include="GT_SoketPool_Manager.cpp">
       <Filter>Source Files\NetIO</Filter>
     </ClCompile>
   </ItemGroup>

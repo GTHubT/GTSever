@@ -18,12 +18,8 @@ namespace GT {
 
 	namespace NET {
 
-#ifndef IOCONTEXT_SHAREPTR
-#define IOCONTEXT_SHAREPTR	std::shared_ptr<GT_IOContextBuffer>
-#endif
-
 #ifndef SOCKETCONTEXT_SHAREPTR
-#define SOCKETCONTEXT_SHAREPTR	std::shared_ptr<GT_IOContextBuffer>
+#define SOCKETCONTEXT_SHAREPTR	std::shared_ptr<GT_SocketConetxt>
 #endif
 
 #ifndef SOCKET_SHAREPTR
@@ -36,11 +32,13 @@ namespace GT {
 
 			bool					Initialize();
 			void					Finalize();
-			void					ReleaseIOBuffer(IOCONTEXT_SHAREPTR ptr);
-			void					PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IOCONTEXT_SHAREPTR io_ptr);
 			SOCKET_SHAREPTR			GetCachedSocket();
-			IOCONTEXT_SHAREPTR		GetIOContextBuffer();										// overlapped struct
+			IO_BUFFER_PTR			GetIOContextBuffer();										// overlapped struct
+			void					ReleaseIOBuffer(IO_BUFFER_PTR ptr);
+			void					ReleaseSocket(SOCKET_SHAREPTR sock_ptr);
+			void					PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IO_BUFFER_PTR io_ptr);
 			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr);			// completion key
+
 			static GT_Resource_Manager& GetInstance();
 
 		private:

@@ -219,7 +219,7 @@
     <ClCompile Include="GT_ServerManager.cpp" />
     <ClCompile Include="GT_SocketContext.cpp" />
     <ClCompile Include="GT_Resource_Manager.cpp" />
-    <ClCompile Include="GT_SoketPool.cpp" />
+    <ClCompile Include="GT_SoketPool_Manager.cpp" />
     <ClCompile Include="GT_IOCPWrapper.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

@@ -25,7 +25,7 @@ namespace GT {
 #endif
 
 #ifndef SOCKET_SHAREPTR
-#define SOCKET_SHAREPTR	std::shared_ptr<GT_IOContextBuffer>
+#define SOCKET_SHAREPTR	std::shared_ptr<SOCKET>
 #endif
 
 		class GT_SocketConetxt {
