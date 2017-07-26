@@ -22,9 +22,10 @@ namespace GT {
             completionkey_ioevent_manager_enable_(false)
         {
 			paccpetex_ = nullptr;
-            listen_socket_ = INVALID_SOCKET;
+            listen_socket_ptr_ = nullptr;
             completion_port_ = INVALID_HANDLE_VALUE;
 			pgetacceptex_sockaddrs_ = nullptr;
+			accept_socket_completion_key_ = nullptr;
 
 			read_complete_func_ = nullptr;
 			read_request_func_	= nullptr;
@@ -77,7 +78,11 @@ namespace GT {
                     break;
                 }
 
-                //ret = BindSocketToCompletionPort(listen_socket_);
+				/* create completion key for accept socket */
+				accept_socket_completion_key_ = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(listen_socket_ptr_);
+				GTSERVER_RESOURCE_MANAGER.SetSocketContexAddr(accept_socket_completion_key_, serveraddr_);
+
+                ret = BindSocketToCompletionPort(listen_socket_ptr_, (ULONG_PTR)accept_socket_completion_key_.get());
                 if (!ret) {
                     GT_LOG_ERROR("bind listen socket to completion port failed!");
                     break;
@@ -98,7 +103,7 @@ namespace GT {
 			DWORD dwBytes = 0;
 
 			WSAIoctl(
-				listen_socket_,
+				*listen_socket_ptr_,
 				SIO_GET_EXTENSION_FUNCTION_POINTER,
 				&GuidAcceptEx,
 				sizeof(GuidAcceptEx),
@@ -116,7 +121,7 @@ namespace GT {
 			DWORD dwBytes = 0;
 
 			WSAIoctl(
-				listen_socket_,
+				*listen_socket_ptr_,
 				SIO_GET_EXTENSION_FUNCTION_POINTER,
 				&GuidGetAcceptExSockAddrs,
 				sizeof(GuidGetAcceptExSockAddrs),
@@ -130,8 +135,8 @@ namespace GT {
 		}
 
 		bool GT_IOCPWrapper::InitializeListenSocket_() {
-            listen_socket_ = (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP) : CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP));
-            if (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) && listen_socket_ != INVALID_SOCKET) {
+            listen_socket_ptr_ = (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP) : CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP));
+            if (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) && *listen_socket_ptr_ != INVALID_SOCKET) {
 
                 // create socket addr
                 serveraddr_.sin_family   = AF_INET;
@@ -139,14 +144,14 @@ namespace GT {
                 serveraddr_.sin_addr.S_un.S_addr = inet_addr(GT_READ_CFG_STRING("server_cfg", "server_address", "127.0.0.2").c_str());
 
                 // bind socket to server IP
-                if (!bind(listen_socket_, (SOCKADDR*)(&serveraddr_), sizeof(SOCKADDR_IN))) {
+                if (!bind(*listen_socket_ptr_, (SOCKADDR*)(&serveraddr_), sizeof(SOCKADDR_IN))) {
                     int err = WSAGetLastError();
                     GT_LOG_ERROR("bind to local failed error code = " << err);
                     return false;
                 }
 
                 // set listen num
-                if (!listen(listen_socket_, SOMAXCONN)) {
+                if (!listen(*listen_socket_ptr_, SOMAXCONN)) {
                     int err = WSAGetLastError();
                     GT_LOG_ERROR("bind to local failed error code = " << err);
                     return false;
@@ -159,8 +164,8 @@ namespace GT {
             return CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
         }
 
-        bool GT_IOCPWrapper::BindSocketToCompletionPort(SOCKET s, ULONG_PTR sockcontext_completionkey) {
-            HANDLE temp_port = CreateIoCompletionPort((HANDLE)s, completion_port_, sockcontext_completionkey, 0);
+        bool GT_IOCPWrapper::BindSocketToCompletionPort(SOCKET_SHAREPTR sock_ptr, ULONG_PTR sockcontext_completionkey) {
+            HANDLE temp_port = CreateIoCompletionPort((HANDLE)(*sock_ptr), completion_port_, sockcontext_completionkey, 0);
             return temp_port == completion_port_;
         }
 
@@ -181,8 +186,8 @@ namespace GT {
             return true;
         }
 
-		SOCKET GT_IOCPWrapper::CreateOverlappedSocket_(int af, int type, int protocl) {
-			return WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED);
+		SOCKET_SHAREPTR GT_IOCPWrapper::CreateOverlappedSocket_(int af, int type, int protocl) {
+			return SOCKET_SHAREPTR(new (SOCKET)(WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED)));
 		}
 
         void GT_IOCPWrapper::ProcessAcceptEvent_() {

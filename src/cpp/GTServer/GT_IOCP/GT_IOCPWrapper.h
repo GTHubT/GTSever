@@ -10,6 +10,7 @@
 #include "GT_Definition.h"
 
 #include <vector>
+#include <memory>
 #include <Windows.h>
 #include <WinSock2.h>
 #include <MSWSock.h>
@@ -33,16 +34,15 @@ namespace GT {
             bool	Initialize();
             bool	StopService();
             void    StartService();
-            bool	BindSocketToCompletionPort(SOCKET s, ULONG_PTR completionkey);
+            bool	BindSocketToCompletionPort(SOCKET_SHAREPTR s_ptr, ULONG_PTR completionkey);
 			void	GetCompletionPortEventStatus();
-            void    GetUnuseIOContext();
             void    DispatchEvent2CallBack(IO_EVENT_TYPE event_type);
 			void	SetCallBackFunc(IO_EVENT_TYPE type, Server_Event_Callback_Func func);
 
         private:
             GT_IOCPWrapper();
             HANDLE	CreateNewIoCompletionPort_();
-			SOCKET	CreateOverlappedSocket_(int af, int type, int protocl);
+			SOCKET_SHAREPTR	CreateOverlappedSocket_(int af, int type, int protocl);
             void    ProcessAcceptEvent_();
 			bool	InitializeListenSocket_();
             void    PostAcceptEvent_();
@@ -55,7 +55,8 @@ namespace GT {
             bool                           is_inited_;
             bool                           completionkey_ioevent_manager_enable_;
             HANDLE                         completion_port_;
-            SOCKET                         listen_socket_;
+            SOCKET_SHAREPTR                listen_socket_ptr_;
+			SOCKETCONTEXT_SHAREPTR		   accept_socket_completion_key_;
             SOCKADDR_IN                    serveraddr_;
             GT::UTIL::GT_Util_ThreadPool   thread_pool_;
 

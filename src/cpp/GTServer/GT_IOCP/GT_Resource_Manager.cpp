@@ -101,13 +101,18 @@ namespace GT {
             sock_context_ptr->AddIOContext2Cache(io_ptr);
 		}
 
+		void GT_Resource_Manager::SetSocketContexAddr(SOCKETCONTEXT_SHAREPTR s_ptr, SOCKADDR_IN sock_addr) {
+			GT_LOG_INFO("Set socket addrress!");
+			s_ptr->SetContextSocketAddr(sock_addr);
+		}
+
 		void GT_Resource_Manager::Resource_Collect_Worker_(std::function<void()> func_, 
 															std::atomic_bool& end_thread_, 
 															std::mutex& source_mutex_,
 															std::condition_variable& source_cv_,
 															int cycle_time_) {
 
-            std::unique_lock<std::mutex> lk(source_mutex_);
+            std::unique_lock<std::mutex> lk(source_mutex_);	/* this lock is for condition variable */
 			while (!end_thread_ && source_cv_.wait_for(lk, std::chrono::milliseconds(cycle_time_)) == std::cv_status::timeout) {
 				func_();
 			}
