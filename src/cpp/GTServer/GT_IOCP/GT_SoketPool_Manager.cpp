@@ -37,11 +37,11 @@ namespace GT {
 
 			bool ret = PreAllocateSocket_();
 
-			std::function<void()> threadfunc = std::bind(&GT_SocketPool_Manager::LongTimeWork4CleanClosedSocket_, this, 
-												std::ref(end_socket_clean_thread_), 
-												std::ref(socket_pool_mutex_), 
-												std::ref(socket_inuse_pool_));
-			clean_thread_ = std::thread(threadfunc);
+            /*std::function<void()> threadfunc = std::bind(&GT_SocketPool_Manager::LongTimeWork4CleanClosedSocket_, this,
+                                                std::ref(end_socket_clean_thread_),
+                                                std::ref(socket_pool_mutex_),
+                                                std::ref(socket_inuse_pool_));
+			clean_thread_ = std::thread(threadfunc);*/
             GT_LOG_INFO("socket pool initialize success!");
 			return true;
 		}
@@ -132,6 +132,19 @@ namespace GT {
 			//socket_inuse_pool_.erase(sock);								// FIX ME: for performance it is not reasonable for search whole inuse pool to delete the closed sock
 		}
 
+
+        void GT_SocketPool_Manager::CollectUnuseSocket() {
+            GT_LOG_INFO("Collect Unuse Socket!");
+            for (auto iter = socket_inuse_pool_.begin(); iter < socket_inuse_pool_.end();) {
+                if (**iter == INVALID_SOCKET) {
+                    SOCKETPOOL_LOCK_THIS_SCOPE;
+                    iter = socket_inuse_pool_.erase(iter);
+                }
+                else {
+                    ++iter;
+                }
+            }
+        }
 
 		/* this will be replace by GT_Resouce_Manager Resource Collector thread */
 		void GT_SocketPool_Manager::LongTimeWork4CleanClosedSocket_(std::atomic<bool>& end_thread_,std::mutex& socket_lock_, std::deque<std::shared_ptr<SOCKET>>& inuse_pool_) {

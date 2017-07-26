@@ -27,6 +27,7 @@ namespace GT {
 			bool						Initilize();		
 			void						DestroyPool();
 			void						CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET>);
+            void                        CollectUnuseSocket();
 			std::shared_ptr<SOCKET>		GetNextUnuseSocket();
 
 		private:

@@ -80,10 +80,12 @@ namespace GT {
 
 		void GT_Resource_Manager::ReleaseIOBuffer(IO_BUFFER_PTR ptr) {
 			GT_LOG_INFO("Collect IO Buffer Resource!");
+            GT_IO_BUFFER_CACHE_MANAGER.ReleaseIOBuffer(ptr);
 		}
 
 		void GT_Resource_Manager::ReleaseSocket(SOCKET_SHAREPTR sock_ptr) {
 			GT_LOG_INFO("Collect Socket Resource!");
+            GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sock_ptr);
 		}
 
 		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr) {
@@ -94,8 +96,9 @@ namespace GT {
 			return temp;
 		}
 
-		void GT_Resource_Manager::PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IO_BUFFER_PTR io_ptr) {
+		void GT_Resource_Manager::PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_context_ptr, IO_BUFFER_PTR io_ptr) {
 			GT_LOG_INFO("Associate IO Buffer with completion key");
+            sock_context_ptr->AddIOContext2Cache(io_ptr);
 		}
 
 		void GT_Resource_Manager::Resource_Collect_Worker_(std::function<void()> func_, 
@@ -103,15 +106,18 @@ namespace GT {
 															std::mutex& source_mutex_,
 															std::condition_variable& source_cv_,
 															int cycle_time_) {
-			while (!end_thread_) {
-				std::unique_lock<std::mutex> lk(source_mutex_);
-				source_cv_.wait_for(lk, std::chrono::milliseconds(cycle_time_));
+
+            std::unique_lock<std::mutex> lk(source_mutex_);
+			while (!end_thread_ && source_cv_.wait_for(lk, std::chrono::milliseconds(cycle_time_)) == std::cv_status::timeout) {
 				func_();
 			}
 		}
 
-		void GT_Resource_Manager::Resource_Collect_Func_() {
+		void GT_Resource_Manager::Resource_Collect_Func_() { /* this function will be update later */
+            GT_LOG_INFO("Collecting Unuse Resource...");
 
+            /* socket resource should be collect in socket pool INUSE cache */
+            GT_SOCKET_CACHE_MANAGER.CollectUnuseSocket();
 		}
 
 		void GT_Resource_Manager::Finalize() {
@@ -127,6 +133,8 @@ namespace GT {
 
 		void GT_Resource_Manager::ClearResource_() {
 			GT_LOG_INFO("Clear all resource hold by resource manager!");
+            GT_SOCKET_CACHE_MANAGER.DestroyPool();
+            GT_IO_BUFFER_CACHE_MANAGER.Finalize();
 		}
 	}
 }

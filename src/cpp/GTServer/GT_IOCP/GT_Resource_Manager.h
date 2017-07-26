@@ -22,9 +22,6 @@ namespace GT {
 #define SOCKETCONTEXT_SHAREPTR	std::shared_ptr<GT_SocketConetxt>
 #endif
 
-#ifndef SOCKET_SHAREPTR
-#define SOCKET_SHAREPTR	std::shared_ptr<SOCKET>
-#endif
 		class GT_Resource_Manager {
 
 		public:
