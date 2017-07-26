@@ -46,8 +46,8 @@ namespace GT {
             void    ProcessAcceptEvent_();
 			bool	InitializeListenSocket_();
             void    PostAcceptEvent_();
-            void    PostReadEvent_();
-            void    PostWriteEvent_();
+            void    PostReadRequestEvent_();
+            void    PostWriteRequestEvent_();
 			bool	GetAcceptEXFuncAddress_();
 			bool	GetAcceptExSockAddrsFuncAddress_();
 

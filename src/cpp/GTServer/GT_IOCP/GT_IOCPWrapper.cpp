@@ -194,11 +194,11 @@ namespace GT {
 
         }
 
-        void GT_IOCPWrapper::PostReadEvent_() {
+        void GT_IOCPWrapper::PostReadRequestEvent_() {
 
         }
 
-        void GT_IOCPWrapper::PostWriteEvent_() {
+        void GT_IOCPWrapper::PostWriteRequestEvent_() {
 
         }
 
