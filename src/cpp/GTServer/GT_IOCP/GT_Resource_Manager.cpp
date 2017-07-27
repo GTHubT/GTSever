@@ -2,7 +2,7 @@
 #include "GTUtlity/GT_Util_GlogWrapper.h"
 #include "GTUtlity/GT_Util_CfgHelper.h"
 
-
+#include <algorithm>
 
 namespace GT {
 
@@ -83,9 +83,12 @@ namespace GT {
             GT_IO_BUFFER_CACHE_MANAGER.ReleaseIOBuffer(ptr);
 		}
 
-		void GT_Resource_Manager::ReleaseSocket(SOCKET_SHAREPTR sock_ptr) {
+		void GT_Resource_Manager::ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sockcontext_ptr) {
 			GT_LOG_INFO("Collect Socket Resource!");
-            GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sock_ptr);
+            /* release socket context IO buffer first */
+            std::set<IO_BUFFER_PTR> io_ptr_set = sockcontext_ptr->GetIOBufferCache();
+            std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr);});
+            GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
 		}
 
 		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr) {

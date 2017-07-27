@@ -40,10 +40,10 @@ namespace GT {
             GT_IOCPWrapper();
             HANDLE	CreateNewIoCompletionPort_();
 			SOCKET_SHAREPTR	CreateOverlappedSocket_(int af, int type, int protocl);
-            void    ProcessAcceptEvent_();
-			bool	InitializeListenSocket_();
+            bool	InitializeListenSocket_();
             void    PostAcceptEvent_();
-            void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
+            void    ProcessAcceptEvent_(IO_BUFFER_PTR io_context);
+            void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_);
             void    PostWriteRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
 			bool	GetAcceptEXFuncAddress_();
 			bool	GetAcceptExSockAddrsFuncAddress_();

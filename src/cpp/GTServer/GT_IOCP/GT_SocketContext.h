@@ -34,12 +34,16 @@ namespace GT {
 			~GT_SocketConetxt();
 
 			void SetContextSocket(SOCKET_SHAREPTR sock_ptr) { socket_shared_ptr_ = sock_ptr; }
-			void SetContextSocketAddr(SOCKADDR_IN sockaddr) { socket_add_ = sockaddr; }
+			void SetContextSocketAddr(SOCKADDR_IN sockaddr) { socket_addr_ = sockaddr; }
 			void AddIOContext2Cache(IO_BUFFER_PTR io_ptr);
+
+            SOCKET_SHAREPTR GetContextSocketPtr() { return socket_shared_ptr_; }
+            SOCKADDR_IN     GetSocketAddr() { return socket_addr_; }
+            std::set<IO_BUFFER_PTR>   GetIOBufferCache() { return socket_io_buffer_cache_; }
 
 		private:
 			SOCKET_SHAREPTR			socket_shared_ptr_;
-			SOCKADDR_IN						socket_add_;
+			SOCKADDR_IN						socket_addr_;
 			std::set<IO_BUFFER_PTR>			socket_io_buffer_cache_;
 		};
 	}

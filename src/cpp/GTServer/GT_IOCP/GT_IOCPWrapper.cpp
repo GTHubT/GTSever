@@ -166,7 +166,7 @@ namespace GT {
 
         void GT_IOCPWrapper::StartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
 			GT_TRACE_FUNCTION;
-            // create thread pool
+            /* create thread pool */
             std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this, std::ref(call_back_func_));
             thread_pool_.Start(std::thread::hardware_concurrency() * 2, threadfunc);
         }
@@ -185,39 +185,80 @@ namespace GT {
 			return SOCKET_SHAREPTR(new (SOCKET)(WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED)));
 		}
 
-        void GT_IOCPWrapper::ProcessAcceptEvent_() {
-
+        void GT_IOCPWrapper::ProcessAcceptEvent_(IO_BUFFER_PTR io_context) {
+            GT_LOG_DEBUG("Process Accept Event!");
         }
 
-        void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
-
+        void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_) {
+            GT_LOG_DEBUG("Post Read Request Event!");
+            DWORD bytes_recved_ = 0;
+            DWORD flag = 0;
+            IO_BUFFER_PTR temp_io_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+            int ret = WSARecv(*(completion_key_->GetContextSocketPtr()), &temp_io_ptr->GetWsaBuf(), 1, &bytes_recved_, &flag, (LPOVERLAPPED)temp_io_ptr.get(), nullptr);
+            if (ret == SOCKET_ERROR && (WSA_IO_PENDING != GetLastError())) {
+                GT_LOG_ERROR("Send Socket recv event failed!");
+            }
         }
 
         void GT_IOCPWrapper::PostWriteRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
-
+            GT_LOG_DEBUG("Post Write Event Request!");
+            DWORD transfersize = 0;
+            int ret = WSASend(*(completion_key_->GetContextSocketPtr()), &io_event_->GetWsaBuf(), io_event_->GetBufferSize(), &transfersize, 0, (LPOVERLAPPED)io_event_.get(), nullptr);
+            if (ret == SOCKET_ERROR && (WSA_IO_PENDING != GetLastError())) {
+                GT_LOG_ERROR("Send Socket write event failed!");
+            }
         }
 
         void GT_IOCPWrapper::PostAcceptEvent_() {
             /* post accept event for listen socket and post num determined by thread num */
-            GT_LOG_INFO("Post Accept Event for listen socket!");
+            GT_LOG_DEBUG("Post Accept Event for listen socket!");
             for (int i = 0; i < std::thread::hardware_concurrency() * 2; i++) {
                 IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
-                temp_ptr->io_event_type = IO_EVENT_ACCEPT_COMPLETE;
+                temp_ptr->SetIOBufferEventType(IO_EVENT_ACCEPT);
+                temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
                 accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
-                SOCKET_SHAREPTR sock = GTSERVER_RESOURCE_MANAGER.GetCachedSocket();
-                paccpetex_func_(*listen_socket_ptr_,
-                    *sock,
-                    temp_ptr->GetBufferAddr(),
-                    temp_ptr->GetBufferSize() - ((sizeof(sockaddr_in) + 16) * 2),
-                    (sizeof(sockaddr_in) + 16),
-                    (sizeof(sockaddr_in) + 16),
-                    nullptr,
-                    (LPOVERLAPPED)temp_ptr.get());
+                if (temp_ptr->GetClientSocketPtr() != nullptr) {
+
+                    bool ret = paccpetex_func_(*listen_socket_ptr_,
+                        *(temp_ptr->GetClientSocketPtr()),
+                        temp_ptr->GetBufferAddr(),
+                        temp_ptr->GetBufferSize() - ((sizeof(sockaddr_in) + 16) * 2),
+                        (sizeof(sockaddr_in) + 16),
+                        (sizeof(sockaddr_in) + 16),
+                        nullptr,
+                        (LPOVERLAPPED)temp_ptr.get());
+
+                    if (ret == false && ERROR_IO_PENDING != GetLastError()) {
+                        GT_LOG_ERROR("Post Accept Event Failed!");
+                    }
+                }else
+                    continue;
             }
         }
 
 		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
+            GT_LOG_DEBUG("Get completion port status...");
+            DWORD Nnumofbytestransfered = 0;
+            SOCKETCONTEXT_SHAREPTR completion_key = nullptr;
+            IO_BUFFER_PTR overlapped_ptr = nullptr;
+            bool ret = GetQueuedCompletionStatus(completion_port_, &Nnumofbytestransfered, (PULONG_PTR)completion_key.get(), (LPOVERLAPPED*)overlapped_ptr.get(), INFINITE);
 
+            if (ret && Nnumofbytestransfered == 0 && overlapped_ptr->GetIOEventType() == IO_EVENT_ACCEPT) {
+                ProcessAcceptEvent_(overlapped_ptr);
+            }
+            else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_READ) {
+
+            }
+            else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_WRITE) {
+
+            }
+            else if (Nnumofbytestransfered == 0) /* client exit */
+            {
+                GTSERVER_RESOURCE_MANAGER.ReleaseCompletionKey(completion_key);
+            }
+            else {
+
+            }
 		}
     }
 }

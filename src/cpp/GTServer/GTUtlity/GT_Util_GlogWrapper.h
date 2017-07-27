@@ -52,6 +52,7 @@ namespace GT {
 #define GT_LOG_INFO(logevent)				GT_LOG_MACRO(logevent, GT_LOG_LEVEL::GT_LOG_LEVEL_ALL)
 #define GT_LOG_WARN(logevent)				GT_LOG_MACRO(logevent, GT_LOG_LEVEL::GT_LOG_LEVEL_WARNING)
 #define GT_LOG_ERROR(logevent)				GT_LOG_MACRO(logevent, GT_LOG_LEVEL::GT_LOG_LEVEL_ERROR)
+#define GT_LOG_DEBUG(logevent)              GT_LOG_MACRO(logevent, GT_LOG_LEVEL::GT_LOG_LEVEL_WARNING)
 #define GT_LOG_MACRO(logevent, loglevel)    {	\
 	std::ostringstream ost;						\
 	ost<<logevent;								\

@@ -32,7 +32,7 @@ namespace GT {
 			SOCKET_SHAREPTR			GetCachedSocket();
 			IO_BUFFER_PTR			GetIOContextBuffer();										// overlapped struct
 			void					ReleaseIOBuffer(IO_BUFFER_PTR ptr);
-			void					ReleaseSocket(SOCKET_SHAREPTR sock_ptr);
+			void					ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr);
 			void					SetSocketContexAddr(SOCKETCONTEXT_SHAREPTR s_ptr, SOCKADDR_IN sock_addr);
 			void					PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IO_BUFFER_PTR io_ptr);
 			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr);			// completion key

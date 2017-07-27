@@ -32,14 +32,16 @@ namespace GT {
 
             char* GetBufferAddr();
             size_t GetBufferSize();
+            std::shared_ptr<SOCKET> GetClientSocketPtr();
+            WSABUF& GetWsaBuf() { return io_wsa_buf_; }
+            IO_EVENT_TYPE GetIOEventType() { return io_event_type_; }
 
 		private:
 			std::shared_ptr<SOCKET>		io_socket_ptr_;
 			WSABUF						io_wsa_buf_;
 			char*						io_buffer_;
 			size_t						io_buffer_size_;
-        public:
-			IO_EVENT_TYPE				io_event_type;
+			IO_EVENT_TYPE				io_event_type_;
 		};
 	}
 }
