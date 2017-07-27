@@ -41,7 +41,8 @@ namespace GT {
             HANDLE	CreateNewIoCompletionPort_();
 			SOCKET_SHAREPTR	CreateOverlappedSocket_(int af, int type, int protocl);
             bool	InitializeListenSocket_();
-            void    PostAcceptEvent_();
+            void    PrePostAcceptEvent_();
+            void    PostAnotherAcceptEvent_();
             void    ProcessAcceptEvent_(IO_BUFFER_PTR io_context);
             void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_);
             void    PostWriteRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);

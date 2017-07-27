@@ -83,7 +83,7 @@ namespace GT {
                     break;
                 }
 
-                PostAcceptEvent_();
+                PrePostAcceptEvent_();
 
                 ret = true;
             } while (0);
@@ -209,30 +209,34 @@ namespace GT {
             }
         }
 
-        void GT_IOCPWrapper::PostAcceptEvent_() {
+        void GT_IOCPWrapper::PrePostAcceptEvent_() {
             /* post accept event for listen socket and post num determined by thread num */
             GT_LOG_DEBUG("Post Accept Event for listen socket!");
             for (int i = 0; i < std::thread::hardware_concurrency() * 2; i++) {
-                IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
-                temp_ptr->SetIOBufferEventType(IO_EVENT_ACCEPT);
-                temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
-                accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
-                if (temp_ptr->GetClientSocketPtr() != nullptr) {
+                PostAnotherAcceptEvent_();
+            }
+        }
+        
+        void GT_IOCPWrapper::PostAnotherAcceptEvent_() {
+            GT_LOG_DEBUG("Post Another Accept Event for listen socket!");
+            IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+            temp_ptr->SetIOBufferEventType(IO_EVENT_ACCEPT);
+            temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
+            accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
+            if (temp_ptr->GetClientSocketPtr() != nullptr) {
 
-                    bool ret = paccpetex_func_(*listen_socket_ptr_,
-                        *(temp_ptr->GetClientSocketPtr()),
-                        temp_ptr->GetBufferAddr(),
-                        temp_ptr->GetBufferSize() - ((sizeof(sockaddr_in) + 16) * 2),
-                        (sizeof(sockaddr_in) + 16),
-                        (sizeof(sockaddr_in) + 16),
-                        nullptr,
-                        (LPOVERLAPPED)temp_ptr.get());
+                bool ret = paccpetex_func_(*listen_socket_ptr_,
+                    *(temp_ptr->GetClientSocketPtr()),
+                    temp_ptr->GetBufferAddr(),
+                    temp_ptr->GetBufferSize() - ((sizeof(sockaddr_in) + 16) * 2),
+                    (sizeof(sockaddr_in) + 16),
+                    (sizeof(sockaddr_in) + 16),
+                    nullptr,
+                    (LPOVERLAPPED)temp_ptr.get());
 
-                    if (ret == false && ERROR_IO_PENDING != GetLastError()) {
-                        GT_LOG_ERROR("Post Accept Event Failed!");
-                    }
-                }else
-                    continue;
+                if (ret == false && ERROR_IO_PENDING != GetLastError()) {
+                    GT_LOG_ERROR("Post Accept Event Failed!");
+                }
             }
         }
 
@@ -244,20 +248,26 @@ namespace GT {
             bool ret = GetQueuedCompletionStatus(completion_port_, &Nnumofbytestransfered, (PULONG_PTR)completion_key.get(), (LPOVERLAPPED*)overlapped_ptr.get(), INFINITE);
 
             if (ret && Nnumofbytestransfered == 0 && overlapped_ptr->GetIOEventType() == IO_EVENT_ACCEPT) {
+                GT_LOG_DEBUG("Get Accept Event!");
                 ProcessAcceptEvent_(overlapped_ptr);
+                PostAnotherAcceptEvent_();
             }
             else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_READ) {
-
+                GT_LOG_DEBUG("Get read event!");
+                call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
             }
             else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_WRITE) {
-
+                GT_LOG_DEBUG("Get write event!");
+                call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
             }
             else if (Nnumofbytestransfered == 0) /* client exit */
             {
+                GT_LOG_DEBUG("client exit!");
                 GTSERVER_RESOURCE_MANAGER.ReleaseCompletionKey(completion_key);
+                PostReadRequestEvent_(completion_key);
             }
             else {
-
+                GT_LOG_DEBUG("Unkonwn Event!");
             }
 		}
     }
