@@ -9,6 +9,7 @@
 
 #include <WinSock2.h>
 #include <memory>
+#include <chrono>
 #include <set>
 
 /************************************************************************/
@@ -42,9 +43,10 @@ namespace GT {
             std::set<IO_BUFFER_PTR>   GetIOBufferCache() { return socket_io_buffer_cache_; }
 
 		private:
-			SOCKET_SHAREPTR			socket_shared_ptr_;
-			SOCKADDR_IN						socket_addr_;
-			std::set<IO_BUFFER_PTR>			socket_io_buffer_cache_;
+			SOCKET_SHAREPTR							socket_shared_ptr_;
+			SOCKADDR_IN								socket_addr_;
+			std::set<IO_BUFFER_PTR>					socket_io_buffer_cache_;
+			std::chrono::system_clock::time_point	time_control_;			/* send a heart package, if out of time, release the context */
 		};
 	}
 }

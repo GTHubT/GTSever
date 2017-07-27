@@ -178,6 +178,8 @@ namespace GT {
 
 
         bool GT_IOCPWrapper::StopService() {
+			GT_LOG_INFO("Now stopping service...");
+			thread_pool_.Stop();
             return true;
         }
 
@@ -187,6 +189,13 @@ namespace GT {
 
         void GT_IOCPWrapper::ProcessAcceptEvent_(IO_BUFFER_PTR io_context) {
             GT_LOG_DEBUG("Process Accept Event!");
+
+			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(io_context->GetClientSocketPtr());
+			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+			overlappe_ptr->SetIOBufferEventType(IO_EVENT_READ);
+			overlappe_ptr->SetIOBufferSocket(io_context->GetClientSocketPtr());
+			PostReadRequestEvent_(completion_key);
+
         }
 
         void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_) {
@@ -200,7 +209,7 @@ namespace GT {
             }
         }
 
-        void GT_IOCPWrapper::PostWriteRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
+        void GT_IOCPWrapper::PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
             GT_LOG_DEBUG("Post Write Event Request!");
             DWORD transfersize = 0;
             int ret = WSASend(*(completion_key_->GetContextSocketPtr()), &io_event_->GetWsaBuf(), io_event_->GetBufferSize(), &transfersize, 0, (LPOVERLAPPED)io_event_.get(), nullptr);
@@ -255,6 +264,7 @@ namespace GT {
             else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_READ) {
                 GT_LOG_DEBUG("Get read event!");
                 call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
+				PostReadRequestEvent_(completion_key);
             }
             else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_WRITE) {
                 GT_LOG_DEBUG("Get write event!");
@@ -269,6 +279,8 @@ namespace GT {
             else {
                 GT_LOG_DEBUG("Unkonwn Event!");
             }
+
+			GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(overlapped_ptr);
 		}
     }
 }

@@ -36,6 +36,7 @@ namespace GT {
             bool	BindSocketToCompletionPort(SOCKET_SHAREPTR s_ptr, ULONG_PTR completionkey);
 			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_);
 
+			void    PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
         private:
             GT_IOCPWrapper();
             HANDLE	CreateNewIoCompletionPort_();
@@ -45,7 +46,6 @@ namespace GT {
             void    PostAnotherAcceptEvent_();
             void    ProcessAcceptEvent_(IO_BUFFER_PTR io_context);
             void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_);
-            void    PostWriteRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
 			bool	GetAcceptEXFuncAddress_();
 			bool	GetAcceptExSockAddrsFuncAddress_();
 
