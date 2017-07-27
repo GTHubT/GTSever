@@ -11,7 +11,7 @@ namespace GT {
 			io_buffer_size_ = len;
 			io_wsa_buf_.buf = io_buffer_;
 			io_wsa_buf_.len = io_buffer_size_;
-			event_type_ = IO_EVENT_NULL;
+			io_event_type = IO_EVENT_NULL;
 			io_socket_ptr_ = nullptr;
 		}
 
@@ -29,11 +29,19 @@ namespace GT {
 		}
 
 		void GT_IOContextBuffer::SetIOBufferEventType(IO_EVENT_TYPE type) {
-			event_type_ = type;
+			io_event_type = type;
 		}
 
 		void GT_IOContextBuffer::ResetBuffer() {
 			memset(io_buffer_, 0, io_buffer_size_);
 		}
+
+        char* GT_IOContextBuffer::GetBufferAddr() {
+            return io_buffer_;
+        }
+
+        size_t GT_IOContextBuffer::GetBufferSize() {
+            return io_buffer_size_;
+        }
 	}
 }

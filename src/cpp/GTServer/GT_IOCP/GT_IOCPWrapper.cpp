@@ -21,16 +21,11 @@ namespace GT {
             is_write_callback_setted_(false),
             completionkey_ioevent_manager_enable_(false)
         {
-			paccpetex_ = nullptr;
+			paccpetex_func_ = nullptr;
             listen_socket_ptr_ = nullptr;
             completion_port_ = INVALID_HANDLE_VALUE;
-			pgetacceptex_sockaddrs_ = nullptr;
+			pgetacceptex_sockaddrs_func_ = nullptr;
 			accept_socket_completion_key_ = nullptr;
-
-			read_complete_func_ = nullptr;
-			read_request_func_	= nullptr;
-			write_compete_func_ = nullptr;
-			write_request_func_ = nullptr;
         }
 
         bool GT_IOCPWrapper::Initialize() {
@@ -107,13 +102,13 @@ namespace GT {
 				SIO_GET_EXTENSION_FUNCTION_POINTER,
 				&GuidAcceptEx,
 				sizeof(GuidAcceptEx),
-				&paccpetex_,
-				sizeof(paccpetex_),
+				&paccpetex_func_,
+				sizeof(paccpetex_func_),
 				&dwBytes,
 				NULL,
 				NULL);
 
-			return nullptr == paccpetex_ ? false : true;
+			return nullptr == paccpetex_func_ ? false : true;
 		}
 
 		bool GT_IOCPWrapper::GetAcceptExSockAddrsFuncAddress_() {
@@ -125,13 +120,13 @@ namespace GT {
 				SIO_GET_EXTENSION_FUNCTION_POINTER,
 				&GuidGetAcceptExSockAddrs,
 				sizeof(GuidGetAcceptExSockAddrs),
-				&pgetacceptex_sockaddrs_,
-				sizeof(pgetacceptex_sockaddrs_),
+				&pgetacceptex_sockaddrs_func_,
+				sizeof(pgetacceptex_sockaddrs_func_),
 				&dwBytes,
 				NULL,
 				NULL);
 
-			return pgetacceptex_sockaddrs_ == nullptr ? false : true;
+			return pgetacceptex_sockaddrs_func_ == nullptr ? false : true;
 		}
 
 		bool GT_IOCPWrapper::InitializeListenSocket_() {
@@ -169,10 +164,10 @@ namespace GT {
             return temp_port == completion_port_;
         }
 
-        void GT_IOCPWrapper::StartService() {
+        void GT_IOCPWrapper::StartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
 			GT_TRACE_FUNCTION;
             // create thread pool
-            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this);
+            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this, std::ref(call_back_func_));
             thread_pool_.Start(std::thread::hardware_concurrency() * 2, threadfunc);
         }
 
@@ -194,48 +189,35 @@ namespace GT {
 
         }
 
-        void GT_IOCPWrapper::PostReadRequestEvent_() {
+        void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
 
         }
 
-        void GT_IOCPWrapper::PostWriteRequestEvent_() {
+        void GT_IOCPWrapper::PostWriteRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
 
         }
 
         void GT_IOCPWrapper::PostAcceptEvent_() {
-
+            /* post accept event for listen socket and post num determined by thread num */
+            GT_LOG_INFO("Post Accept Event for listen socket!");
+            for (int i = 0; i < std::thread::hardware_concurrency() * 2; i++) {
+                IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+                temp_ptr->io_event_type = IO_EVENT_ACCEPT_COMPLETE;
+                accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
+                SOCKET_SHAREPTR sock = GTSERVER_RESOURCE_MANAGER.GetCachedSocket();
+                paccpetex_func_(*listen_socket_ptr_,
+                    *sock,
+                    temp_ptr->GetBufferAddr(),
+                    temp_ptr->GetBufferSize() - ((sizeof(sockaddr_in) + 16) * 2),
+                    (sizeof(sockaddr_in) + 16),
+                    (sizeof(sockaddr_in) + 16),
+                    nullptr,
+                    (LPOVERLAPPED)temp_ptr.get());
+            }
         }
 
-		void GT_IOCPWrapper::GetCompletionPortEventStatus() {
+		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
 
 		}
-
-		/* this function can be transfer to GT_Server_Manager, it may be better design */
-		void GT_IOCPWrapper::SetCallBackFunc(IO_EVENT_TYPE type, Server_Event_Callback_Func func) {
-			GT_LOG_INFO("Set service calllback!");
-			switch (type)
-			{
-			case IO_EVENT_READ_COMPLETE:
-				GT_LOG_INFO("set read complete callback func success!");
-				read_complete_func_ = func;
-				break;
-			case IO_EVENT_READ_REQUEST:
-				GT_LOG_INFO("set read request callback func success!");
-				read_request_func_ = func;
-				break;
-			case IO_EVENT_WRITE_COMPLETE:
-				GT_LOG_INFO("set write complete callback func success!");
-				write_compete_func_ = func;
-				break;
-			case IO_EVENT_WRITE_REQUEST:
-				GT_LOG_INFO("set write request callback func success!");
-				write_request_func_ = func;
-				break;
-			default:
-				GT_LOG_INFO("unknow io event type!");
-				break;
-			}
-		}
-
     }
 }

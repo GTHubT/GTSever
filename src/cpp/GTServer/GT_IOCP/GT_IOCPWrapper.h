@@ -14,6 +14,7 @@
 #include <Windows.h>
 #include <WinSock2.h>
 #include <MSWSock.h>
+#include <functional>
 
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -23,8 +24,6 @@ namespace GT {
 
     namespace NET {
 
-		typedef void(*Server_Event_Callback_Func) (char* data, int bufferlen);
-
         class GT_IOCPWrapper
         {
         public:
@@ -33,11 +32,9 @@ namespace GT {
 
             bool	Initialize();
             bool	StopService();
-            void    StartService();
+            void    StartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_);
             bool	BindSocketToCompletionPort(SOCKET_SHAREPTR s_ptr, ULONG_PTR completionkey);
-			void	GetCompletionPortEventStatus();
-            void    DispatchEvent2CallBack(IO_EVENT_TYPE event_type);
-			void	SetCallBackFunc(IO_EVENT_TYPE type, Server_Event_Callback_Func func);
+			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_);
 
         private:
             GT_IOCPWrapper();
@@ -46,8 +43,8 @@ namespace GT {
             void    ProcessAcceptEvent_();
 			bool	InitializeListenSocket_();
             void    PostAcceptEvent_();
-            void    PostReadRequestEvent_();
-            void    PostWriteRequestEvent_();
+            void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
+            void    PostWriteRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
 			bool	GetAcceptEXFuncAddress_();
 			bool	GetAcceptExSockAddrsFuncAddress_();
 
@@ -64,12 +61,8 @@ namespace GT {
 			int							index_allocated_used_;
             bool						is_read_callback_setted_;
             bool						is_write_callback_setted_;
-			LPFN_ACCEPTEX				paccpetex_;
-			LPFN_GETACCEPTEXSOCKADDRS	pgetacceptex_sockaddrs_;
-            Server_Event_Callback_Func  read_request_func_;
-			Server_Event_Callback_Func	read_complete_func_;
-			Server_Event_Callback_Func	write_compete_func_;
-            Server_Event_Callback_Func  write_request_func_;
+			LPFN_ACCEPTEX				paccpetex_func_;
+			LPFN_GETACCEPTEXSOCKADDRS	pgetacceptex_sockaddrs_func_;
 
         };
     }
