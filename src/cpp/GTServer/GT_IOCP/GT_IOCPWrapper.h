@@ -32,11 +32,11 @@ namespace GT {
 
             bool	Initialize();
             bool	StopService();
-            void    StartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_);
+            void    GTStartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)> call_back_func_);
             bool	BindSocketToCompletionPort(SOCKET_SHAREPTR s_ptr, ULONG_PTR completionkey);
-			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_);
+			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)> call_back_);
 
-			void    PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
+			void	SendDataUserInterface(PULONG_PTR, char*, size_t);
         private:
             GT_IOCPWrapper();
             HANDLE	CreateNewIoCompletionPort_();
@@ -45,13 +45,15 @@ namespace GT {
             void    PrePostAcceptEvent_();
             void    PostAnotherAcceptEvent_();
             void    ProcessAcceptEvent_(IO_BUFFER_PTR io_context);
-            void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_);
+			void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_);
+			void    PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
+			void    PostWriteRequestEvent(PULONG_PTR completion_key_pointer, IO_BUFFER_PTR io_event_);
 			bool	GetAcceptEXFuncAddress_();
 			bool	GetAcceptExSockAddrsFuncAddress_();
 
         private:
             bool                           is_inited_;
-            bool                           completionkey_ioevent_manager_enable_;
+            bool                           resource_manager_enable_;
             HANDLE                         completion_port_;
             SOCKET_SHAREPTR                listen_socket_ptr_;
 			SOCKETCONTEXT_SHAREPTR		   accept_socket_completion_key_;

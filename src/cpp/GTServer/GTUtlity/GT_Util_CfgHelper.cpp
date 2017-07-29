@@ -20,16 +20,15 @@ namespace GT {
         }
 
 		bool GT_Util_CfgHelper::LoadCfg(std::string cfgpath) {
-			GT_TRACE_FUNCTION;
 			cfg_content_ = GT_Util_FileHelper::ReadFileContent(cfgpath);
 			if (!cfg_content_.empty()) {
 				Json::Reader reader;
 				bool ret = reader.parse(cfg_content_, cfg_root_);
 				if (!ret)
-					GT_LOG_ERROR("CFG parser failed!");
+					printf("CFG parser failed!");
 				return ret;
 			}
-			GT_LOG_WARN("CFG file not found or the file is empty");
+			printf("CFG file not found or the file is empty");
 			return !cfg_content_.empty();
 		}
 

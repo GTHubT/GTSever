@@ -19,7 +19,7 @@ namespace GT {
             is_inited_(false),
             is_read_callback_setted_(false),
             is_write_callback_setted_(false),
-            completionkey_ioevent_manager_enable_(false)
+            resource_manager_enable_(false)
         {
 			paccpetex_func_ = nullptr;
             listen_socket_ptr_ = nullptr;
@@ -30,6 +30,9 @@ namespace GT {
 
         bool GT_IOCPWrapper::Initialize() {
 			GT_TRACE_FUNCTION;
+			if (is_inited_)
+				return true;
+
             bool ret = false;
             do {
                 WORD version;
@@ -47,7 +50,7 @@ namespace GT {
                     break;
                 }
 
-                completionkey_ioevent_manager_enable_ = GTSERVER_RESOURCE_MANAGER.Initialize();
+                resource_manager_enable_ = GTSERVER_RESOURCE_MANAGER.Initialize();
 
                 bool ret = InitializeListenSocket_();
                 if (!ret) {
@@ -164,7 +167,7 @@ namespace GT {
             return temp_port == completion_port_;
         }
 
-        void GT_IOCPWrapper::StartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
+        void GT_IOCPWrapper::GTStartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)> call_back_func_) {
 			GT_TRACE_FUNCTION;
             /* create thread pool */
             std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this, std::ref(call_back_func_));
@@ -218,6 +221,15 @@ namespace GT {
             }
         }
 
+		void GT_IOCPWrapper::PostWriteRequestEvent(PULONG_PTR completion_key_pointer, IO_BUFFER_PTR io_event_) {
+			GT_LOG_DEBUG("Post Write Event Request!");
+			DWORD transfersize = 0;
+			int ret = WSASend(*(((GT_SocketConetxt*)(completion_key_pointer))->GetContextSocketPtr().get()), &io_event_->GetWsaBuf(), io_event_->GetBufferSize(), &transfersize, 0, (LPOVERLAPPED)io_event_.get(), nullptr);
+			if (ret == SOCKET_ERROR && (WSA_IO_PENDING != GetLastError())) {
+				GT_LOG_ERROR("Send Socket write event failed!");
+			}
+		}
+
         void GT_IOCPWrapper::PrePostAcceptEvent_() {
             /* post accept event for listen socket and post num determined by thread num */
             GT_LOG_DEBUG("Post Accept Event for listen socket!");
@@ -249,7 +261,14 @@ namespace GT {
             }
         }
 
-		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
+		void GT_IOCPWrapper::SendDataUserInterface(PULONG_PTR completion_key_pointer, char* data, size_t len) {
+			IO_BUFFER_PTR io_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+			io_ptr->AllocateIOBufferBySize(len);
+			memcpy(io_ptr->GetWsaBuf().buf, data, len);
+			PostWriteRequestEvent(completion_key_pointer, io_ptr);
+		}
+
+		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)> call_back_func_) {
             GT_LOG_DEBUG("Get completion port status...");
             DWORD Nnumofbytestransfered = 0;
             SOCKETCONTEXT_SHAREPTR completion_key = nullptr;

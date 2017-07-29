@@ -23,7 +23,7 @@ namespace GT {
 			io_buffer_ = new char[io_buffer_size_];
             if (nullptr != io_buffer_)
                 memset(io_buffer_, 0, io_buffer_size_);
-			return io_buffer_ == nullptr ? false : true;
+			return io_buffer_ != nullptr;
 		}
 
 		void GT_IOContextBuffer::SetIOBufferSocket(std::shared_ptr<SOCKET> s_ptr) {
@@ -49,5 +49,13 @@ namespace GT {
         std::shared_ptr<SOCKET> GT_IOContextBuffer::GetClientSocketPtr() {
             return nullptr != io_socket_ptr_ ? io_socket_ptr_ : nullptr;
         }
+
+		bool GT_IOContextBuffer::AllocateIOBufferBySize(size_t len) {
+			io_buffer_size_ = len;
+			io_buffer_ = new char[io_buffer_size_];
+			if (nullptr != io_buffer_)
+				memset(io_buffer_, 0, io_buffer_size_);
+			return nullptr != io_buffer_;
+		}
 	}
 }

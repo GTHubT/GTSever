@@ -29,6 +29,7 @@ namespace GT {
 			void SetIOBufferSocket(std::shared_ptr<SOCKET> s);
 			void SetIOBufferEventType(IO_EVENT_TYPE type);
 			void ResetBuffer();
+			bool AllocateIOBufferBySize(size_t len);
 
             char* GetBufferAddr();
             size_t GetBufferSize();
