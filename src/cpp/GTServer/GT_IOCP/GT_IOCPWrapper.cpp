@@ -182,6 +182,7 @@ namespace GT {
 
         bool GT_IOCPWrapper::StopService() {
 			GT_LOG_INFO("Now stopping service...");
+			GTSERVER_RESOURCE_MANAGER.Finalize();
 			thread_pool_.Stop();
             return true;
         }

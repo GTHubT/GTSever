@@ -101,7 +101,7 @@ namespace GT {
 
 		void GT_ServerManager::GTStartService() {
 			GT_TRACE_FUNCTION;
-			GT_IOCP.GTStartService(std::bind(&GT_ServerManager::DispatchEvent, this));
+			//GT_IOCP.GTStartService(std::bind(&GT_ServerManager::DispatchEvent, this));
 		}
 
 		void GT_ServerManager::DispatchEvent(IO_EVENT_TYPE type, SOCKETCONTEXT_SHAREPTR completion_key, IO_BUFFER_PTR io_ptr) {
@@ -125,7 +125,9 @@ namespace GT {
 		}
 
 		void GT_ServerManager::StopService() {
-
+			GT_TRACE_FUNCTION;
+			GT_LOG_INFO("service stopping...");
+			GT_IOCP.StopService();
 		}
     }
 }
