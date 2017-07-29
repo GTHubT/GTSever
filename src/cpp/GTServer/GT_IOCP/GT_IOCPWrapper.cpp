@@ -264,10 +264,12 @@ namespace GT {
             else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_READ) {
                 GT_LOG_DEBUG("Get read event!");
                 call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
+				completion_key->ResetTimer();
 				PostReadRequestEvent_(completion_key);
             }
             else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_WRITE) {
                 GT_LOG_DEBUG("Get write event!");
+				completion_key->ResetTimer();
                 call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
             }
             else if (Nnumofbytestransfered == 0) /* client exit */

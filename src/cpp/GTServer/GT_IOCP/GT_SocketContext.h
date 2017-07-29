@@ -42,11 +42,18 @@ namespace GT {
             SOCKADDR_IN     GetSocketAddr() { return socket_addr_; }
             std::set<IO_BUFFER_PTR>   GetIOBufferCache() { return socket_io_buffer_cache_; }
 
+			void ResetTimer() { time_control_ = std::chrono::system_clock::now(); }
+			std::chrono::system_clock::time_point GetTimer() { return time_control_; }
+
 		private:
 			SOCKET_SHAREPTR							socket_shared_ptr_;
 			SOCKADDR_IN								socket_addr_;
 			std::set<IO_BUFFER_PTR>					socket_io_buffer_cache_;
-			std::chrono::system_clock::time_point	time_control_;			/* send a heart package, if out of time, release the context */
+			/***********************************************************************************************************/
+			/*another way to lean the close socket, I set timer for each completion key, every time the completion have*/
+			/*send or recv event happen, reset the timer, if the completion key have not got any event within config "out_date_control" */
+			/***********************************************************************************************************/
+			std::chrono::system_clock::time_point	time_control_;			
 		};
 	}
 }
