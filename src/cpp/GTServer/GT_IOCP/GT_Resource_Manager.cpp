@@ -103,7 +103,7 @@ namespace GT {
             GT_IO_BUFFER_CACHE_MANAGER.ReleaseIOBuffer(ptr);
 		}
 
-		void GT_Resource_Manager::ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR& sockcontext_ptr) {
+		void GT_Resource_Manager::ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sockcontext_ptr) {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Collect Socket Resource!");
 			GT_RESOURCE_LOCK;
@@ -113,7 +113,6 @@ namespace GT {
             std::set<IO_BUFFER_PTR> io_ptr_set = sockcontext_ptr->GetIOBufferCache();
             std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
-			RemoveCompletionKeyFromCache(sockcontext_ptr);
 		}
 
 		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr) {
@@ -126,19 +125,6 @@ namespace GT {
 			return temp;
 		}
 
-		void GT_Resource_Manager::RemoveCompletionKeyFromCache(SOCKETCONTEXT_SHAREPTR& com_ptr) {
-			GT_TRACE_FUNCTION;
-
-			std::set<SOCKETCONTEXT_SHAREPTR>::iterator del_iter = completion_key_ptr_cache_.find(com_ptr);
-			if (del_iter != completion_key_ptr_cache_.end()) {
-				GT_LOG_DEBUG("delete the out date completion key!");
-				completion_key_ptr_cache_.erase(del_iter);
-			}
-			else
-			{
-				GT_LOG_DEBUG("did not find the completion key that need remove from the cache...");
-			}
-		}
 
 		void GT_Resource_Manager::PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_context_ptr, IO_BUFFER_PTR io_ptr) {
 			GT_LOG_INFO("Associate IO Buffer with completion key");
@@ -171,9 +157,16 @@ namespace GT {
 
 		void GT_Resource_Manager::ConnectChecker() {
 			GT_TRACE_FUNCTION;
-			for (auto iter : completion_key_ptr_cache_) {
-				if (std::chrono::system_clock::now() - iter->GetTimer() > std::chrono::microseconds(out_date_time_control_)) /*connection have too many time uncomunication*/  {
-					ReleaseCompletionKey(iter);
+			std::set<SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_ptr_cache_.begin();
+			for (; iter!= completion_key_ptr_cache_.end();) {
+				if (std::chrono::system_clock::now() - (*iter)->GetTimer() > std::chrono::microseconds(out_date_time_control_)) /*connection have too many time uncomunication*/  {
+					ReleaseCompletionKey(*iter);
+					GT_RESOURCE_LOCK;
+					iter = completion_key_ptr_cache_.erase(iter);
+					GT_LOG_DEBUG("delete the out date completion key!");
+				}
+				else {
+					++ iter;
 				}
 			}
 		}

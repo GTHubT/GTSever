@@ -11,6 +11,8 @@
 #include <vector>
 #include <thread>
 #include <deque>
+#include <memory>
+#include <set>
 
 using namespace GT::UTIL;
 void thredfunc() {
@@ -42,9 +44,27 @@ void testreadfile() {
 	GT_LOG_ERROR("SERVER IP = " << serverip.c_str());
 }
 
+void test_stl_set() {
+	std::set<std::shared_ptr<int>> int_set;
+	int_set.insert(std::shared_ptr<int>(new int(1)));
+	int_set.insert(std::shared_ptr<int>(new int(2)));
+	int_set.insert(std::shared_ptr<int>(new int(3)));
+
+	std::set<std::shared_ptr<int>>::iterator iter = int_set.begin();
+	for (; iter != int_set.end();iter++) {
+		printf("test the set by iterator, iterator value = %d, pointer address = %p \n", *((*iter).get()), (*iter).get());
+		//iter = int_set.erase(iter);
+	}
+
+	for (auto iter : int_set) {
+		printf("test the set by auto, iterator value = %d, pointer address = %p \n", *iter, iter.get());
+	}
+
+}
+
 int main()
 {
-	
+	test_stl_set();
 	GT::UTIL::GT_Util_GlogWrapper gt = GT::UTIL::GT_Util_GlogWrapper::GetInstance();
 	gt.GT_LogInitialize("test.log", GT_LOG_LEVEL_WARNING, 1);
 	GT_TRACE_FUNCTION;
