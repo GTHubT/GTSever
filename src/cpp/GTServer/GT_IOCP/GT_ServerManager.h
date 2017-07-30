@@ -27,6 +27,7 @@ namespace GT {
 			void StopService();
 
 			void RegisterServerCallBack(IO_EVENT_TYPE type, CallBackFunc call_back);
+			void UnRegisterServerCallBack(IO_EVENT_TYPE);
 			void DispatchEvent(IO_EVENT_TYPE type, SOCKETCONTEXT_SHAREPTR completion_key, IO_BUFFER_PTR io_ptr);
 			void PostWriteEvent(const PULONG_PTR completion_key, char* data, size_t data_len);
 

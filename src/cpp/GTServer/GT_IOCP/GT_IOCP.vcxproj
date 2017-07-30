@@ -185,7 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GTServer.h" />
-    <ClInclude Include="GT_Cfg.h" />
     <ClInclude Include="GT_Definition.h" />
     <ClInclude Include="GT_IOContextBuffer.h" />
     <ClInclude Include="GT_IOContextBuffer_Manager.h" />

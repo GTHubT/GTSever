@@ -70,6 +70,7 @@ namespace GT {
 														std::ref(resource_cv_),
 														resource_collect_cycle_time_));
 
+				/* init out date connection checker */
 				out_date_time_control_ = GT_READ_CFG_INT("server_cfg", "out_date_control", 120) * 1000;
 				connect_check_interval_ = GT_READ_CFG_INT("server_cfg","connect_check_interval", 30000);
 				connect_check_thread_ = std::move(std::thread(&GT_Resource_Manager::ConnectCheckWorker, this,
@@ -185,6 +186,7 @@ namespace GT {
 
 		void GT_Resource_Manager::Finalize() {
 			GT_TRACE_FUNCTION;
+			GT_LOG_INFO("resource manager finalize...");
 			end_resource_collector_ = true;
 			resource_cv_.notify_one();
 			if (resource_collector_thread_.joinable()) {
@@ -196,7 +198,7 @@ namespace GT {
 			connect_check_cv_.notify_one();
 			if (connect_check_thread_.joinable()) {
 				connect_check_thread_.join();
-				GT_LOG_INFO("connect check worker exit!");
+				GT_LOG_INFO("Connection Checker worker exit!");
 			}
 			ClearResource_();
 		}

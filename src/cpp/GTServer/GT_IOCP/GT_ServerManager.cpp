@@ -16,7 +16,9 @@ namespace GT {
 											log_level_(GT_LOG_LEVEL_OFF),
 											log_name_("GTServer"),
 											cfg_path_(".//GTServer.cfg"),
-											max_logsize_(50)
+											max_logsize_(50),
+											read_event_call_back_(nullptr),
+											write_event_call_back_(nullptr)
         {
         }
 
@@ -87,11 +89,30 @@ namespace GT {
 			{
 			case IO_EVENT_READ:
 				read_event_call_back_ = func_;
-				GT_LOG_DEBUG("set read event call back success!");
+				GT_LOG_DEBUG("register read event call back success!");
 				break;
 			case IO_EVENT_WRITE:
 				write_event_call_back_ = func_;
-				GT_LOG_DEBUG("set write event call back success!");
+				GT_LOG_DEBUG("register write event call back success!");
+				break;
+			default:
+				GT_LOG_DEBUG("unknown io type!");
+				break;
+			}
+		}
+
+		void GT_ServerManager::UnRegisterServerCallBack(IO_EVENT_TYPE type) {
+			GT_TRACE_FUNCTION;
+			GT_LOG_INFO("Unregister call back function...");
+			switch (type)
+			{
+			case IO_EVENT_READ:
+				read_event_call_back_ = nullptr;
+				GT_LOG_DEBUG("unregister read event call back success!");
+				break;
+			case IO_EVENT_WRITE:
+				write_event_call_back_ = nullptr;
+				GT_LOG_DEBUG("unregister write event call back success!");
 				break;
 			default:
 				GT_LOG_DEBUG("unknown io type!");
@@ -101,17 +122,17 @@ namespace GT {
 
 		void GT_ServerManager::GTStartService() {
 			GT_TRACE_FUNCTION;
-			//GT_IOCP.GTStartService(std::bind(&GT_ServerManager::DispatchEvent, this));
+			GT_IOCP.GTStartService(std::bind(&GT_ServerManager::DispatchEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		}
 
 		void GT_ServerManager::DispatchEvent(IO_EVENT_TYPE type, SOCKETCONTEXT_SHAREPTR completion_key, IO_BUFFER_PTR io_ptr) {
 			switch (type)
 			{
 			case IO_EVENT_READ:
-				read_event_call_back_((PULONG_PTR)completion_key.get(), io_ptr->GetWsaBuf().buf, io_ptr->GetWsaBuf().len);
+				read_event_call_back_ != nullptr ? read_event_call_back_((PULONG_PTR)completion_key.get(), io_ptr->GetWsaBuf().buf, io_ptr->GetWsaBuf().len) : NULL;
 				break;
 			case IO_EVENT_WRITE:
-				write_event_call_back_((PULONG_PTR)completion_key.get(), io_ptr->GetWsaBuf().buf, io_ptr->GetWsaBuf().len);
+				write_event_call_back_ != nullptr ? write_event_call_back_((PULONG_PTR)completion_key.get(), io_ptr->GetWsaBuf().buf, io_ptr->GetWsaBuf().len) : NULL;
 				break;
 			default:
 				GT_LOG_DEBUG("unknown message!");

@@ -269,7 +269,7 @@ namespace GT {
 			PostWriteRequestEvent(completion_key_pointer, io_ptr);
 		}
 
-		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)> call_back_func_) {
+		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
             GT_LOG_DEBUG("Get completion port status...");
             DWORD Nnumofbytestransfered = 0;
             SOCKETCONTEXT_SHAREPTR completion_key = nullptr;

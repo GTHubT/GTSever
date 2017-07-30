@@ -12,25 +12,23 @@
 
 
 #include "GT_Definition.h"
+#include "GT_ServerManager.h"
+#include "GTUtlity/GT_Util_GlogWrapper.h"
 
 #include <string>
 
-// This class is exported from the GTServer.dll
-//class GTSERVER_API CGTServer {
-//public:
-//	CGTServer(void);
-//	// TODO: add your methods here.
-//};
-//
-//extern GTSERVER_API int nGTServer;
-//
-//GTSERVER_API int fnGTServer(void);
 
 GTSERVER_API GT_ERROR_CODE GTServer_Initialize(std::string cfg_path);
 
+GTSERVER_API GT_ERROR_CODE GTServer_StartService();
+
 GTSERVER_API GT_ERROR_CODE GTServer_Uninitialize();
 
-GTSERVER_API GT_ERROR_CODE GTServer_RefisterEventCallBack();
+GTSERVER_API GT_ERROR_CODE GTServer_RefisterEventCallBack(IO_EVENT_TYPE, GT::NET::CallBackFunc call_back);
+
+GTSERVER_API GT_ERROR_CODE GTServer_UnRegisterEventCallBack(IO_EVENT_TYPE);
+
+GTSERVER_API void GTServer_WriteMessage(PULONG_PTR, char*, size_t);
 
 
 
