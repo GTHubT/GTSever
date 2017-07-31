@@ -17,8 +17,10 @@ namespace GT {
             bool IsCmdExists(std::string cmd);
             std::string GetCmdValue(std::string cmd);
 
+		private:
+			std::string CmdPreProcess_(std::string cmd);
         private:
-            std::vector<std::string> cmd_set_;
+            std::vector<std::string> cmd_vector_;
 
         };
     }

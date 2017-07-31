@@ -39,7 +39,9 @@
     <ClInclude Include="GT_Util_FileHelper.h">
       <Filter>file_helper</Filter>
     </ClInclude>
-    <ClInclude Include="GT_Util_CmdParser.h" />
+    <ClInclude Include="GT_Util_CmdParser.h">
+      <Filter>cmd_parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GT_Util_GlogWrapper.cpp">
@@ -57,6 +59,8 @@
     <ClCompile Include="GT_Util_FileHelper.cpp">
       <Filter>file_helper</Filter>
     </ClCompile>
-    <ClCompile Include="GT_Util_CmdParser.cpp" />
+    <ClCompile Include="GT_Util_CmdParser.cpp">
+      <Filter>cmd_parser</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

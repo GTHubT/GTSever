@@ -9,10 +9,6 @@ int main(int argc, const char* argv[])
 {
     GT::UTIL::GT_Util_CmdParser cmdparser;
     cmdparser.ParserCmd(argc, argv);
-    if (cmdparser.IsCmdExists("-type")) {
-        std::string cmd = cmdparser.GetCmdValue("-type");
-        printf("cmd = %s", cmd.c_str());
-    }
     return 0;
 }
 
