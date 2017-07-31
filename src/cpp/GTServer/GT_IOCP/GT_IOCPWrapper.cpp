@@ -191,13 +191,28 @@ namespace GT {
 			return SOCKET_SHAREPTR(new (SOCKET)(WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED)));
 		}
 
-        void GT_IOCPWrapper::ProcessAcceptEvent_(IO_BUFFER_PTR io_context) {
+        void GT_IOCPWrapper::ProcessAcceptEvent_(IO_BUFFER_PTR io_context) { /* use AcceptEX, when new connection comes, the first meassage may come together */
             GT_LOG_DEBUG("Process Accept Event!");
-
+            
+            int nLocalLen = 0, nRmoteLen = 0;
+            LPSOCKADDR pLocalAddr, pRemoteAddr;
+            pgetacceptex_sockaddrs_func_((PVOID)io_context->GetWsaBuf().buf,
+                io_context->GetWsaBuf().len - ((sizeof(sockaddr_in) + 16) * 2),
+                (sizeof(sockaddr_in) + 16),
+                (sizeof(sockaddr_in) + 16),
+                (SOCKADDR**)&pLocalAddr,
+                &nLocalLen,
+                (SOCKADDR**)&pRemoteAddr,
+                &nRmoteLen);
+            /* convert sockaddr to sockaddr_in struct */
+            struct sockaddr_in *local_ipv4 = (struct sockaddr_in *)pLocalAddr;
+            struct sockaddr_in *remote_ipv4 = (struct sockaddr_in *)pRemoteAddr;
+            GT_LOG_DEBUG("get new connection and local sockaddr = " << inet_ntoa(local_ipv4->sin_addr) << ", remote sockaddr = " << inet_ntoa(remote_ipv4->sin_addr));
 			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(io_context->GetClientSocketPtr());
 			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
 			overlappe_ptr->SetIOBufferEventType(IO_EVENT_READ);
 			overlappe_ptr->SetIOBufferSocket(io_context->GetClientSocketPtr());
+            completion_key->SetContextSocketAddr(*remote_ipv4);
 			PostReadRequestEvent_(completion_key);
 
         }
@@ -282,19 +297,19 @@ namespace GT {
                 PostAnotherAcceptEvent_();
             }
             else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_READ) {
-                GT_LOG_DEBUG("Get read event!");
+                GT_LOG_DEBUG("Get read event from : " << inet_ntoa(completion_key->GetSocketAddr().sin_addr));
                 call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
 				completion_key->ResetTimer();
 				PostReadRequestEvent_(completion_key);
             }
             else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_WRITE) {
-                GT_LOG_DEBUG("Get write event!");
+                GT_LOG_DEBUG("Get write event from : " << inet_ntoa(completion_key->GetSocketAddr().sin_addr));
 				completion_key->ResetTimer();
                 call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
             }
             else if (Nnumofbytestransfered == 0) /* client exit */
             {
-                GT_LOG_DEBUG("client exit!");
+                GT_LOG_DEBUG("client exit : " << inet_ntoa(completion_key->GetSocketAddr().sin_addr));
                 GTSERVER_RESOURCE_MANAGER.ReleaseCompletionKey(completion_key);
                 PostReadRequestEvent_(completion_key);
             }
