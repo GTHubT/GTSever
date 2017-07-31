@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GT_Util_CfgHelper.h" />
+    <ClInclude Include="GT_Util_CmdParser.h" />
     <ClInclude Include="GT_Util_FileHelper.h" />
     <ClInclude Include="GT_Util_ThreadPool.h" />
     <ClInclude Include="GT_Util_GlogWrapper.h" />
@@ -187,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GT_Util_CfgHelper.cpp" />
+    <ClCompile Include="GT_Util_CmdParser.cpp" />
     <ClCompile Include="GT_Util_FileHelper.cpp" />
     <ClCompile Include="GT_Util_ThreadPool.cpp" />
     <ClCompile Include="GT_Util_GlogWrapper.cpp" />

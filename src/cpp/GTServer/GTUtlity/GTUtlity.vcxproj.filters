@@ -19,6 +19,9 @@
     <Filter Include="sys_helper">
       <UniqueIdentifier>{35793421-1ba4-40cd-a95f-be8328f788f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cmd_parser">
+      <UniqueIdentifier>{4e51f5b1-523f-4cbf-91f7-f2041423b0cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GT_Util_GlogWrapper.h">
@@ -36,6 +39,7 @@
     <ClInclude Include="GT_Util_FileHelper.h">
       <Filter>file_helper</Filter>
     </ClInclude>
+    <ClInclude Include="GT_Util_CmdParser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GT_Util_GlogWrapper.cpp">
@@ -53,5 +57,6 @@
     <ClCompile Include="GT_Util_FileHelper.cpp">
       <Filter>file_helper</Filter>
     </ClCompile>
+    <ClCompile Include="GT_Util_CmdParser.cpp" />
   </ItemGroup>
 </Project>
