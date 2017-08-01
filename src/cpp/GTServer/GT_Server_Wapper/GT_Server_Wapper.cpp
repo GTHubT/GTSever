@@ -4,6 +4,11 @@
 #include "stdafx.h"
 #include "GTUtlity/GT_Util_CmdParser.h"
 
+#include <iostream>
+
+void CmdHelper() {
+    std::wcout << L"-type [IOCP|Select] default is IOCP" << std::endl;
+}
 
 int main(int argc, const char* argv[])
 {
