@@ -34,6 +34,7 @@ namespace GT {
 
 		void GT_ServerManager::InitLogAndCfgSrvice(std::string cfg_path) {
 			/* load config */
+			cfg_path_ = cfg_path;
 			bool ret = GT::UTIL::GT_Util_CfgHelper::LoadCfg(cfg_path_);
 			if (!server_manager_initted_) {
 				printf("load config fail!");

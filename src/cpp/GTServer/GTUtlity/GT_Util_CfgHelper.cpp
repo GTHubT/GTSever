@@ -28,7 +28,7 @@ namespace GT {
 					printf("CFG parser failed!");
 				return ret;
 			}
-			printf("CFG file not found or the file is empty");
+			printf("CFG file not found or the file is empty!\n");
 			return !cfg_content_.empty();
 		}
 

@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "GTUtlity/GT_Util_CmdParser.h"
+#include "GTUtlity/GT_Util_OSInfo.h"
 #include "GT_Module_Wrapper.h"
 
 #include <iostream>
@@ -38,7 +39,8 @@ int main(int argc, const char* argv[])
 		return 0;
 	}
 
-	GTSERVER.InitLogService();
+	std::string config_path = GT::UTIL::GT_Util_OSInfo::GetCurrentFolder() + "GTServer.cfg";
+	GTSERVER.InitLogService(config_path);
 
 	bool ret = GTSERVER.Initialize();
 	if (!ret) {
