@@ -38,8 +38,18 @@ int main(int argc, const char* argv[])
 		return 0;
 	}
 
-	GTSERVER.Initialize();
-	GTSERVER.StartGTService();
+	GTSERVER.InitLogService();
+
+	bool ret = GTSERVER.Initialize();
+	if (!ret) {
+		printf("GT Service Init Failed! ");
+		return 0;
+	}
+	ret = GTSERVER.StartGTService();
+	if (!ret) {
+		printf("GT Service Start Failed! ");
+		return 0;
+	}
 
 	while (1) {
 

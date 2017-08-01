@@ -17,8 +17,9 @@
 
 #include <string>
 
+GTSERVER_API GT_ERROR_CODE GTIOCP_InitLogService(std::string cfg_path);
 
-GTSERVER_API GT_ERROR_CODE GTIOCP_Initialize(std::string cfg_path);
+GTSERVER_API GT_ERROR_CODE GTIOCP_Initialize();
 
 GTSERVER_API GT_ERROR_CODE GTIOCP_StartService();
 

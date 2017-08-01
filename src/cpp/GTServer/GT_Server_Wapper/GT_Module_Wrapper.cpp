@@ -21,7 +21,14 @@ namespace GT {
         {
         }
 
-		bool GT_Module_Wrapper::Initialize(std::string cfg_pth) {
+		void GT_Module_Wrapper::InitLogService(std::string cfg_pth /* = DEFAULT_CFG_PATH */) {
+			if (cfg_pth.empty()) {
+				GT_LOG_INFO("config path empty, use default config path.");
+			}
+			GTIOCP_InitLogService(cfg_pth);
+		}
+
+		bool GT_Module_Wrapper::Initialize() {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("initialize GT service...");
 			if (is_module_initted_) {
@@ -29,13 +36,10 @@ namespace GT {
 				return is_module_initted_;
 			}
 
-			if (cfg_pth.empty()) {
-				GT_LOG_INFO("config path empty, use default config path.");
-			}
 
 			if (module_type_ == GT_IOCP) {
 
-				GT_ERROR_CODE errcode = GTIOCP_Initialize(cfg_pth);
+				GT_ERROR_CODE errcode = GTIOCP_Initialize();
 				if (errcode == GT_ERROR_SUCCESS) {
 					is_module_initted_ = false;
 					GT_LOG_ERROR("GT service initialize failed!");

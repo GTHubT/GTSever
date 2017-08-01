@@ -10,12 +10,18 @@
 #endif // !GTIOCP
 
 
-
-GTSERVER_API GT_ERROR_CODE GTIOCP_Initialize(std::string cfg_path) {
+GTSERVER_API GT_ERROR_CODE GTIOCP_InitLogService(std::string cfg_path) {
 	GT_TRACE_FUNCTION;
-	GT_LOG_INFO("Initiaize GT Server, config file path = " << cfg_path.c_str());
+	GT_LOG_INFO("Initiaize GT Server log service, config file path = " << cfg_path.c_str());
+	GTSERVER_MANAGER.InitLogAndCfgSrvice(cfg_path);
+	return GT_ERROR_SUCCESS;
+}
+
+
+GTSERVER_API GT_ERROR_CODE GTIOCP_Initialize() {
+	GT_TRACE_FUNCTION;
 	GT_ERROR_CODE retcode = GT_ERROR_FAILED;
-	bool ret = GTSERVER_MANAGER.Initialize(cfg_path);
+	bool ret = GTSERVER_MANAGER.Initialize();
 	ret ? retcode = GT_ERROR_SUCCESS : ret = GT_ERROR_SUCCESS;
     return retcode;
 }

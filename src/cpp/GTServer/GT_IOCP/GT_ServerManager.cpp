@@ -32,34 +32,29 @@ namespace GT {
 			return manager_instance;
 		}
 
-		bool GT_ServerManager::Initialize(std::string cfg_path_) {
+		void GT_ServerManager::InitLogAndCfgSrvice(std::string cfg_path) {
+			/* load config */
+			bool ret = GT::UTIL::GT_Util_CfgHelper::LoadCfg(cfg_path_);
+			if (!server_manager_initted_) {
+				printf("load config fail!");
+			}
+
+			/* init log */
+			log_name_ = GT_READ_CFG_STRING("log_control", "log_name", "GT");
+			std::string log_level_str = GT_READ_CFG_STRING("log_control", "log_level", "off");
+			log_level_ = LoglevelConvert(log_level_str);
+			max_logsize_ = GT_READ_CFG_INT("log_control", "max_log_size", 50);
+			GT::UTIL::GT_Util_GlogWrapper::GetInstance().GT_LogInitialize(log_name_, log_level_, max_logsize_);
+		}
+
+		bool GT_ServerManager::Initialize() {
 			if (server_manager_initted_)
 				return server_manager_initted_;
 
-			do {
-
-				/* load config */
-				server_manager_initted_ = GT::UTIL::GT_Util_CfgHelper::LoadCfg(cfg_path_);
-				if (!server_manager_initted_) {
-					printf("load config fail!");
-					break;
-				}
-
-				/* init log */
-				log_name_ = GT_READ_CFG_STRING("log_control", "log_name", "GT");
-				std::string log_level_str = GT_READ_CFG_STRING("log_control", "log_level","off");
-				log_level_ = LoglevelConvert(log_level_str);
-				max_logsize_ = GT_READ_CFG_INT("log_control", "max_log_size", 50);
-				GT::UTIL::GT_Util_GlogWrapper::GetInstance().GT_LogInitialize(log_name_, log_level_, max_logsize_);
-
-
-				server_manager_initted_ = GT_IOCP.Initialize();
-				if (!server_manager_initted_) {
-					GT_LOG_ERROR("IOCP init failed!");
-					break;
-				}
-
-			} while (0);
+			server_manager_initted_ = GT_IOCP.Initialize();
+			if (!server_manager_initted_) {
+				GT_LOG_ERROR("IOCP init failed!");
+			}
 			return server_manager_initted_;
 		}
 

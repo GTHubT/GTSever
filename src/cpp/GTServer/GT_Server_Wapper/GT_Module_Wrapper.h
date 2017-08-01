@@ -22,7 +22,8 @@ namespace GT {
 			static GT_Module_Wrapper& GetInstance();
 
 			void SetModuleType(MODULE_TYPE);
-			bool Initialize(std::string cfg_pth = DEFAULT_CFG_PATH);
+			void InitLogService(std::string cfg_pth = DEFAULT_CFG_PATH);
+			bool Initialize();
 			bool StartGTService();
 			void StopGTService();
 
