@@ -26,9 +26,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GTServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GT_IOCPWrapper.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
@@ -53,6 +50,9 @@
     <ClInclude Include="GT_SocketPool_Manager.h">
       <Filter>Source Files\NetIO</Filter>
     </ClInclude>
+    <ClInclude Include="GTIOCP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GT_IOCPWrapper.cpp">
@@ -60,9 +60,6 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GTServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GT_ServerManager.cpp">
@@ -82,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="GT_SoketPool_Manager.cpp">
       <Filter>Source Files\NetIO</Filter>
+    </ClCompile>
+    <ClCompile Include="GTIOCP.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -9,8 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Module_Wrapper">
-      <UniqueIdentifier>{321eb250-df09-4da0-af45-4a9d766063bd}</UniqueIdentifier>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -23,18 +24,12 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GT_Module_Wrapper.h">
-      <Filter>Module_Wrapper</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GT_Module_Wrapper.cpp">
-      <Filter>Module_Wrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="GT_Server_Wapper.cpp">
+    <ClCompile Include="GT_Server_ACCompany.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

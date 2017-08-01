@@ -18,17 +18,17 @@
 #include <string>
 
 
-GTSERVER_API GT_ERROR_CODE GTServer_Initialize(std::string cfg_path);
+GTSERVER_API GT_ERROR_CODE GTIOCP_Initialize(std::string cfg_path);
 
-GTSERVER_API GT_ERROR_CODE GTServer_StartService();
+GTSERVER_API GT_ERROR_CODE GTIOCP_StartService();
 
-GTSERVER_API GT_ERROR_CODE GTServer_Uninitialize();
+GTSERVER_API GT_ERROR_CODE GTIOCP_Uninitialize();
 
-GTSERVER_API GT_ERROR_CODE GTServer_RefisterEventCallBack(IO_EVENT_TYPE, GT::NET::CallBackFunc call_back);
+GTSERVER_API GT_ERROR_CODE GTIOCP_RefisterEventCallBack(IO_EVENT_TYPE, GT::NET::CallBackFunc call_back);
 
-GTSERVER_API GT_ERROR_CODE GTServer_UnRegisterEventCallBack(IO_EVENT_TYPE);
+GTSERVER_API GT_ERROR_CODE GTIOCP_UnRegisterEventCallBack(IO_EVENT_TYPE);
 
-GTSERVER_API void GTServer_WriteMessage(PULONG_PTR, char*, size_t);
+GTSERVER_API void GTIOCP_WriteMessage(PULONG_PTR, char*, size_t);
 
 
 

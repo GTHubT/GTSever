@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "GTServer.h"
+#include "GTIOCP.h"
 
 
 #ifndef GTSERVER_MANAGER
@@ -11,7 +11,7 @@
 
 
 
-GTSERVER_API GT_ERROR_CODE GTServer_Initialize(std::string cfg_path) {
+GTSERVER_API GT_ERROR_CODE GTIOCP_Initialize(std::string cfg_path) {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("Initiaize GT Server, config file path = " << cfg_path.c_str());
 	GT_ERROR_CODE retcode = GT_ERROR_FAILED;
@@ -21,7 +21,7 @@ GTSERVER_API GT_ERROR_CODE GTServer_Initialize(std::string cfg_path) {
 }
 
 
-GTSERVER_API GT_ERROR_CODE GTServer_StartService() {
+GTSERVER_API GT_ERROR_CODE GTIOCP_StartService() {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("Now start GT Server service...");
 	GT_ERROR_CODE retcode = GT_ERROR_FAILED;
@@ -30,7 +30,7 @@ GTSERVER_API GT_ERROR_CODE GTServer_StartService() {
 }
 
 
-GTSERVER_API GT_ERROR_CODE GTServer_RefisterEventCallBack(IO_EVENT_TYPE type, GT::NET::CallBackFunc call_back) {
+GTSERVER_API GT_ERROR_CODE GTIOCP_RefisterEventCallBack(IO_EVENT_TYPE type, GT::NET::CallBackFunc call_back) {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("Register IO Event worker, Event type = " << type);
 
@@ -53,14 +53,14 @@ GTSERVER_API GT_ERROR_CODE GTServer_RefisterEventCallBack(IO_EVENT_TYPE type, GT
 }
 
 
-GTSERVER_API void GTServer_WriteMessage(PULONG_PTR completion_key, char* data, size_t len) {
+GTSERVER_API void GTIOCP_WriteMessage(PULONG_PTR completion_key, char* data, size_t len) {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("Write Message, Message len = " << len << ", Message data = " << data);
 	GTSERVER_MANAGER.PostWriteEvent(completion_key, data, len);
 }
 
 
-GTSERVER_API GT_ERROR_CODE GTServer_UnRegisterEventCallBack(IO_EVENT_TYPE type) {
+GTSERVER_API GT_ERROR_CODE GTIOCP_UnRegisterEventCallBack(IO_EVENT_TYPE type) {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("unregister io event call back, io event type = " << type);
 
@@ -83,7 +83,7 @@ GTSERVER_API GT_ERROR_CODE GTServer_UnRegisterEventCallBack(IO_EVENT_TYPE type) 
 }
 
 
-GTSERVER_API GT_ERROR_CODE GTServer_Uninitialize() {
+GTSERVER_API GT_ERROR_CODE GTIOCP_Uninitialize() {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("GT Server stopping...");
 	GTSERVER_MANAGER.StopService();

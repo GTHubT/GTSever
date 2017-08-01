@@ -184,7 +184,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GTServer.h" />
+    <ClInclude Include="GTIOCP.h" />
     <ClInclude Include="GT_Definition.h" />
     <ClInclude Include="GT_IOContextBuffer.h" />
     <ClInclude Include="GT_IOContextBuffer_Manager.h" />
@@ -211,7 +211,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="GTServer.cpp" />
+    <ClCompile Include="GTIOCP.cpp" />
     <ClCompile Include="GT_IOContextBuffer.cpp" />
     <ClCompile Include="GT_IOContextBuffer_Manager.cpp" />
     <ClCompile Include="GT_ServerManager.cpp" />
