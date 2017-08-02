@@ -315,6 +315,8 @@ namespace GT {
 			PostWriteRequestEvent(completion_key_pointer, io_ptr);
 		}
 
+
+		//FIXME: when exit, should send message to exit GetQueuedCompletionStatus, so that the process can exit elegant
 		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
             GT_LOG_DEBUG("Get completion port status...");
             DWORD Nnumofbytestransfered = 0;
