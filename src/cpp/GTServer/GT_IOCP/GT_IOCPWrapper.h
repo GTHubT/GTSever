@@ -53,7 +53,6 @@ namespace GT {
 
         private:
             bool                           is_inited_;
-            bool                           resource_manager_enable_;
             HANDLE                         completion_port_;
             SOCKET_SHAREPTR                listen_socket_ptr_;
 			SOCKETCONTEXT_SHAREPTR		   accept_socket_completion_key_;
@@ -61,6 +60,8 @@ namespace GT {
             GT::UTIL::GT_Util_ThreadPool   thread_pool_;
 
         private:
+            bool                        is_resource_worker_started_;
+            bool                        is_iocp_thread_pool_started_;
 			int							index_allocated_used_;
             bool						is_read_callback_setted_;
             bool						is_write_callback_setted_;

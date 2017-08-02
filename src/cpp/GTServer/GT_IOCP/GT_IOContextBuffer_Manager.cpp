@@ -55,7 +55,7 @@ namespace GT {
 
 
 		bool GT_IOContextBuffer_Manager::PreAllocateSomeIOBuffer_() {
-			GT_LOG_INFO("pre allocate some io buffer size = "<< pre_allocate_size_ <<", each buffer size = " << io_buffer_size_);
+			GT_LOG_INFO("pre allocate some io buffer size = "<< pre_allocate_size_ <<", each buffer size = " << io_buffer_size_ << " (Bytes)");
 
 			for (size_t buffer_size = 0; buffer_size < pre_allocate_size_; buffer_size++) {
 				IO_BUFFER_PTR temp_ptr = IO_BUFFER_PTR(new GT_IOContextBuffer(io_buffer_size_));
@@ -64,7 +64,7 @@ namespace GT {
 				else
 					continue;
 			}
-			return io_buffer_cache_.empty();
+			return !io_buffer_cache_.empty();
 		}
 
 		bool GT_IOContextBuffer_Manager::ReAllocateSomeIOBuffer_() {

@@ -36,7 +36,7 @@ GTSERVER_API GT_ERROR_CODE GTIOCP_StartService() {
 }
 
 
-GTSERVER_API GT_ERROR_CODE GTIOCP_RefisterEventCallBack(IO_EVENT_TYPE type, GT::NET::CallBackFunc call_back) {
+GTSERVER_API GT_ERROR_CODE GTIOCP_RegisterEventCallBack(IO_EVENT_TYPE type, GT::NET::CallBackFunc call_back) {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("Register IO Event worker, Event type = " << type);
 

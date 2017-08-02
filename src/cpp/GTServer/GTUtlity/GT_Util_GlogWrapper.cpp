@@ -98,6 +98,8 @@ namespace GT {
 			case GT_LOG_LEVEL_ERROR:
 				googleloglevel_ = google::GLOG_ERROR;
 				break;
+            case GT_LOG_LEVEL_ALL:
+                break;
 			default:
 				printf("unknown LOGLEVEL just ignore it!\n");
 				break;

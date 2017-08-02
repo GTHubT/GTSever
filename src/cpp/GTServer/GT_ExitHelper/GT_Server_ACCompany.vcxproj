@@ -74,13 +74,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)temp\$(ProjectName)</IntDir>
-    <TargetName>GTFriend</TargetName>
+    <TargetName>GTExitHelper</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)temp\$(ProjectName)</IntDir>
-    <TargetName>GTFriend</TargetName>
+    <TargetName>GTExitHelper</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

@@ -39,16 +39,19 @@ namespace GT {
 
 			if (module_type_ == GT_IOCP) {
 
+				/* register callback function */
+				GTIOCP_RegisterEventCallBack(IO_EVENT_READ, ReadCallback);
+				GTIOCP_RegisterEventCallBack(IO_EVENT_WRITE, WriteCallback);
+
 				GT_ERROR_CODE errcode = GTIOCP_Initialize();
-				if (errcode == GT_ERROR_SUCCESS) {
+				if (errcode == GT_ERROR_FAILED) {
 					is_module_initted_ = false;
 					GT_LOG_ERROR("GT service initialize failed!");
 					return is_module_initted_;
-				}
-
-				/* register callback function */
-				GTIOCP_RefisterEventCallBack(IO_EVENT_READ, ReadCallback);
-				GTIOCP_RefisterEventCallBack(IO_EVENT_WRITE, WriteCallback);
+                }
+                else {
+                    is_module_initted_ = true;
+                }
 			}
 			else {
 				//TODO:
@@ -84,7 +87,7 @@ namespace GT {
 			return is_module_initted_;
 		}
 
-		void GT_Module_Wrapper::StopGTService() {
+		void GT_Module_Wrapper::ExitGTService() {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Now Stopping GT Service...");
 

@@ -35,10 +35,7 @@ namespace GT {
 		void GT_ServerManager::InitLogAndCfgSrvice(std::string cfg_path) {
 			/* load config */
 			cfg_path_ = cfg_path;
-			bool ret = GT::UTIL::GT_Util_CfgHelper::LoadCfg(cfg_path_);
-			if (!server_manager_initted_) {
-				printf("load config fail!");
-			}
+			GT::UTIL::GT_Util_CfgHelper::LoadCfg(cfg_path_);
 
 			/* init log */
 			log_name_ = GT_READ_CFG_STRING("log_control", "log_name", "GT");
@@ -60,21 +57,21 @@ namespace GT {
 		}
 
 		GT_LOG_LEVEL GT_ServerManager::LoglevelConvert(std::string loglevel) {
-			if (!loglevel.compare("all")) {
+			if (loglevel == "all") {
 				return GT_LOG_LEVEL_ALL;
 			}
-			else if (!loglevel.compare("off")) {
+			else if (loglevel == "off") {
 				return GT_LOG_LEVEL_OFF;
 			}
-			else if(!loglevel.compare("warn"))
+			else if(loglevel == "warn")
 			{
 				return GT_LOG_LEVEL_WARNING;
 			}
-			else if (!loglevel.compare("error")) {
+			else if (loglevel == "error") {
 				return GT_LOG_LEVEL_ERROR;
 			}
 			else {
-				printf("unknown log level!");
+				printf("unknown log level! \n");
 				return GT_LOG_LEVEL_OFF;
 			}
 		}

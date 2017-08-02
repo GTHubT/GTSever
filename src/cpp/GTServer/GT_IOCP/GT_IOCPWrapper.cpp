@@ -19,7 +19,8 @@ namespace GT {
             is_inited_(false),
             is_read_callback_setted_(false),
             is_write_callback_setted_(false),
-            resource_manager_enable_(false)
+            is_resource_worker_started_(false),
+            is_iocp_thread_pool_started_(false)
         {
 			paccpetex_func_ = nullptr;
             listen_socket_ptr_ = nullptr;
@@ -50,9 +51,7 @@ namespace GT {
                     break;
                 }
 
-                resource_manager_enable_ = GTSERVER_RESOURCE_MANAGER.Initialize();
-
-                bool ret = InitializeListenSocket_();
+                ret = InitializeListenSocket_();
                 if (!ret) {
                     GT_LOG_ERROR("init listen socket failed!");
                     break;
@@ -76,6 +75,13 @@ namespace GT {
                     break;
                 }
 
+                ret = GTSERVER_RESOURCE_MANAGER.Initialize();
+                if (!ret) {
+                    GT_LOG_ERROR("init resource manager failed!");
+                    break;
+                }
+                is_resource_worker_started_ = true;
+
 				/* create completion key for accept socket */
 				accept_socket_completion_key_ = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(listen_socket_ptr_);
 				GTSERVER_RESOURCE_MANAGER.SetSocketContexAddr(accept_socket_completion_key_, serveraddr_);
@@ -91,12 +97,19 @@ namespace GT {
                 ret = true;
             } while (0);
 
-			ret ? is_inited_ = ret : WSACleanup();
-            return ret;
+            if (ret) {
+                is_inited_ = true;
+            }
+            else {
+                WSACleanup();
+                GTSERVER_RESOURCE_MANAGER.Finalize();
+            }
+            return is_inited_;
         }
 
 
-		bool GT_IOCPWrapper::GetAcceptEXFuncAddress_() {
+        bool GT_IOCPWrapper::GetAcceptEXFuncAddress_() {
+            GT_LOG_INFO("Get GetAcceptEx address!");
 			GUID GuidAcceptEx = WSAID_ACCEPTEX;  
 			DWORD dwBytes = 0;
 
@@ -115,6 +128,7 @@ namespace GT {
 		}
 
 		bool GT_IOCPWrapper::GetAcceptExSockAddrsFuncAddress_() {
+            GT_LOG_INFO("Get GetAcceptExSockAddrs address!");
 			GUID GuidGetAcceptExSockAddrs = WSAID_GETACCEPTEXSOCKADDRS;
 			DWORD dwBytes = 0;
 
@@ -134,7 +148,7 @@ namespace GT {
 
 		bool GT_IOCPWrapper::InitializeListenSocket_() {
             listen_socket_ptr_ = (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? CreateOverlappedSocket_(AF_INET, SOCK_STREAM, IPPROTO_TCP) : CreateOverlappedSocket_(AF_INET, SOCK_DGRAM, IPPROTO_UDP));
-            if (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) && *listen_socket_ptr_ != INVALID_SOCKET) {
+            if (GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) && *(listen_socket_ptr_.get()) != INVALID_SOCKET) {
 
                 // create socket addr
                 serveraddr_.sin_family   = AF_INET;
@@ -142,14 +156,14 @@ namespace GT {
                 serveraddr_.sin_addr.S_un.S_addr = inet_addr(GT_READ_CFG_STRING("server_cfg", "server_address", "127.0.0.2").c_str());
 
                 // bind socket to server IP
-                if (!bind(*listen_socket_ptr_, (SOCKADDR*)(&serveraddr_), sizeof(SOCKADDR_IN))) {
+                if (SOCKET_ERROR == bind(*(listen_socket_ptr_.get()), (SOCKADDR*)(&serveraddr_), sizeof(SOCKADDR_IN))) {
                     int err = WSAGetLastError();
                     GT_LOG_ERROR("bind to local failed error code = " << err);
                     return false;
                 }
 
                 // set listen num
-                if (!listen(*listen_socket_ptr_, SOMAXCONN)) {
+                if (SOCKET_ERROR  == listen(*listen_socket_ptr_, SOMAXCONN)) {
                     int err = WSAGetLastError();
                     GT_LOG_ERROR("bind to local failed error code = " << err);
                     return false;
@@ -172,6 +186,7 @@ namespace GT {
             /* create thread pool */
             std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this, std::ref(call_back_func_));
             thread_pool_.Start(std::thread::hardware_concurrency() * 2, threadfunc);
+            is_iocp_thread_pool_started_ = true;
         }
 
         GT_IOCPWrapper& GT_IOCPWrapper::GetInstance() {
@@ -182,8 +197,14 @@ namespace GT {
 
         bool GT_IOCPWrapper::StopService() {
 			GT_LOG_INFO("Now stopping service...");
-			GTSERVER_RESOURCE_MANAGER.Finalize();
-			thread_pool_.Stop();
+            if (is_resource_worker_started_) {
+                GT_LOG_INFO("Now stop resource manager service...");
+                GTSERVER_RESOURCE_MANAGER.Finalize();
+            }
+            if (is_iocp_thread_pool_started_) {
+                GT_LOG_INFO("Now stop iocp thread pool service...");
+                thread_pool_.Stop();
+            }
             return true;
         }
 
@@ -273,6 +294,9 @@ namespace GT {
 
                 if (ret == false && ERROR_IO_PENDING != GetLastError()) {
                     GT_LOG_ERROR("Post Accept Event Failed!");
+                }
+                else {
+                    GT_LOG_INFO("Post Accept Event Success!");
                 }
             }
         }

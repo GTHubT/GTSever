@@ -12,7 +12,7 @@ namespace GT {
 #define DEFAULT_CFG_PATH ".//GTServer.cfg"
 		enum MODULE_TYPE {
 			GT_IOCP,
-			GT_Seletd
+			GT_Selete
 		};
 
         class GT_Module_Wrapper
@@ -25,7 +25,7 @@ namespace GT {
 			void InitLogService(std::string cfg_pth = DEFAULT_CFG_PATH);
 			bool Initialize();
 			bool StartGTService();
-			void StopGTService();
+			void ExitGTService();
 
 			static void ReadEventCallback(PULONG_PTR, const char*, int);
 			static void WriteEventCallBack(PULONG_PTR, const char*, int);

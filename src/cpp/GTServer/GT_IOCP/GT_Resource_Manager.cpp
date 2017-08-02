@@ -34,14 +34,14 @@ namespace GT {
 		}
 
 		GT_Resource_Manager& GT_Resource_Manager::GetInstance() {
-			GT_Resource_Manager socket_context_manager_;
+			static GT_Resource_Manager socket_context_manager_;
 			return socket_context_manager_;
 		}
 
 		bool GT_Resource_Manager::Initialize() {
 			GT_TRACE_FUNCTION;
 			if (is_enabled_) {
-				GT_LOG_INFO("Resource manager has already inited!");
+				GT_LOG_WARN("Resource manager has already inited!");
 				return is_enabled_;
 			}
 
