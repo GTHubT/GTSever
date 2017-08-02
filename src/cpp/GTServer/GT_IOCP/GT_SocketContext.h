@@ -28,6 +28,11 @@ namespace GT {
 #ifndef SOCKET_SHAREPTR
 #define SOCKET_SHAREPTR	std::shared_ptr<SOCKET>
 #endif
+		enum SOCKET_TYPE {		/* add type for socket context collector, do not collect listen socket */
+			NULL_SOCKET,
+			LISTEN_SOCKET,
+			ACCEPTED_SOCKET
+		};
 
 		class GT_SocketConetxt {
 		public:
@@ -45,7 +50,11 @@ namespace GT {
 			void ResetTimer() { time_control_ = std::chrono::system_clock::now(); }
 			std::chrono::system_clock::time_point GetTimer() { return time_control_; }
 
+			void SetSocketType(SOCKET_TYPE type) { sock_type_ = type; }
+			SOCKET_TYPE GetSocketType() { return sock_type_; }
+
 		private:
+			SOCKET_TYPE								sock_type_;
 			SOCKET_SHAREPTR							socket_shared_ptr_;
 			SOCKADDR_IN								socket_addr_;
 			std::set<IO_BUFFER_PTR>					socket_io_buffer_cache_;

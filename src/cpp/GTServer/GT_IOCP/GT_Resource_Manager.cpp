@@ -72,7 +72,7 @@ namespace GT {
 
 				/* init out date connection checker */
 				out_date_time_control_ = GT_READ_CFG_INT("server_cfg", "out_date_control", 120) * 1000;
-				connect_check_interval_ = GT_READ_CFG_INT("server_cfg","connect_check_interval", 30000);
+				connect_check_interval_ = GT_READ_CFG_INT("server_cfg","connect_check_interval", 30000) * 1000;
 				connect_check_thread_ = std::move(std::thread(&GT_Resource_Manager::ConnectCheckWorker, this,
 												  std::bind(&GT_Resource_Manager::ConnectChecker, this),
 												  std::ref(connect_check_mutex_),
@@ -110,18 +110,18 @@ namespace GT {
 			GT_RESOURCE_LOCK;
 
             /* release socket context IO buffer first */
-            closesocket(*(sockcontext_ptr->GetContextSocketPtr()));
             std::set<IO_BUFFER_PTR> io_ptr_set = sockcontext_ptr->GetIOBufferCache();
             std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
 		}
 
-		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr) {
+		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type) {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Create new completion key!");
 			GT_RESOURCE_LOCK;
 			SOCKETCONTEXT_SHAREPTR temp(new GT_SocketConetxt());
 			temp->SetContextSocket(sock_ptr);
+			temp->SetSocketType(type);
 			completion_key_ptr_cache_.insert(temp);
 			return temp;
 		}
@@ -160,7 +160,8 @@ namespace GT {
 			GT_TRACE_FUNCTION;
 			std::set<SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_ptr_cache_.begin();
 			for (; iter!= completion_key_ptr_cache_.end();) {
-				if (std::chrono::system_clock::now() - (*iter)->GetTimer() > std::chrono::microseconds(out_date_time_control_)) /*connection have too many time uncomunication*/  {
+				auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - (*iter)->GetTimer()).count();
+				if (d > out_date_time_control_ && (*iter)->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/  {
 					ReleaseCompletionKey(*iter);
 					GT_RESOURCE_LOCK;
 					iter = completion_key_ptr_cache_.erase(iter);

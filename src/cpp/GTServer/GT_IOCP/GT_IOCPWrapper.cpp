@@ -83,7 +83,7 @@ namespace GT {
                 is_resource_worker_started_ = true;
 
 				/* create completion key for accept socket */
-				accept_socket_completion_key_ = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(listen_socket_ptr_);
+				accept_socket_completion_key_ = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(listen_socket_ptr_, LISTEN_SOCKET);
 				GTSERVER_RESOURCE_MANAGER.SetSocketContexAddr(accept_socket_completion_key_, serveraddr_);
 
                 ret = BindSocketToCompletionPort(listen_socket_ptr_, (ULONG_PTR)accept_socket_completion_key_.get());
@@ -183,10 +183,15 @@ namespace GT {
 
         void GT_IOCPWrapper::GTStartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)> call_back_func_) {
 			GT_TRACE_FUNCTION;
-            /* create thread pool */
-            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this, std::ref(call_back_func_));
+			GT_LOG_INFO("GT Service start...");
+			printf("GT Service start...\n");
+
+            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this, std::ref(call_back_func_));/* create thread pool */
             thread_pool_.Start(std::thread::hardware_concurrency() * 2, threadfunc);
             is_iocp_thread_pool_started_ = true;
+
+			printf("GT Service started.\n");
+			GT_LOG_INFO("GT Service start...");
         }
 
         GT_IOCPWrapper& GT_IOCPWrapper::GetInstance() {
@@ -229,11 +234,12 @@ namespace GT {
             struct sockaddr_in *local_ipv4 = (struct sockaddr_in *)pLocalAddr;
             struct sockaddr_in *remote_ipv4 = (struct sockaddr_in *)pRemoteAddr;
             GT_LOG_DEBUG("get new connection and local sockaddr = " << inet_ntoa(local_ipv4->sin_addr) << ", remote sockaddr = " << inet_ntoa(remote_ipv4->sin_addr));
-			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(io_context->GetClientSocketPtr());
+			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(io_context->GetClientSocketPtr(), ACCEPTED_SOCKET);
 			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
 			overlappe_ptr->SetIOBufferEventType(IO_EVENT_READ);
 			overlappe_ptr->SetIOBufferSocket(io_context->GetClientSocketPtr());
             completion_key->SetContextSocketAddr(*remote_ipv4);
+			BindSocketToCompletionPort(completion_key->GetContextSocketPtr(), (ULONG_PTR)completion_key.get());
 			PostReadRequestEvent_(completion_key);
 
         }

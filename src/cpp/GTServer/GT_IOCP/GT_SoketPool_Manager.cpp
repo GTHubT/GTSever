@@ -126,10 +126,11 @@ namespace GT {
 
 		void GT_SocketPool_Manager::CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET> sock_ptr) {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
-			closesocket(*sock_ptr);
-			tobereuse_socket_pool_.push_back(std::move(*sock_ptr));
-			*sock_ptr = INVALID_SOCKET;											// a assumption, I think start a new thread to clean the INVAID_SOCKET maybe a way for performance
-			//socket_inuse_pool_.erase(sock);								// FIX ME: for performance it is not reasonable for search whole inuse pool to delete the closed sock
+			if (sock_ptr != nullptr) {
+				closesocket(*sock_ptr);
+				tobereuse_socket_pool_.push_back(std::move(*sock_ptr));
+				*sock_ptr = INVALID_SOCKET;
+			}		
 		}
 
 

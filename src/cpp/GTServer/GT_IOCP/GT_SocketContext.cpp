@@ -5,7 +5,8 @@ namespace GT {
 	namespace NET {
 
 		GT_SocketConetxt::GT_SocketConetxt() {
-
+			sock_type_ = NULL_SOCKET;
+			time_control_ = std::chrono::system_clock::now();
 		}
 
 		GT_SocketConetxt::~GT_SocketConetxt() {
