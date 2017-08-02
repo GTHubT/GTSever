@@ -19,10 +19,12 @@ namespace GT {
 
 	namespace NET {
 
+#define DEFAULT_BUFFER_LEN 4*1024
+
 		class GT_IOContextBuffer: public OVERLAPPED {
 
 		public:
-			GT_IOContextBuffer(size_t len);
+			GT_IOContextBuffer(size_t len = DEFAULT_BUFFER_LEN);
 			~GT_IOContextBuffer();
 
 			bool AllocateIOBuffer();

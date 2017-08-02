@@ -311,29 +311,29 @@ namespace GT {
 		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
             GT_LOG_DEBUG("Get completion port status...");
             DWORD Nnumofbytestransfered = 0;
-            SOCKETCONTEXT_SHAREPTR completion_key = nullptr;
-            IO_BUFFER_PTR overlapped_ptr = nullptr;
-            bool ret = GetQueuedCompletionStatus(completion_port_, &Nnumofbytestransfered, (PULONG_PTR)completion_key.get(), (LPOVERLAPPED*)overlapped_ptr.get(), INFINITE);
-
-            if (ret && Nnumofbytestransfered == 0 && overlapped_ptr->GetIOEventType() == IO_EVENT_ACCEPT) {
+            GT_SocketConetxt completion_key; //FIXME: need add move construct
+            GT_IOContextBuffer overlapped;  //FIXME: need add move construct
+            bool ret = GetQueuedCompletionStatus(completion_port_, &Nnumofbytestransfered, (PULONG_PTR)&completion_key, (LPOVERLAPPED*)&overlapped, INFINITE);
+            SOCKETCONTEXT_SHAREPTR gt_completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext();
+            if (ret && Nnumofbytestransfered == 0 && overlapped.GetIOEventType() == IO_EVENT_ACCEPT) {
                 GT_LOG_DEBUG("Get Accept Event!");
-                ProcessAcceptEvent_(overlapped_ptr);
+                ProcessAcceptEvent_(overlapped);
                 PostAnotherAcceptEvent_();
             }
-            else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_READ) {
+            else if (ret && overlapped.GetIOEventType() == IO_EVENT_READ) {
                 GT_LOG_DEBUG("Get read event from : " << inet_ntoa(completion_key->GetSocketAddr().sin_addr));
-                call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
-				completion_key->ResetTimer();
+                call_back_func_(IO_EVENT_READ, completion_key, overlapped);
+				completion_key.ResetTimer();
 				PostReadRequestEvent_(completion_key);
             }
-            else if (ret && overlapped_ptr->GetIOEventType() == IO_EVENT_WRITE) {
+            else if (ret && overlapped->GetIOEventType() == IO_EVENT_WRITE) {
                 GT_LOG_DEBUG("Get write event from : " << inet_ntoa(completion_key->GetSocketAddr().sin_addr));
-				completion_key->ResetTimer();
-                call_back_func_(IO_EVENT_READ, completion_key, overlapped_ptr);
+				completion_key.ResetTimer();
+                call_back_func_(IO_EVENT_READ, completion_key, overlapped);
             }
             else if (Nnumofbytestransfered == 0) /* client exit */
             {
-                GT_LOG_DEBUG("client exit : " << inet_ntoa(completion_key->GetSocketAddr().sin_addr));
+                GT_LOG_DEBUG("client exit : " << inet_ntoa(completion_key.GetSocketAddr().sin_addr));
                 GTSERVER_RESOURCE_MANAGER.ReleaseCompletionKey(completion_key);
                 PostReadRequestEvent_(completion_key);
             }
@@ -341,7 +341,7 @@ namespace GT {
                 GT_LOG_DEBUG("Unkonwn Event!");
             }
 
-			GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(overlapped_ptr);
+			GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(overlapped);
 		}
     }
 }
