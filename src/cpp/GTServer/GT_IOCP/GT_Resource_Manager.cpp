@@ -110,7 +110,7 @@ namespace GT {
 			GT_RESOURCE_LOCK;
 
             /* release socket context IO buffer first */
-			closesocket(*(sockcontext_ptr->GetContextSocketPtr()));
+            closesocket(*(sockcontext_ptr->GetContextSocketPtr()));
             std::set<IO_BUFFER_PTR> io_ptr_set = sockcontext_ptr->GetIOBufferCache();
             std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());

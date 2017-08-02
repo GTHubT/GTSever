@@ -71,7 +71,7 @@ namespace GT {
 
 			if (module_type_ == GT_IOCP) {
 				GT_ERROR_CODE errcode = GTIOCP_StartService();
-				if (errcode == GT_ERROR_SUCCESS) {
+				if (errcode == GT_ERROR_FAILED) {
 					is_module_initted_ = false;
 					GT_LOG_ERROR("GT Service Start Failed!");
 				}
