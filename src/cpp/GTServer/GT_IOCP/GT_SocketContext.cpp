@@ -17,5 +17,13 @@ namespace GT {
 			socket_io_buffer_cache_.insert(io_ptr);
 		}
 
+		void GT_SocketConetxt::MoveOtherObj2Local(GT_SocketConetxt* ptr) {
+			sock_type_ = ptr->GetSocketType();
+			socket_shared_ptr_ = ptr->GetContextSocketPtr();
+			socket_addr_ = ptr->GetSocketAddr();
+
+			time_control_ = ptr->GetTimer();
+		}
+
 	}
 }

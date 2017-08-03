@@ -328,9 +328,18 @@ namespace GT {
             GT_LOG_DEBUG("Get completion port status...");
             DWORD Nnumofbytestransfered = 0;
 
-            SOCKETCONTEXT_SHAREPTR gt_completion_key_ptr = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(nullptr);
-            IO_BUFFER_PTR gt_io_buffer_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
-            bool ret = GetQueuedCompletionStatus(completion_port_, &Nnumofbytestransfered, (PULONG_PTR)gt_completion_key_ptr.get(), (LPOVERLAPPED*)gt_io_buffer_ptr.get(), INFINITE);
+			ULONG_PTR completion_key;
+			OVERLAPPED* overlapped;
+			bool ret = GetQueuedCompletionStatus(completion_port_, &Nnumofbytestransfered, &completion_key, &overlapped, INFINITE);
+			
+
+			SOCKETCONTEXT_SHAREPTR gt_completion_key_ptr;;
+			IO_BUFFER_PTR gt_io_buffer_ptr;
+			GT_SocketConetxt* gt_context = (GT_SocketConetxt*)completion_key;
+			GT_IOContextBuffer* gt_io = (GT_IOContextBuffer*)overlapped;
+
+			//FIXME: need convert completion_key to SOCKETCONTEXT_SHAREPTR, gt_io to IO_BUFFER_PTR
+			//consider use hash map, map<ulong_ptr, SOCKETCONTEXT_SHAREPTR>, map<ulong_ptr, IO_BUFFER_PTR> for fast search
 
             if (ret && Nnumofbytestransfered == 0 && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_ACCEPT) {
                 GT_LOG_DEBUG("Get Accept Event!");
@@ -349,7 +358,7 @@ namespace GT {
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr);
             }
             else if (gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_EXIT) {
-                GT_LOG_INFO("Get exit io event, set the is_need_continue_wait flag to false!");
+                GT_LOG_INFO("Get exit IO event, set the is_need_continue_wait flag to false!");
                 is_need_continue_wait = false;
             }
             else if (ret == false && Nnumofbytestransfered == 0) /* client exit */
@@ -367,14 +376,15 @@ namespace GT {
 
         void GT_IOCPWrapper::PostExitEvent_() {
             GT_LOG_INFO("Post Exit Event.");
-            for (int i = 0; i < std::thread::hardware_concurrency(); i++) {
+            for (int i = 0; i < std::thread::hardware_concurrency() * 2; i++) {
                 IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
-                temp_ptr->SetIOBufferEventType(IO_EVENT_ACCEPT);
+                temp_ptr->SetIOBufferEventType(IO_EVENT_EXIT);
                 temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
                 accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
-                temp_ptr->SetIOBufferEventType(IO_EVENT_EXIT);
-                DWORD transfed = sizeof(GT_IOContextBuffer);
-                PostQueuedCompletionStatus(completion_port_, transfed, (ULONG_PTR)accept_socket_completion_key_.get(), (LPOVERLAPPED)temp_ptr.get());
+				//GT_IOContextBuffer temp;
+				//temp.SetIOBufferEventType(IO_EVENT_EXIT);
+
+				PostQueuedCompletionStatus(completion_port_,  0, (ULONG_PTR)accept_socket_completion_key_.get(),(LPOVERLAPPED)temp_ptr.get());
             }
         }
     }

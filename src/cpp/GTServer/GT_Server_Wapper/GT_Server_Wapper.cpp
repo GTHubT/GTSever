@@ -35,7 +35,7 @@ void CreateAndWaitEvent() {
             char c = '0';
             std::cout << "do you mean to end the GT Service? (y/n) ";
             std::cin >> c;
-            if (c == 'y') {
+            if (c == 'y' || c == 'Y') {
                 ::CloseHandle(m_event);
                 break;
             }

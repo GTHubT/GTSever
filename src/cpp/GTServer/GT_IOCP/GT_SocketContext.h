@@ -53,6 +53,8 @@ namespace GT {
 			void SetSocketType(SOCKET_TYPE type) { sock_type_ = type; }
 			SOCKET_TYPE GetSocketType() { return sock_type_; }
 
+			void MoveOtherObj2Local(GT_SocketConetxt*);
+
 		private:
 			SOCKET_TYPE								sock_type_;
 			SOCKET_SHAREPTR							socket_shared_ptr_;

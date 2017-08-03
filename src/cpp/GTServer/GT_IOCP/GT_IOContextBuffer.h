@@ -39,7 +39,7 @@ namespace GT {
             WSABUF& GetWsaBuf() { return io_wsa_buf_; }
             IO_EVENT_TYPE GetIOEventType() { return io_event_type_; }
 
-		private:
+		public:
 			std::shared_ptr<SOCKET>		io_socket_ptr_;
 			WSABUF						io_wsa_buf_;
 			char*						io_buffer_;
