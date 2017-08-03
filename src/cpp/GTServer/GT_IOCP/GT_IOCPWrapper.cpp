@@ -20,7 +20,8 @@ namespace GT {
             is_read_callback_setted_(false),
             is_write_callback_setted_(false),
             is_resource_worker_started_(false),
-            is_iocp_thread_pool_started_(false)
+            is_iocp_thread_pool_started_(false),
+            is_need_continue_wait_completion_port_status_(true)
         {
 			paccpetex_func_ = nullptr;
             listen_socket_ptr_ = nullptr;
@@ -186,7 +187,7 @@ namespace GT {
 			GT_LOG_INFO("GT Service start...");
 			printf("GT Service start...\n");
 
-            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this, std::ref(call_back_func_));/* create thread pool */
+            std::function<void()> threadfunc = std::bind(&GT_IOCPWrapper::GetCompletionPortEventStatus, this, std::ref(call_back_func_), std::ref(is_need_continue_wait_completion_port_status_));/* create thread pool */
             thread_pool_.Start(std::thread::hardware_concurrency() * 2, threadfunc);
             is_iocp_thread_pool_started_ = true;
 
@@ -201,7 +202,9 @@ namespace GT {
 
 
         bool GT_IOCPWrapper::StopService() {
-			GT_LOG_INFO("Now stopping service...");
+            GT_LOG_INFO("Now post exit event to GT Service waiting thread!");
+            PostExitEvent_();
+            GT_LOG_INFO("Now stopping service...");
             if (is_resource_worker_started_) {
                 GT_LOG_INFO("Now stop resource manager service...");
                 GTSERVER_RESOURCE_MANAGER.Finalize();
@@ -317,7 +320,11 @@ namespace GT {
 
 
 		//FIXME: when exit, should send message to exit GetQueuedCompletionStatus, so that the process can exit elegant
-		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_) {
+		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_, std::atomic_bool& is_need_continue_wait) {
+            if (!is_need_continue_wait) {
+                GT_LOG_INFO("its time to end GT Service, Do not need continue wait for completion port...");
+                return;
+            }
             GT_LOG_DEBUG("Get completion port status...");
             DWORD Nnumofbytestransfered = 0;
 
@@ -341,6 +348,10 @@ namespace GT {
                 gt_completion_key_ptr->ResetTimer();
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr);
             }
+            else if (gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_EXIT) {
+                GT_LOG_INFO("Get exit io event, set the is_need_continue_wait flag to false!");
+                is_need_continue_wait = false;
+            }
             else if (ret == false && Nnumofbytestransfered == 0) /* client exit */
             {
                 GT_LOG_ERROR("GetQueuedCompletionStatus failed, error code = " << GetLastError());
@@ -353,5 +364,17 @@ namespace GT {
 
 			GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(gt_io_buffer_ptr);
 		}
+
+        void GT_IOCPWrapper::PostExitEvent_() {
+            GT_LOG_INFO("Post Exit Event.");
+            for (int i = 0; i < std::thread::hardware_concurrency(); i++) {
+                IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+                temp_ptr->SetIOBufferEventType(IO_EVENT_ACCEPT);
+                temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
+                accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
+                temp_ptr->SetIOBufferEventType(IO_EVENT_EXIT);
+                PostQueuedCompletionStatus(completion_port_, 0, (ULONG_PTR)accept_socket_completion_key_.get(), (LPOVERLAPPED)temp_ptr.get());
+            }
+        }
     }
 }

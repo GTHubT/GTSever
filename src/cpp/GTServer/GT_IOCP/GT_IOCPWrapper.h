@@ -34,7 +34,7 @@ namespace GT {
             bool	StopService();
             void    GTStartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)> call_back_func_);
             bool	BindSocketToCompletionPort(SOCKET_SHAREPTR s_ptr, ULONG_PTR completionkey);
-			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_);
+			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_, std::atomic_bool& is_need_continue_wait);
 
 			void	SendDataUserInterface(PULONG_PTR, char*, size_t);
         private:
@@ -50,6 +50,7 @@ namespace GT {
 			void    PostWriteRequestEvent(PULONG_PTR completion_key_pointer, IO_BUFFER_PTR io_event_);
 			bool	GetAcceptEXFuncAddress_();
 			bool	GetAcceptExSockAddrsFuncAddress_();
+            void    PostExitEvent_();
 
         private:
             bool                           is_inited_;
@@ -60,9 +61,9 @@ namespace GT {
             GT::UTIL::GT_Util_ThreadPool   thread_pool_;
 
         private:
+            std::atomic_bool            is_need_continue_wait_completion_port_status_;
             bool                        is_resource_worker_started_;
             bool                        is_iocp_thread_pool_started_;
-			int							index_allocated_used_;
             bool						is_read_callback_setted_;
             bool						is_write_callback_setted_;
 			LPFN_ACCEPTEX				paccpetex_func_;
