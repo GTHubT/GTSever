@@ -332,14 +332,14 @@ namespace GT {
 			OVERLAPPED* overlapped;
 			bool ret = GetQueuedCompletionStatus(completion_port_, &Nnumofbytestransfered, &completion_key, &overlapped, INFINITE);
 			
-
 			SOCKETCONTEXT_SHAREPTR gt_completion_key_ptr;;
 			IO_BUFFER_PTR gt_io_buffer_ptr;
+			
 			GT_SocketConetxt* gt_context = (GT_SocketConetxt*)completion_key;
 			GT_IOContextBuffer* gt_io = (GT_IOContextBuffer*)overlapped;
 
 			//FIXME: need convert completion_key to SOCKETCONTEXT_SHAREPTR, gt_io to IO_BUFFER_PTR
-			//consider use hash map, map<ulong_ptr, SOCKETCONTEXT_SHAREPTR>, map<ulong_ptr, IO_BUFFER_PTR> for fast search
+			//consider use hash map, map<ulong_ptr, SOCKETCONTEXT_SHAREPTR>, map<ulong_ptr, IO_BUFFER_PTR>
 
             if (ret && Nnumofbytestransfered == 0 && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_ACCEPT) {
                 GT_LOG_DEBUG("Get Accept Event!");
@@ -357,7 +357,7 @@ namespace GT {
                 gt_completion_key_ptr->ResetTimer();
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr);
             }
-            else if (gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_EXIT) {
+            else if (ret && gt_completion_key_ptr == NULL && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_EXIT) {
                 GT_LOG_INFO("Get exit IO event, set the is_need_continue_wait flag to false!");
                 is_need_continue_wait = false;
             }
@@ -380,11 +380,8 @@ namespace GT {
                 IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
                 temp_ptr->SetIOBufferEventType(IO_EVENT_EXIT);
                 temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
-                accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
-				//GT_IOContextBuffer temp;
-				//temp.SetIOBufferEventType(IO_EVENT_EXIT);
 
-				PostQueuedCompletionStatus(completion_port_,  0, (ULONG_PTR)accept_socket_completion_key_.get(),(LPOVERLAPPED)temp_ptr.get());
+				PostQueuedCompletionStatus(completion_port_,  0, 0, (LPOVERLAPPED)temp_ptr.get());
             }
         }
     }
