@@ -322,7 +322,7 @@ namespace GT {
 		//FIXME: when exit, should send message to exit GetQueuedCompletionStatus, so that the process can exit elegant
 		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_, std::atomic_bool& is_need_continue_wait) {
             if (!is_need_continue_wait) {
-                GT_LOG_INFO("its time to end GT Service, Do not need continue wait for completion port...");
+                GT_LOG_INFO("[Thread] "<< std::this_thread::get_id() << ":, its time to end GT Service, Do not need continue wait for completion port...");
                 return;
             }
             GT_LOG_DEBUG("Get completion port status...");
@@ -373,7 +373,8 @@ namespace GT {
                 temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
                 accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
                 temp_ptr->SetIOBufferEventType(IO_EVENT_EXIT);
-                PostQueuedCompletionStatus(completion_port_, 0, (ULONG_PTR)accept_socket_completion_key_.get(), (LPOVERLAPPED)temp_ptr.get());
+                DWORD transfed = sizeof(GT_IOContextBuffer);
+                PostQueuedCompletionStatus(completion_port_, transfed, (ULONG_PTR)accept_socket_completion_key_.get(), (LPOVERLAPPED)temp_ptr.get());
             }
         }
     }
