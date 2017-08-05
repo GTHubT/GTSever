@@ -62,7 +62,7 @@ int main(int argc, const char* argv[])
             GTSERVER.SetModuleType(GT::MODULE::GT_IOCP);
         }
         else if (value == "Select") {
-            GTSERVER.SetModuleType(GT::MODULE::GT_Selete);
+            GTSERVER.SetModuleType(GT::MODULE::GT_Select);
         }
         else {
             CmdHelper();

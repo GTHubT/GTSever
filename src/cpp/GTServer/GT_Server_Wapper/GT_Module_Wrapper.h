@@ -12,7 +12,7 @@ namespace GT {
 #define DEFAULT_CFG_PATH ".//GTServer.cfg"
 		enum MODULE_TYPE {
 			GT_IOCP,
-			GT_Selete
+			GT_Select
 		};
 
         class GT_Module_Wrapper

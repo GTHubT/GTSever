@@ -110,8 +110,8 @@ namespace GT {
 			GT_RESOURCE_LOCK;
 
             /* release socket context IO buffer first */
-            std::set<IO_BUFFER_PTR> io_ptr_set = sockcontext_ptr->GetIOBufferCache();
-            std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr);});
+            std::map<ULONG_PTR, IO_BUFFER_PTR> io_ptr_set = sockcontext_ptr->GetIOBufferCache();
+            std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr.second);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
 		}
 
@@ -122,7 +122,7 @@ namespace GT {
 			SOCKETCONTEXT_SHAREPTR temp(new GT_SocketConetxt());
 			temp->SetContextSocket(sock_ptr);
 			temp->SetSocketType(type);
-			completion_key_ptr_cache_.insert(temp);
+			completion_key_ptr_cache_.insert(std::make_pair((ULONG_PTR)temp.get(), temp));
 			return temp;
 		}
 
@@ -142,11 +142,13 @@ namespace GT {
 															std::mutex& source_mutex_,
 															std::condition_variable& source_cv_,
 															int cycle_time_) {
-
+			GT_TRACE_FUNCTION;
             std::unique_lock<std::mutex> lk(source_mutex_);	/* this lock is for condition variable */
 			while (!end_thread_ && source_cv_.wait_for(lk, std::chrono::milliseconds(cycle_time_)) == std::cv_status::timeout) {
 				func_();
 			}
+			GT_LOG_INFO("Resource Collector worker exit!");
+			printf("Resource Collector worker exit!\n");
 		}
 
 		void GT_Resource_Manager::Resource_Collect_Func_() { /* this function will be update later */
@@ -157,12 +159,11 @@ namespace GT {
 		}
 
 		void GT_Resource_Manager::ConnectChecker() {
-			GT_TRACE_FUNCTION;
-			std::set<SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_ptr_cache_.begin();
+			std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_ptr_cache_.begin();
 			for (; iter!= completion_key_ptr_cache_.end();) {
-				auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - (*iter)->GetTimer()).count();
-				if (d > out_date_time_control_ && (*iter)->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/  {
-					ReleaseCompletionKey(*iter);
+				auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - (*iter).second->GetTimer()).count();
+				if (d > out_date_time_control_ && (*iter).second->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/  {
+					ReleaseCompletionKey(iter->second);
 					GT_RESOURCE_LOCK;
 					iter = completion_key_ptr_cache_.erase(iter);
 					GT_LOG_DEBUG("delete the out date completion key!");
@@ -178,11 +179,14 @@ namespace GT {
 													std::condition_variable& cv,
 													std::atomic_bool& end_thread,
 													int check_interval) {
+			GT_TRACE_FUNCTION;
 			std::unique_lock<std::mutex> lk(mu);
 			while (!end_thread && cv.wait_for(lk, std::chrono::microseconds(check_interval)) == std::cv_status::timeout)
 			{
 				func();
 			}
+			GT_LOG_INFO("Connection check worker exit!");
+			printf("Connection check worker exit! \n");
  		}
 
 		void GT_Resource_Manager::Finalize() {
@@ -204,9 +208,16 @@ namespace GT {
 			ClearResource_();
 		}
 
+		void GT_Resource_Manager::CleanCache_() {
+			GT_TRACE_FUNCTION;
+			GT_LOG_INFO("Clean the completion key cache...");
+			std::for_each(completion_key_ptr_cache_.begin(), completion_key_ptr_cache_.end(), [&](auto iter)->void {ReleaseCompletionKey(iter.second); });
+		}
+
 		void GT_Resource_Manager::ClearResource_() {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Clear all resource hold by resource manager!");
+			CleanCache_();
             GT_SOCKET_CACHE_MANAGER.DestroyPool();
             GT_IO_BUFFER_CACHE_MANAGER.Finalize();
 		}

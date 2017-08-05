@@ -31,6 +31,7 @@ namespace GT {
 		}
 
 		bool GT_IOContextBuffer_Manager::Initialize() {
+			GT_TRACE_FUNCTION;
 			IOBUFFER_MANAGER_LOCK_THIS_SCOPE;
 			if (io_buffer_manager_inited_) {
 				GT_LOG_INFO("IO Buffer Manager already init!");
@@ -55,6 +56,7 @@ namespace GT {
 
 
 		bool GT_IOContextBuffer_Manager::PreAllocateSomeIOBuffer_() {
+			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("pre allocate some io buffer size = "<< pre_allocate_size_ <<", each buffer size = " << io_buffer_size_ << " (Bytes)");
 
 			for (size_t buffer_size = 0; buffer_size < pre_allocate_size_; buffer_size++) {
@@ -68,6 +70,7 @@ namespace GT {
 		}
 
 		bool GT_IOContextBuffer_Manager::ReAllocateSomeIOBuffer_() {
+			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("io buffer cache size is not enough, reallocate some io buffers, reallocate size = "<< re_allocate_size_);
 			for (size_t s = 0; s < re_allocate_size_; s++) {
 				IO_BUFFER_PTR temp_ptr = IO_BUFFER_PTR(new GT_IOContextBuffer(io_buffer_size_));
@@ -107,6 +110,7 @@ namespace GT {
 		}
 
 		void GT_IOContextBuffer_Manager::Finalize() {
+			GT_TRACE_FUNCTION;
 			IOBUFFER_MANAGER_LOCK_THIS_SCOPE;
 			CleanIOBufferCache_();
 			io_buffer_manager_inited_ = false;

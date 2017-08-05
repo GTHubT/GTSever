@@ -13,6 +13,7 @@
 #include <chrono>
 #include <mutex>
 #include <condition_variable>
+#include <map>
 
 namespace GT {
 
@@ -36,13 +37,14 @@ namespace GT {
 			void					SetSocketContexAddr(SOCKETCONTEXT_SHAREPTR s_ptr, SOCKADDR_IN sock_addr);
 			void					PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IO_BUFFER_PTR io_ptr);
 			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type = NULL_SOCKET);			// completion key
-
+			std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& GetCompletionKeyCache() { return completion_key_ptr_cache_; }
 
 			static GT_Resource_Manager& GetInstance();
 
 		private:
 			GT_Resource_Manager();
 			void	ClearResource_();
+			void	CleanCache_();
 			void	Resource_Collect_Func_();
 			void	Resource_Collect_Worker_(std::function<void()> func_, std::atomic_bool& end_thread_, std::mutex& resource_lock, std::condition_variable& source_cv, int cycle_time_);
 
@@ -65,7 +67,7 @@ namespace GT {
 			int connect_check_interval_;
 			std::thread connect_check_thread_;
 
-			std::set<SOCKETCONTEXT_SHAREPTR> completion_key_ptr_cache_;
+			std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_ptr_cache_;
 		};
 	}
 }

@@ -338,10 +338,21 @@ namespace GT {
 			GT_SocketConetxt* gt_context = (GT_SocketConetxt*)completion_key;
 			GT_IOContextBuffer* gt_io = (GT_IOContextBuffer*)overlapped;
 
-			//FIXME: need convert completion_key to SOCKETCONTEXT_SHAREPTR, gt_io to IO_BUFFER_PTR
-			//consider use hash map, map<ulong_ptr, SOCKETCONTEXT_SHAREPTR>, map<ulong_ptr, IO_BUFFER_PTR>
+			std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_cache = GTSERVER_RESOURCE_MANAGER.GetCompletionKeyCache();
+			if (completion_key_cache.find((ULONG_PTR)gt_context) != completion_key_cache.end()) {
+				gt_completion_key_ptr = completion_key_cache[(ULONG_PTR)gt_context];
 
-            if (ret && Nnumofbytestransfered == 0 && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_ACCEPT) {
+				std::map<ULONG_PTR, IO_BUFFER_PTR> io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
+				if (io_buffer_cache.find((ULONG_PTR)gt_io) != io_buffer_cache.end()) {
+					gt_io_buffer_ptr = io_buffer_cache[(ULONG_PTR)gt_io];
+				}
+			}
+
+			if (ret && gt_completion_key_ptr.get() == NULL && gt_io->GetIOEventType() == IO_EVENT_EXIT) {
+				GT_LOG_INFO("Get exit IO event, set the is_need_continue_wait flag to false!");
+				is_need_continue_wait = false;
+			}
+			else if (ret && Nnumofbytestransfered == 0 && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_ACCEPT) {
                 GT_LOG_DEBUG("Get Accept Event!");
                 ProcessAcceptEvent_(gt_io_buffer_ptr);
                 PostAnotherAcceptEvent_();
@@ -356,10 +367,6 @@ namespace GT {
                 GT_LOG_DEBUG("Get write event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 gt_completion_key_ptr->ResetTimer();
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr);
-            }
-            else if (ret && gt_completion_key_ptr == NULL && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_EXIT) {
-                GT_LOG_INFO("Get exit IO event, set the is_need_continue_wait flag to false!");
-                is_need_continue_wait = false;
             }
             else if (ret == false && Nnumofbytestransfered == 0) /* client exit */
             {
@@ -380,7 +387,6 @@ namespace GT {
                 IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
                 temp_ptr->SetIOBufferEventType(IO_EVENT_EXIT);
                 temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
-
 				PostQueuedCompletionStatus(completion_port_,  0, 0, (LPOVERLAPPED)temp_ptr.get());
             }
         }

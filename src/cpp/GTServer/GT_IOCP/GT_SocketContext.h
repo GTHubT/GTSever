@@ -10,7 +10,7 @@
 #include <WinSock2.h>
 #include <memory>
 #include <chrono>
-#include <set>
+#include <map>
 
 /************************************************************************/
 /* socket context is combined by socket pool element and IO context     */
@@ -45,7 +45,7 @@ namespace GT {
 
             SOCKET_SHAREPTR GetContextSocketPtr() { return socket_shared_ptr_; }
             SOCKADDR_IN     GetSocketAddr() { return socket_addr_; }
-            std::set<IO_BUFFER_PTR>   GetIOBufferCache() { return socket_io_buffer_cache_; }
+            std::map<ULONG_PTR, IO_BUFFER_PTR>&   GetIOBufferCache() { return socket_io_buffer_cache_; }
 
 			void ResetTimer() { time_control_ = std::chrono::system_clock::now(); }
 			std::chrono::system_clock::time_point GetTimer() { return time_control_; }
@@ -53,13 +53,12 @@ namespace GT {
 			void SetSocketType(SOCKET_TYPE type) { sock_type_ = type; }
 			SOCKET_TYPE GetSocketType() { return sock_type_; }
 
-			void MoveOtherObj2Local(GT_SocketConetxt*);
 
 		private:
 			SOCKET_TYPE								sock_type_;
 			SOCKET_SHAREPTR							socket_shared_ptr_;
 			SOCKADDR_IN								socket_addr_;
-			std::set<IO_BUFFER_PTR>					socket_io_buffer_cache_;
+			std::map<ULONG_PTR, IO_BUFFER_PTR>		socket_io_buffer_cache_;
 			/***********************************************************************************************************/
 			/*another way to lean the close socket, I set timer for each completion key, every time the completion have*/
 			/*send or recv event happen, reset the timer, if the completion key have not got any event within config "out_date_control" */
