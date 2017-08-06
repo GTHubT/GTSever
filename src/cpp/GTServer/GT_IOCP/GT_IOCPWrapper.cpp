@@ -321,8 +321,8 @@ namespace GT {
 
 		//FIXME: when exit, should send message to exit GetQueuedCompletionStatus, so that the process can exit elegant
 		void GT_IOCPWrapper::GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_func_, std::atomic_bool& is_need_continue_wait) {
-            if (!is_need_continue_wait) {
-                GT_LOG_INFO("[Thread] "<< std::this_thread::get_id() << ":, its time to end GT Service, Do not need continue wait for completion port...");
+			if (!is_need_continue_wait) {
+				//GT_LOG_INFO("[Thread] " << std::this_thread::get_id() << ":, its time to end GT Service, Do not need continue wait for completion port...");
                 return;
             }
             GT_LOG_DEBUG("Get completion port status...");
@@ -348,7 +348,13 @@ namespace GT {
 				}
 			}
 
-			if (ret && gt_completion_key_ptr.get() == NULL && gt_io->GetIOEventType() == IO_EVENT_EXIT) {
+			if (gt_completion_key_ptr.get() == NULL || gt_io_buffer_ptr.get() == NULL)
+			{
+				GT_LOG_INFO("completion key or io buffer context empty...");
+				return;
+			}
+
+			if (ret && gt_io->GetIOEventType() == IO_EVENT_EXIT) {
 				GT_LOG_INFO("Get exit IO event, set the is_need_continue_wait flag to false!");
 				is_need_continue_wait = false;
 			}
@@ -368,7 +374,7 @@ namespace GT {
                 gt_completion_key_ptr->ResetTimer();
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr);
             }
-            else if (ret == false && Nnumofbytestransfered == 0) /* client exit */
+            else if (ret == false && Nnumofbytestransfered == 0 && GetLastError() != 0) /* client exit */
             {
                 GT_LOG_ERROR("GetQueuedCompletionStatus failed, error code = " << GetLastError());
                 GT_LOG_DEBUG("client exit : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
@@ -387,7 +393,8 @@ namespace GT {
                 IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
                 temp_ptr->SetIOBufferEventType(IO_EVENT_EXIT);
                 temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
-				PostQueuedCompletionStatus(completion_port_,  0, 0, (LPOVERLAPPED)temp_ptr.get());
+				accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
+				PostQueuedCompletionStatus(completion_port_,  0, (ULONG_PTR)accept_socket_completion_key_.get(), (LPOVERLAPPED)temp_ptr.get());
             }
         }
     }
