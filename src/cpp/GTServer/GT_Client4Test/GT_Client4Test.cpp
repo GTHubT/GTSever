@@ -23,6 +23,7 @@ int main()
 		std::cout << "init client failed!" << std::endl;
 		return 0;
 	}
+
 	client.StartTest();
 
 	while (true) {

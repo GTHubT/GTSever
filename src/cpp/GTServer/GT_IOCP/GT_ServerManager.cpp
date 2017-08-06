@@ -115,17 +115,18 @@ namespace GT {
 
 		void GT_ServerManager::GTStartService() {
 			GT_TRACE_FUNCTION;
-			GT_IOCP.GTStartService(std::bind(&GT_ServerManager::DispatchEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+			dispatch_event_func_ = std::bind(&GT_ServerManager::DispatchEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+			GT_IOCP.GTStartService(dispatch_event_func_);
 		}
 
-		void GT_ServerManager::DispatchEvent(IO_EVENT_TYPE type, SOCKETCONTEXT_SHAREPTR completion_key, IO_BUFFER_PTR io_ptr) {
+		void GT_ServerManager::DispatchEvent(IO_EVENT_TYPE type, SOCKETCONTEXT_SHAREPTR completion_key, IO_BUFFER_PTR io_ptr, long len) {
 			switch (type)
 			{
 			case IO_EVENT_READ:
-				read_event_call_back_ != nullptr ? read_event_call_back_((PULONG_PTR)completion_key.get(), io_ptr->GetWsaBuf().buf, io_ptr->GetWsaBuf().len) : NULL;
+				read_event_call_back_ != nullptr ? read_event_call_back_((PULONG_PTR)completion_key.get(), io_ptr->GetWsaBuf().buf, len) : NULL;
 				break;
 			case IO_EVENT_WRITE:
-				write_event_call_back_ != nullptr ? write_event_call_back_((PULONG_PTR)completion_key.get(), io_ptr->GetWsaBuf().buf, io_ptr->GetWsaBuf().len) : NULL;
+				write_event_call_back_ != nullptr ? write_event_call_back_((PULONG_PTR)completion_key.get(), io_ptr->GetWsaBuf().buf, len) : NULL;
 				break;
 			default:
 				GT_LOG_DEBUG("unknown message!");

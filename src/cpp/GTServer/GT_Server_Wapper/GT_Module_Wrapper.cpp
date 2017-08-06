@@ -108,10 +108,12 @@ namespace GT {
 
 		void GT_Module_Wrapper::ReadEventCallback(PULONG_PTR ptr, const char* data, int len) {
 			GT_LOG_ERROR("reading data...");
+			printf("get data from client data len = %d, content: %s \n", len, data);
 		}
 
 		void GT_Module_Wrapper::WriteEventCallBack(PULONG_PTR ptr, const char* data, int len) {
 			GT_LOG_ERROR("writing event complete!");
+			printf("get write complete event! \n");
 		}
     }
 }

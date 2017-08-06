@@ -32,9 +32,9 @@ namespace GT {
 
             bool	Initialize();
             bool	StopService();
-            void    GTStartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)> call_back_func_);
+            void    GTStartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR, long)>& call_back_func_);
             bool	BindSocketToCompletionPort(SOCKET_SHAREPTR s_ptr, ULONG_PTR completionkey);
-			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR)>& call_back_, std::atomic_bool& is_need_continue_wait);
+			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR, long)>& call_back_, std::atomic_bool& is_need_continue_wait);
 
 			void	SendDataUserInterface(PULONG_PTR, char*, size_t);
         private:

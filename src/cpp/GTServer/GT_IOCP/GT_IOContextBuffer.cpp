@@ -21,6 +21,8 @@ namespace GT {
 
 		bool GT_IOContextBuffer::AllocateIOBuffer() {
 			io_buffer_ = new char[io_buffer_size_];
+			io_wsa_buf_.buf = io_buffer_;		/* WSABUF is use for WSARecv and WSASend, as a buffer */
+			io_wsa_buf_.len = io_buffer_size_;
             if (nullptr != io_buffer_)
                 memset(io_buffer_, 0, io_buffer_size_);
 			return io_buffer_ != nullptr;

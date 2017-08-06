@@ -33,6 +33,8 @@ namespace GT {
 			GT_LOG_LEVEL log_level_ = LoglevelConvert(log_level_str);
 			int max_logsize_ = GT_READ_CFG_INT("log_control", "max_log_size", 50);
 			GT::UTIL::GT_Util_GlogWrapper::GetInstance().GT_LogInitialize(log_name_, log_level_, max_logsize_);
+
+			return true;
 		}
 
 
@@ -44,13 +46,15 @@ namespace GT {
 			err = WSAStartup(version, &wsadata);
 			if (err != 0) {
 				GT_LOG_ERROR("socket environment init failed!");
-				return;
+				return false;
 			}
 
 			if (LOBYTE(wsadata.wVersion) != 2 || HIBYTE(wsadata.wVersion) != 2) {
 				GT_LOG_ERROR("WINSOCK dll do not support version 2.2!");
-				return;
+				return false;
 			}
+
+			return true;
 		}
 
 
@@ -83,7 +87,7 @@ namespace GT {
 
 		void GT_Client::TestFunc_(std::atomic_bool& end_thread) {
 			while(!end_thread){
-				std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+				//std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 
 				SOCKET client_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 				if (client_ == INVALID_SOCKET) {
@@ -91,10 +95,32 @@ namespace GT {
 					CloseHandle((HANDLE)client_);
 					continue;
 				}
+				
+				printf("client socket = %d \n" ,(int)client_);
 
 				SOCKADDR_IN client_addr_;
-				client_addr_.sin_addr = inet_ntoa(GT_READ_CFG_STRING());
-				client_addr_.sin_port = htos()
+				client_addr_.sin_family = AF_INET;
+				client_addr_.sin_addr.S_un.S_addr = inet_addr(GT_READ_CFG_STRING("server_cfg", "server_address" ,"127.0.0.2").c_str());
+				client_addr_.sin_port = htons(GT_READ_CFG_INT("server_cfg","server_port", 5000));
+
+				int ret = connect(client_, (sockaddr*)&client_addr_, sizeof(client_addr_));
+				if (ret != 0) {
+					GT_LOG_ERROR("connect error, error code = " << GetLastError());
+					CloseHandle((HANDLE)client_);
+					continue;
+				}
+
+				GT_LOG_INFO("connect server success!");
+
+				std::string msg = "hello IOCP!";
+				int num = send(client_, msg.c_str(), msg.length(), 0);
+				if (num == SOCKET_ERROR) {
+					GT_LOG_ERROR("send data error, err code = "<< GetLastError());
+					closesocket(client_);
+					CloseHandle((HANDLE)client_);
+				}
+				closesocket(client_);
+				CloseHandle((HANDLE)client_);
 			}
 		}
 
