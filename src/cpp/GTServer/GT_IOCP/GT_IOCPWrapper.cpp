@@ -240,6 +240,10 @@ namespace GT {
 			printf("get new connection and local sockaddr = %s, remote sockaddr = %s \n", inet_ntoa(local_ipv4->sin_addr) ,inet_ntoa(remote_ipv4->sin_addr));
 			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(io_context->GetClientSocketPtr(), ACCEPTED_SOCKET);
 			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+			if (overlappe_ptr == nullptr) {
+				GT_LOG_ERROR("IO Buffer allocate failed!");
+				return;
+			}
 			overlappe_ptr->SetIOBufferEventType(IO_EVENT_READ);
 			overlappe_ptr->SetIOBufferSocket(io_context->GetClientSocketPtr());
             completion_key->SetContextSocketAddr(*remote_ipv4);
@@ -253,6 +257,10 @@ namespace GT {
             DWORD bytes_recved_ = 0;
             DWORD flag = 0;
             IO_BUFFER_PTR temp_io_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+			if (temp_io_ptr == nullptr) {
+				GT_LOG_ERROR("IO Buffer allocate failed!");
+				return;
+			}
             int ret = WSARecv(*(completion_key_->GetContextSocketPtr().get()), &temp_io_ptr->GetWsaBuf(), 1, &bytes_recved_, &flag, (LPOVERLAPPED)temp_io_ptr.get(), nullptr);
             DWORD err = GetLastError();
             if (ret == SOCKET_ERROR && (WSA_IO_PENDING != err)) {
@@ -289,6 +297,10 @@ namespace GT {
         void GT_IOCPWrapper::PostAnotherAcceptEvent_() {
             GT_LOG_DEBUG("Post Another Accept Event for listen socket!");
             IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+			if (temp_ptr == nullptr) {
+				GT_LOG_ERROR("IO Buffer allocate failed!");
+				return;
+			}
             temp_ptr->SetIOBufferEventType(IO_EVENT_ACCEPT);
             temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
             accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);
@@ -314,6 +326,10 @@ namespace GT {
 
 		void GT_IOCPWrapper::SendDataUserInterface(PULONG_PTR completion_key_pointer, char* data, size_t len) {
 			IO_BUFFER_PTR io_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+			if (io_ptr == nullptr) {
+				GT_LOG_ERROR("IO Buffer allocate failed!");
+				return;
+			}
 			io_ptr->AllocateIOBufferBySize(len);
 			memcpy(io_ptr->GetWsaBuf().buf, data, len);
 			PostWriteRequestEvent(completion_key_pointer, io_ptr);
@@ -396,6 +412,10 @@ namespace GT {
             GT_LOG_INFO("Post Exit Event.");
             for (int i = 0; i < std::thread::hardware_concurrency() * 2; i++) {
                 IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+				if (temp_ptr == nullptr) {
+					GT_LOG_ERROR("IO Buffer allocate failed!");
+					return;
+				}
                 temp_ptr->SetIOBufferEventType(IO_EVENT_EXIT);
                 temp_ptr->SetIOBufferSocket(GTSERVER_RESOURCE_MANAGER.GetCachedSocket());
 				accept_socket_completion_key_->AddIOContext2Cache(temp_ptr);

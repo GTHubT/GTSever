@@ -28,7 +28,7 @@ namespace GT {
 			GT::UTIL::GT_Util_CfgHelper::LoadCfg(cfg_path);
 
 			/* init log */
-			std::string log_name_ = GT_READ_CFG_STRING("log_control", "log_name", "GT");
+			std::string log_name_ = "GTClient.log";
 			std::string log_level_str = GT_READ_CFG_STRING("log_control", "log_level", "off");
 			GT_LOG_LEVEL log_level_ = LoglevelConvert(log_level_str);
 			int max_logsize_ = GT_READ_CFG_INT("log_control", "max_log_size", 50);
