@@ -5,6 +5,10 @@
 #include <chrono>
 #include <algorithm>
 
+/*  CACHE:  if the cache is not enough, manager should allocate new item, but should allocate to the new_allocate_cache_ not the in use cache */
+/*  if the invoker did not get the item from context, it can new a item, and push the item to the is use cache directly, and the new_allocate_cache_ should merge to the unuse cache at a proper time*/
+/*  AND A QUESTION: Why the cache use so quick, does the collector do not work??*/
+
 using namespace GT::UTIL;
 namespace GT {
 
