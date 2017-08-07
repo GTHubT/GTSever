@@ -89,16 +89,21 @@ namespace GT {
 
 		IO_BUFFER_PTR GT_IOContextBuffer_Manager::GetNextIOBufferPtr() {
 			IOBUFFER_MANAGER_LOCK_THIS_SCOPE;
-			IO_BUFFER_PTR temp_ptr;
 			if (io_buffer_cache_.empty() || io_buffer_cache_.size() < size_need_reallocate_) {
 				ReAllocateSomeIOBuffer_();
-			}else{
+            }
+            if (io_buffer_cache_.size() > 0){
+                IO_BUFFER_PTR temp_ptr;
 				temp_ptr = io_buffer_cache_.front();
 				io_buffer_cache_.pop_front();
 				io_buffer_in_use_.push_back(temp_ptr);
 				return io_buffer_in_use_.back();
-			}
-			return nullptr;
+			}else {
+                IO_BUFFER_PTR temp_ptr(new GT_IOContextBuffer);
+                temp_ptr->AllocateIOBuffer();
+                io_buffer_in_use_.push_back(temp_ptr);
+                return temp_ptr;
+            }
 		}
 
 		void GT_IOContextBuffer_Manager::ReleaseIOBuffer(IO_BUFFER_PTR buffer_ptr) {
@@ -106,7 +111,9 @@ namespace GT {
 			if (buffer_ptr != nullptr) {
 				buffer_ptr->ResetBuffer();
 			}
+            GT_LOG_INFO("io buffer cache size = " << io_buffer_cache_.size());
 			io_buffer_cache_.push_back(buffer_ptr);
+            GT_LOG_INFO("after collect io buffer cache size = " << io_buffer_cache_.size());
 		}
 
 		void GT_IOContextBuffer_Manager::Finalize() {

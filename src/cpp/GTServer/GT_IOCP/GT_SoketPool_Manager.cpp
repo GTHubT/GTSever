@@ -74,6 +74,8 @@ namespace GT {
 		std::shared_ptr<SOCKET> GT_SocketPool_Manager::GetNextUnuseSocket() {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
 
+            GT_LOG_INFO("inuse socket pool size = " << socket_inuse_pool_.size());
+            GT_LOG_INFO("socket pool size = " << socket_pool_.size());
 			if (socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
 				UpdateSocketPool_();
 			}
@@ -81,8 +83,15 @@ namespace GT {
 				socket_inuse_pool_.push_back(std::shared_ptr<SOCKET>(new SOCKET(std::move(socket_pool_.front()))));
 				socket_pool_.pop_front();	
 				return socket_inuse_pool_.back();
-			}
-			return nullptr;
+            }
+            else {
+                SOCKET temp_sock = std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED));
+                std::shared_ptr<SOCKET> temp_ptr(new (SOCKET)(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)));
+                socket_pool_.push_back(temp_sock);
+                socket_inuse_pool_.push_back(std::shared_ptr<SOCKET>(new SOCKET(std::move(socket_pool_.front()))));
+                socket_pool_.pop_front();
+                return socket_inuse_pool_.back();
+            }
 			
 		}
 
@@ -131,7 +140,8 @@ namespace GT {
 		void GT_SocketPool_Manager::CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET> sock_ptr) {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
 			if (sock_ptr != nullptr) {
-				closesocket(*sock_ptr);
+                closesocket(*sock_ptr);
+                GT_LOG_INFO("tobe use socket pool size = " << tobereuse_socket_pool_.size());
 				tobereuse_socket_pool_.push_back(std::move(*sock_ptr));
 				*sock_ptr = INVALID_SOCKET;
 			}		
