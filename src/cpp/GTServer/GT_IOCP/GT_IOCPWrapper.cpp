@@ -263,7 +263,7 @@ namespace GT {
 				return;
 			}
             int ret = WSARecv(*(completion_key_->GetContextSocketPtr().get()), &temp_io_ptr->GetWsaBuf(), 1, &bytes_recved_, &flag, (LPOVERLAPPED)temp_io_ptr.get(), nullptr);
-            DWORD err = GetLastError();
+            DWORD err = WSAGetLastError();
             if (ret == SOCKET_ERROR && (WSA_IO_PENDING != err)) {
                 GT_LOG_ERROR("Send Socket recv event failed!");
             }
@@ -273,7 +273,7 @@ namespace GT {
             GT_LOG_DEBUG("Post Write Event Request!");
             DWORD transfersize = 0;
             int ret = WSASend(*(completion_key_->GetContextSocketPtr().get()), &io_event_->GetWsaBuf(), io_event_->GetBufferSize(), &transfersize, 0, (LPOVERLAPPED)io_event_.get(), nullptr);
-            if (ret == SOCKET_ERROR && (WSA_IO_PENDING != GetLastError())) {
+            if (ret == SOCKET_ERROR && (WSA_IO_PENDING != WSAGetLastError())) {
                 GT_LOG_ERROR("Send Socket write event failed!");
             }
         }
@@ -282,7 +282,7 @@ namespace GT {
 			GT_LOG_DEBUG("Post Write Event Request!");
 			DWORD transfersize = 0;
 			int ret = WSASend(*(((GT_SocketConetxt*)(completion_key_pointer))->GetContextSocketPtr().get()), &io_event_->GetWsaBuf(), io_event_->GetBufferSize(), &transfersize, 0, (LPOVERLAPPED)io_event_.get(), nullptr);
-			if (ret == SOCKET_ERROR && (WSA_IO_PENDING != GetLastError())) {
+			if (ret == SOCKET_ERROR && (WSA_IO_PENDING != WSAGetLastError())) {
 				GT_LOG_ERROR("Send Socket write event failed!");
 			}
 		}
@@ -316,7 +316,7 @@ namespace GT {
                     nullptr,
                     (LPOVERLAPPED)temp_ptr.get());
 
-				DWORD err = GetLastError();
+				DWORD err = WSAGetLastError();
                 if (ret == false && ERROR_IO_PENDING != err) {
                     GT_LOG_ERROR("Post Accept Event Failed! error code = " << err);
                 }
@@ -398,9 +398,9 @@ namespace GT {
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
 				gt_completion_key_ptr->ReleaseUsedIOContext(gt_io_buffer_ptr);
             }
-            else if (ret == false && Nnumofbytestransfered == 0 && GetLastError() != 0) /* client exit */
+            else if (ret == false && Nnumofbytestransfered == 0 && WSAGetLastError() != 0) /* client exit */
             {
-                GT_LOG_ERROR("GetQueuedCompletionStatus failed, error code = " << GetLastError());
+                GT_LOG_ERROR("GetQueuedCompletionStatus failed, error code = " << WSAGetLastError());
                 GT_LOG_DEBUG("client exit : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 GTSERVER_RESOURCE_MANAGER.ReleaseCompletionKey(gt_completion_key_ptr);
             }

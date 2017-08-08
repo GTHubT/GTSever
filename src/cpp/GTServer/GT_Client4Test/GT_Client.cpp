@@ -105,7 +105,7 @@ namespace GT {
 
 				int ret = connect(client_, (sockaddr*)&client_addr_, sizeof(client_addr_));
 				if (ret != 0) {
-					GT_LOG_ERROR("connect error, error code = " << GetLastError());
+					GT_LOG_ERROR("connect error, error code = " << WSAGetLastError());
 					CloseHandle((HANDLE)client_);
 					continue;
 				}
@@ -115,7 +115,7 @@ namespace GT {
 				std::string msg = "hello IOCP!";
 				int num = send(client_, msg.c_str(), msg.length(), 0);
 				if (num == SOCKET_ERROR) {
-					GT_LOG_ERROR("send data error, err code = "<< GetLastError());
+					GT_LOG_ERROR("send data error, err code = "<< WSAGetLastError());
 					closesocket(client_);
 					CloseHandle((HANDLE)client_);
 				}
