@@ -3,10 +3,11 @@
 
 #include <thread>
 #include <atomic>
-#include <deque>
+#include <map>
 #include <vector>
 #include <mutex>
 #include <memory>
+#include <deque>
 #include <WinSock2.h>
 
 /***************************************************************************************************/
@@ -42,8 +43,8 @@ namespace GT {
 			std::thread			clean_thread_;
 			static  std::mutex	socket_pool_mutex_;
 			std::deque<SOCKET>	socket_pool_;
-			std::deque<SOCKET>	tobereuse_socket_pool_;
-			std::deque<std::shared_ptr<SOCKET>>	socket_inuse_pool_;
+			std::map<ULONG_PTR, SOCKET>	tobereuse_socket_pool_;
+			std::map<ULONG_PTR, std::shared_ptr<SOCKET>>	socket_inuse_pool_;
 			std::atomic<bool>	end_socket_clean_thread_;
 
 

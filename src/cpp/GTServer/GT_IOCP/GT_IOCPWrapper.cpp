@@ -236,8 +236,8 @@ namespace GT {
             /* convert sockaddr to sockaddr_in struct */
             struct sockaddr_in *local_ipv4 = (struct sockaddr_in *)pLocalAddr;
             struct sockaddr_in *remote_ipv4 = (struct sockaddr_in *)pRemoteAddr;
-            GT_LOG_DEBUG("get new connection and local sockaddr = " << inet_ntoa(local_ipv4->sin_addr) << ", remote sockaddr = " << inet_ntoa(remote_ipv4->sin_addr));
-			printf("get new connection and local sockaddr = %s, remote sockaddr = %s \n", inet_ntoa(local_ipv4->sin_addr) ,inet_ntoa(remote_ipv4->sin_addr));
+            GT_LOG_DEBUG("get new connection and local sockaddr = " << inet_ntoa(local_ipv4->sin_addr) << ", remote sockaddr = " << inet_ntoa(remote_ipv4->sin_addr) << ", remote port = " << remote_ipv4->sin_port);
+			printf("get new connection and local sockaddr = %s, remote sockaddr = %s , remote port = %d\n", inet_ntoa(local_ipv4->sin_addr) ,inet_ntoa(remote_ipv4->sin_addr), remote_ipv4->sin_port);
 			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(io_context->GetClientSocketPtr(), ACCEPTED_SOCKET);
 			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
 			if (overlappe_ptr == nullptr) {
@@ -316,8 +316,9 @@ namespace GT {
                     nullptr,
                     (LPOVERLAPPED)temp_ptr.get());
 
-                if (ret == false && ERROR_IO_PENDING != GetLastError()) {
-                    GT_LOG_ERROR("Post Accept Event Failed!");
+				DWORD err = GetLastError();
+                if (ret == false && ERROR_IO_PENDING != err) {
+                    GT_LOG_ERROR("Post Accept Event Failed! error code = " << err);
                 }
                 else {
                     GT_LOG_INFO("Post Accept Event Success!");

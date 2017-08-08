@@ -62,13 +62,13 @@ namespace GT {
 				}
 
 				/* init Resource Collector Worker */
-				resource_collect_cycle_time_ = GT_READ_CFG_INT("resource_control", "resource_collect_cycle_time", 30000); /* (ms) */
-				resource_collector_thread_ = std::move(std::thread(&GT_Resource_Manager::Resource_Collect_Worker_, this, 
-														std::bind(&GT_Resource_Manager::Resource_Collect_Func_, this), 
-														std::ref(end_resource_collector_),
-														std::ref(resource_collector_mutex_),
-														std::ref(resource_cv_),
-														resource_collect_cycle_time_));
+				//resource_collect_cycle_time_ = GT_READ_CFG_INT("resource_control", "resource_collect_cycle_time", 30000); /* (ms) */
+				//resource_collector_thread_ = std::move(std::thread(&GT_Resource_Manager::Resource_Collect_Worker_, this, 
+				//										std::bind(&GT_Resource_Manager::Resource_Collect_Func_, this), 
+				//										std::ref(end_resource_collector_),
+				//										std::ref(resource_collector_mutex_),
+				//										std::ref(resource_cv_),
+				//										resource_collect_cycle_time_));
 
 				/* init out date connection checker */
 				out_date_time_control_ = GT_READ_CFG_INT("server_cfg", "out_date_control", 120) * 1000;
@@ -192,12 +192,12 @@ namespace GT {
 		void GT_Resource_Manager::Finalize() {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("resource manager finalize...");
-			end_resource_collector_ = true;
-			resource_cv_.notify_one();
-			if (resource_collector_thread_.joinable()) {
-				resource_collector_thread_.join();
-				GT_LOG_INFO("Resource Collector Thread Exit!");
-			}
+			//end_resource_collector_ = true;
+			//resource_cv_.notify_one();
+			//if (resource_collector_thread_.joinable()) {
+			//	resource_collector_thread_.join();
+			//	GT_LOG_INFO("Resource Collector Thread Exit!");
+			//}
 
 			end_connect_check_ato_ = true;
 			connect_check_cv_.notify_one();
