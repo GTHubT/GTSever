@@ -13,7 +13,7 @@ using namespace GT::UTIL;
 namespace GT {
 
 	namespace NET {
-#define SOCKETPOOL_LOCK_THIS_SCOPE	std::lock_guard<std::mutex> lk(socket_pool_mutex_);
+#define SOCKETPOOL_LOCK_THIS_SCOPE	std::lock_guard<std::mutex> lk(GT_SocketPool_Manager::socket_pool_mutex_);
 
 		std::mutex GT_SocketPool_Manager::socket_pool_mutex_;
 
@@ -111,8 +111,6 @@ namespace GT {
 
 		/* if the socket pool is not enough, will call ReAllocateSocket4Pool to reallocate sockets for further use */
 		void GT_SocketPool_Manager::ReAllocateSocket4Pool_() {
-			SOCKETPOOL_LOCK_THIS_SCOPE;
-
 			size_t newsize_ = poolsize_ + GT_READ_CFG_INT("socket_pool_cfg", "reallocate_socket_num_pertime", 300);
 			while (poolsize_ < newsize_) {
 				GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))) :
@@ -125,10 +123,10 @@ namespace GT {
 			GT_TRACE_FUNCTION;
 			SOCKETPOOL_LOCK_THIS_SCOPE;
 
-			end_socket_clean_thread_ = true;
-			if (clean_thread_.joinable()) {
-				clean_thread_.join();
-			}
+			//end_socket_clean_thread_ = true;
+			//if (clean_thread_.joinable()) {
+			//	clean_thread_.join();
+			//}
 
 			std::for_each(socket_inuse_pool_.begin(), socket_inuse_pool_.end(), [] (auto iter){ closesocket(*iter); });
 
@@ -153,6 +151,7 @@ namespace GT {
             for (auto iter = socket_inuse_pool_.begin(); iter < socket_inuse_pool_.end();) {
                 if (**iter == INVALID_SOCKET) {
                     SOCKETPOOL_LOCK_THIS_SCOPE;
+					GT_LOG_INFO("release invalid socket");
                     iter = socket_inuse_pool_.erase(iter);
                 }
                 else {

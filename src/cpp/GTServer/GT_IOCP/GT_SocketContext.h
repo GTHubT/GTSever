@@ -11,6 +11,7 @@
 #include <memory>
 #include <chrono>
 #include <map>
+#include <mutex>
 
 /************************************************************************/
 /* socket context is combined by socket pool element and IO context     */
@@ -53,6 +54,8 @@ namespace GT {
 			void SetSocketType(SOCKET_TYPE type) { sock_type_ = type; }
 			SOCKET_TYPE GetSocketType() { return sock_type_; }
 
+			void ReleaseUsedIOContext(IO_BUFFER_PTR io_context);
+
 
 		private:
 			SOCKET_TYPE								sock_type_;
@@ -63,7 +66,8 @@ namespace GT {
 			/*another way to lean the close socket, I set timer for each completion key, every time the completion have*/
 			/*send or recv event happen, reset the timer, if the completion key have not got any event within config "out_date_control" */
 			/***********************************************************************************************************/
-			std::chrono::system_clock::time_point	time_control_;			
+			std::chrono::system_clock::time_point	time_control_;	
+			std::mutex								sock_context_mutex_;
 		};
 	}
 }

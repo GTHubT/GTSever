@@ -45,7 +45,7 @@ namespace GT {
             void    PrePostAcceptEvent_();
             void    PostAnotherAcceptEvent_();
             void    ProcessAcceptEvent_(IO_BUFFER_PTR io_context);
-			void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_);
+			void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_context);
 			void    PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
 			void    PostWriteRequestEvent(PULONG_PTR completion_key_pointer, IO_BUFFER_PTR io_event_);
 			bool	GetAcceptEXFuncAddress_();

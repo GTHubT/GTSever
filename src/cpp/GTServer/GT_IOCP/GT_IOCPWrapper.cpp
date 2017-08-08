@@ -248,12 +248,13 @@ namespace GT {
 			overlappe_ptr->SetIOBufferSocket(io_context->GetClientSocketPtr());
             completion_key->SetContextSocketAddr(*remote_ipv4);
 			BindSocketToCompletionPort(completion_key->GetContextSocketPtr(), (ULONG_PTR)completion_key.get());
-			PostReadRequestEvent_(completion_key);
-
+			PostReadRequestEvent_(completion_key, overlappe_ptr);
+			accept_socket_completion_key_->ReleaseUsedIOContext(io_context);
         }
 
-        void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_) {
+        void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_context) {
             GT_LOG_DEBUG("Post Read Request Event!");
+			completion_key_->ReleaseUsedIOContext(io_context);
             DWORD bytes_recved_ = 0;
             DWORD flag = 0;
             IO_BUFFER_PTR temp_io_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
@@ -388,12 +389,13 @@ namespace GT {
                 GT_LOG_DEBUG("Get read event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
                 gt_completion_key_ptr->ResetTimer();
-				PostReadRequestEvent_(gt_completion_key_ptr);
+				PostReadRequestEvent_(gt_completion_key_ptr, gt_io_buffer_ptr);
             }
             else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_WRITE) {
                 GT_LOG_DEBUG("Get write event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 gt_completion_key_ptr->ResetTimer();
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
+				gt_completion_key_ptr->ReleaseUsedIOContext(gt_io_buffer_ptr);
             }
             else if (ret == false && Nnumofbytestransfered == 0 && GetLastError() != 0) /* client exit */
             {
@@ -404,8 +406,6 @@ namespace GT {
             else {
                 GT_LOG_DEBUG("Unkonwn Event!");
             }
-
-			GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(gt_io_buffer_ptr);
 		}
 
         void GT_IOCPWrapper::PostExitEvent_() {
