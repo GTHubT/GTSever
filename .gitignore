@@ -8,6 +8,9 @@ src/cpp/GTServer/temp/
 src/cpp/GTServer/.vs/
 src/cpp/GTServer/GTest/Debug/
 src/cpp/GTServer/GTest/Release/
+src/cpp/GTServer/Build/*
+src/cpp/GTServer/temp/*
+src/cpp/GTServer/ipch/*
 *.ilk
 *.exp
 *.db
