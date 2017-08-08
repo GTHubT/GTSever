@@ -40,21 +40,34 @@ namespace GT {
 			GT_SocketConetxt();
 			~GT_SocketConetxt();
 
-			void SetContextSocket(SOCKET_SHAREPTR sock_ptr) { socket_shared_ptr_ = sock_ptr; }
-			void SetContextSocketAddr(SOCKADDR_IN sockaddr) { socket_addr_ = sockaddr; }
+			inline void SetContextSocket(SOCKET_SHAREPTR sock_ptr) { 
+				socket_shared_ptr_ = sock_ptr; 
+			}
+			inline void SetContextSocketAddr(SOCKADDR_IN sockaddr) { 
+				socket_addr_ = sockaddr; 
+			}
+			inline SOCKET_SHAREPTR GetContextSocketPtr() { 
+				return socket_shared_ptr_; 
+			}
+            inline SOCKADDR_IN  GetSocketAddr() { 
+				return socket_addr_; 
+			}
+			inline void ResetTimer() { 
+				time_control_ = std::chrono::system_clock::now(); 
+			}
+			inline std::chrono::system_clock::time_point GetTimer() { 
+				return time_control_; 
+			}
+			inline void SetSocketType(SOCKET_TYPE type) { 
+				sock_type_ = type; 
+			}
+			inline SOCKET_TYPE GetSocketType() { 
+				return sock_type_; 
+			}
+
 			void AddIOContext2Cache(IO_BUFFER_PTR io_ptr);
-
-            SOCKET_SHAREPTR GetContextSocketPtr() { return socket_shared_ptr_; }
-            SOCKADDR_IN     GetSocketAddr() { return socket_addr_; }
-            std::map<ULONG_PTR, IO_BUFFER_PTR>&   GetIOBufferCache() { return socket_io_buffer_cache_; }
-
-			void ResetTimer() { time_control_ = std::chrono::system_clock::now(); }
-			std::chrono::system_clock::time_point GetTimer() { return time_control_; }
-
-			void SetSocketType(SOCKET_TYPE type) { sock_type_ = type; }
-			SOCKET_TYPE GetSocketType() { return sock_type_; }
-
 			void ReleaseUsedIOContext(IO_BUFFER_PTR io_context);
+			std::map<ULONG_PTR, IO_BUFFER_PTR>&   GetIOBufferCache();
 
 
 		private:
