@@ -89,6 +89,11 @@ namespace GT {
 			return is_enabled_;
 		}
 
+        std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& GT_Resource_Manager::GetCompletionKeyCache() {
+            GT_RESOURCE_LOCK;
+            return completion_key_ptr_cache_;
+        }
+
 		SOCKET_SHAREPTR GT_Resource_Manager::GetCachedSocket() {
 			GT_LOG_INFO("Get New sokcet from cache!");
 			return GT_SOCKET_CACHE_MANAGER.GetNextUnuseSocket();
@@ -110,7 +115,7 @@ namespace GT {
 			GT_RESOURCE_LOCK;
 
             /* release socket context IO buffer first */
-            std::map<ULONG_PTR, IO_BUFFER_PTR> io_ptr_set = sockcontext_ptr->GetIOBufferCache();
+            std::map<ULONG_PTR, IO_BUFFER_PTR>& io_ptr_set = sockcontext_ptr->GetIOBufferCache();
             std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr.second);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
 		}

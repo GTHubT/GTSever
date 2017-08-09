@@ -357,11 +357,11 @@ namespace GT {
 			GT_SocketConetxt* gt_context = (GT_SocketConetxt*)completion_key;
 			GT_IOContextBuffer* gt_io = (GT_IOContextBuffer*)overlapped;
 
-			std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_cache = GTSERVER_RESOURCE_MANAGER.GetCompletionKeyCache();
+			std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& completion_key_cache = GTSERVER_RESOURCE_MANAGER.GetCompletionKeyCache();
 			if (completion_key_cache.find((ULONG_PTR)gt_context) != completion_key_cache.end()) {
 				gt_completion_key_ptr = completion_key_cache[(ULONG_PTR)gt_context];
 
-				std::map<ULONG_PTR, IO_BUFFER_PTR> io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
+				std::map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
 				if (io_buffer_cache.find((ULONG_PTR)gt_io) != io_buffer_cache.end()) {
 					gt_io_buffer_ptr = io_buffer_cache[(ULONG_PTR)gt_io];
 				}

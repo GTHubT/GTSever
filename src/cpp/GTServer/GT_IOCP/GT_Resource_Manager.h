@@ -37,7 +37,7 @@ namespace GT {
 			void					SetSocketContexAddr(SOCKETCONTEXT_SHAREPTR s_ptr, SOCKADDR_IN sock_addr);
 			void					PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IO_BUFFER_PTR io_ptr);
 			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type = NULL_SOCKET);			// completion key
-			std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& GetCompletionKeyCache() { return completion_key_ptr_cache_; }
+            std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& GetCompletionKeyCache();
 
 			static GT_Resource_Manager& GetInstance();
 
