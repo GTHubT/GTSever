@@ -30,9 +30,9 @@ namespace GT {
             ~GT_IOCPWrapper() {}
             static GT_IOCPWrapper& GetInstance();
 
-            bool	Initialize();
+            bool	Initialize(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR, long)>& call_back_func_);
             bool	StopService();
-            void    GTStartService(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR, long)>& call_back_func_);
+            void    GTStartService();
             bool	BindSocketToCompletionPort(SOCKET_SHAREPTR s_ptr, ULONG_PTR completionkey);
 			void	GetCompletionPortEventStatus(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR, long)>& call_back_, std::atomic_bool& is_need_continue_wait);
 
@@ -44,13 +44,14 @@ namespace GT {
             bool	InitializeListenSocket_();
             void    PrePostAcceptEvent_();
             void    PostAnotherAcceptEvent_();
-            void    ProcessAcceptEvent_(IO_BUFFER_PTR io_context);
+            void    ProcessAcceptEvent_(std::thread::id, IO_BUFFER_PTR io_context);
 			void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_context);
 			void    PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
 			void    PostWriteRequestEvent(PULONG_PTR completion_key_pointer, IO_BUFFER_PTR io_event_);
 			bool	GetAcceptEXFuncAddress_();
 			bool	GetAcceptExSockAddrsFuncAddress_();
             void    PostExitEvent_();
+			void	InitThreadPool_(std::function<void(IO_EVENT_TYPE, SOCKETCONTEXT_SHAREPTR, IO_BUFFER_PTR, long)>& call_back_func_);
 
         private:
             bool                           is_inited_;

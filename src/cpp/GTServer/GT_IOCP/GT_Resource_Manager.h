@@ -14,6 +14,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <map>
+#include <vector>
 
 namespace GT {
 
@@ -28,7 +29,7 @@ namespace GT {
 		public:
 			~GT_Resource_Manager();
 
-			bool					Initialize();
+			bool					Initialize(std::vector<std::thread::id>& thread_id);
 			void					Finalize();
 			SOCKET_SHAREPTR			GetCachedSocket();
 			IO_BUFFER_PTR			GetIOContextBuffer();										// overlapped struct
@@ -36,8 +37,10 @@ namespace GT {
 			void					ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr);
 			void					SetSocketContexAddr(SOCKETCONTEXT_SHAREPTR s_ptr, SOCKADDR_IN sock_addr);
 			void					PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IO_BUFFER_PTR io_ptr);
-			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type = NULL_SOCKET);			// completion key
-            std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& GetCompletionKeyCache();
+			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(std::thread::id thread_id, SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type = NULL_SOCKET);			// completion key
+            bool GetCompletionKeyCacheByThreadID(std::thread::id thread_id, std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>&);
+			SOCKETCONTEXT_SHAREPTR GetListenSocketCompletionKey(SOCKET_SHAREPTR sock_ptr);
+
 
 			static GT_Resource_Manager& GetInstance();
 
@@ -48,6 +51,7 @@ namespace GT {
 			void	Resource_Collect_Func_();
 			void	Resource_Collect_Worker_(std::function<void()> func_, std::atomic_bool& end_thread_, std::mutex& resource_lock, std::condition_variable& source_cv, int cycle_time_);
 
+			bool	InitializeCache_(std::vector<std::thread::id>& thread_id);
 			void	ConnectChecker(); /* check the connection by timer control, if the timer is expired, will close the connection */
 			void	ConnectCheckWorker(std::function<void()> func, std::mutex& mu, std::condition_variable& cv, std::atomic_bool& end_thread, int check_interval);
 		private:
@@ -67,7 +71,7 @@ namespace GT {
 			int connect_check_interval_;
 			std::thread connect_check_thread_;
 
-			std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_ptr_cache_;
+			std::map<std::thread::id, std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>*> completion_key_ptr_cache_by_thread_id_; /* each thread have its own cache */
 		};
 	}
 }

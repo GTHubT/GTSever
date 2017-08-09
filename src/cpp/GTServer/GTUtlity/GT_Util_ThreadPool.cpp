@@ -26,6 +26,7 @@ namespace GT {
 				Thread_Tuple* thread_tuple = new Thread_Tuple();
                 thread_tuple->this_thread_ = std::move(std::thread(&GT_Util_ThreadPool::LongTimeWorker_, this, thread_func, std::ref(thread_tuple->end_thread_)));
                 workpool_.push_back(thread_tuple);
+				thread_pool_id_.push_back(thread_tuple->this_thread_.get_id());
                 printf("create thread TID = %d \n", thread_tuple->this_thread_.get_id());
 			}
 			workpool_started_ = true;

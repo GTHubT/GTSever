@@ -368,7 +368,7 @@ namespace GT {
 			GT_IOContextBuffer* gt_io = (GT_IOContextBuffer*)overlapped;
 			if (gt_io == NULL || gt_context == NULL || gt_io->GetIOEventType() == IO_EVENT_NULL)
 			{
-				GT_LOG_ERROR("completion key or io buffer empty...");	/* why the logic can occured at this place ??? */
+				GT_LOG_ERROR("completion key or io buffer empty...");
 				return;
 			}
 

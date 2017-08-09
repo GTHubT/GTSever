@@ -40,7 +40,7 @@ namespace GT {
             void Start(size_t poolsize, std::function<void()>);
             void Stop();
 			size_t GetPoolSize();
-
+			std::vector<std::thread::id> GetThreadID() { return thread_pool_id_; }
         private:
             void LongTimeWorker_(std::function<void()>, std::atomic<bool>&);
 
@@ -48,6 +48,7 @@ namespace GT {
 			size_t	poolsize_;
 			bool	workpool_started_;
             std::vector<Thread_Tuple*> workpool_;
+			std::vector<std::thread::id> thread_pool_id_;
         };
     }
 }

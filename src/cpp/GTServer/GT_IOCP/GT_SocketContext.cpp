@@ -1,5 +1,6 @@
 #include "GT_SocketContext.h"
 #include "GT_IOContextBuffer_Manager.h"
+#include "GTUtlity/GT_Util_GlogWrapper.h"
 
 namespace GT {
 
@@ -24,6 +25,7 @@ namespace GT {
 			auto iter = socket_io_buffer_cache_.find((ULONG_PTR)io_context.get());
 			GT_IOContextBuffer_Manager::GetInstance().ReleaseIOBuffer(io_context);
 			if (iter != socket_io_buffer_cache_.end()) {
+				GT_LOG_INFO("NOW release io context from completion key!");
 				socket_io_buffer_cache_.erase(iter);
 			}
 		}

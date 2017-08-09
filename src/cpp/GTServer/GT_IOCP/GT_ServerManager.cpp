@@ -49,7 +49,9 @@ namespace GT {
 			if (server_manager_initted_)
 				return server_manager_initted_;
 
-			server_manager_initted_ = GT_IOCP.Initialize();
+			dispatch_event_func_ = std::bind(&GT_ServerManager::DispatchEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+
+			server_manager_initted_ = GT_IOCP.Initialize(dispatch_event_func_);
 			if (!server_manager_initted_) {
 				GT_LOG_ERROR("IOCP init failed!");
 			}
@@ -115,8 +117,7 @@ namespace GT {
 
 		void GT_ServerManager::GTStartService() {
 			GT_TRACE_FUNCTION;
-			dispatch_event_func_ = std::bind(&GT_ServerManager::DispatchEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-			GT_IOCP.GTStartService(dispatch_event_func_);
+			GT_IOCP.GTStartService();
 		}
 
 		void GT_ServerManager::DispatchEvent(IO_EVENT_TYPE type, SOCKETCONTEXT_SHAREPTR completion_key, IO_BUFFER_PTR io_ptr, long len) {
