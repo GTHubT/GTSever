@@ -211,14 +211,14 @@ namespace GT {
         bool GT_IOCPWrapper::StopService() {
             GT_LOG_INFO("Now post exit event to GT Service waiting thread!");
             PostExitEvent_();
-            GT_LOG_INFO("Now stopping service...");
+			GT_LOG_INFO("Now stopping service...");
+			if (is_iocp_thread_pool_started_) {
+				GT_LOG_INFO("Now stop iocp thread pool service...");
+				thread_pool_.Stop();
+			}
             if (is_resource_worker_started_) {
                 GT_LOG_INFO("Now stop resource manager service...");
                 GTSERVER_RESOURCE_MANAGER.Finalize();
-            }
-            if (is_iocp_thread_pool_started_) {
-                GT_LOG_INFO("Now stop iocp thread pool service...");
-                thread_pool_.Stop();
             }
             return true;
         }
