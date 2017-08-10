@@ -26,7 +26,7 @@ namespace GT {
 												   out_date_time_control_(100*1000),
 												   end_connect_check_ato_(false),
 												   connect_check_interval_(20000){
-			completion_key_ptr_cache_by_thread_id_.clear();
+			completion_key_ptr_cache_.clear();
 
 		}
 
@@ -61,11 +61,6 @@ namespace GT {
 					break;
 				}
 
-				is_enabled_ = InitializeCache_(thread_id);
-				if (!is_enabled_) {
-					GT_LOG_ERROR("Completion cache initialize failed!");
-					break;
-				}
 
 				/* init Resource Collector Worker */
 				//resource_collect_cycle_time_ = GT_READ_CFG_INT("resource_control", "resource_collect_cycle_time", 30000); /* (ms) */
@@ -95,12 +90,10 @@ namespace GT {
 			return is_enabled_;
 		}
 
-		bool GT_Resource_Manager::InitializeCache_(std::vector<std::thread::id>& thread_id) {
-			for (auto iter : thread_id) {
-				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>* temp_ptr = new std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>;
-				completion_key_ptr_cache_by_thread_id_.insert(std::make_pair(iter, temp_ptr));
-			}
-			return true;
+
+		std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& GT_Resource_Manager::GetCompletionKeyCache() {
+			GT_RESOURCE_LOCK;
+			return completion_key_ptr_cache_;
 		}
 
 
@@ -111,17 +104,6 @@ namespace GT {
 			return temp_ptr;
 		}
 
-        bool GT_Resource_Manager::GetCompletionKeyCacheByThreadID(std::thread::id thread_id, std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& cache) {
-            GT_RESOURCE_LOCK;
-			if (completion_key_ptr_cache_by_thread_id_.find(thread_id) != completion_key_ptr_cache_by_thread_id_.end()) {
-				cache = *completion_key_ptr_cache_by_thread_id_[thread_id];
-				return true;
-			}
-			else {
-				GT_LOG_ERROR("did not find the target cache of thread : " << thread_id);
-				return false;
-			}
-        }
 
 		SOCKET_SHAREPTR GT_Resource_Manager::GetCachedSocket() {
 			GT_LOG_INFO("Get New sokcet from cache!");
@@ -149,20 +131,15 @@ namespace GT {
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
 		}
 
-		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(std::thread::id thread_id, SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type) {
+		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type) {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Create new completion key!");
 			GT_RESOURCE_LOCK;
 			SOCKETCONTEXT_SHAREPTR temp(new GT_SocketConetxt());
 			temp->SetContextSocket(sock_ptr);
 			temp->SetSocketType(type);
-			if (completion_key_ptr_cache_by_thread_id_.find(thread_id) != completion_key_ptr_cache_by_thread_id_.end()) {
-				completion_key_ptr_cache_by_thread_id_[thread_id]->insert(std::make_pair((ULONG_PTR)temp.get(), temp));
-				return temp;
-			}
-			else {
-				return nullptr;
-			}
+			completion_key_ptr_cache_.insert(std::make_pair((ULONG_PTR)temp.get(), temp));
+			return temp;
 		}
 
 
@@ -198,21 +175,18 @@ namespace GT {
 		}
 
 		void GT_Resource_Manager::ConnectChecker() {
-			for (auto& cache_reverse : completion_key_ptr_cache_by_thread_id_) {
-				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& cache = *cache_reverse.second;
-				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = cache.begin();
-				for (; iter != cache.end();) {
-					auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - (*iter).second->GetTimer()).count();
-					if (d > out_date_time_control_ && (*iter).second->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/ {
+			auto iter = completion_key_ptr_cache_.begin();
+			for ( ;iter != completion_key_ptr_cache_.end(); ) {
+					auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - iter->second->GetTimer()).count();
+					if (d > out_date_time_control_ && iter->second->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/ {
 						ReleaseCompletionKey(iter->second);
 						GT_RESOURCE_LOCK;
-						iter = cache.erase(iter);
+						iter = completion_key_ptr_cache_.erase(iter);
 						GT_LOG_DEBUG("delete the out date completion key!");
 					}
 					else {
 						++iter;
 					}
-				}
 			}
 		}
 
@@ -253,14 +227,8 @@ namespace GT {
 		void GT_Resource_Manager::CleanCache_() {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Clean the completion key cache...");
-			for (auto& cache : completion_key_ptr_cache_by_thread_id_) {
-				auto& thread_cache = *cache.second;
-				std::for_each(thread_cache.begin(), thread_cache.end(), [&](auto iter)->void {ReleaseCompletionKey(iter.second); });
-			}
-
-			for (auto cache : completion_key_ptr_cache_by_thread_id_) {
-				delete cache.second;
-			}
+			std::for_each(completion_key_ptr_cache_.begin(), completion_key_ptr_cache_.end(), [&](auto iter)->void {ReleaseCompletionKey(iter.second); });
+			
 		}
 
 		void GT_Resource_Manager::ClearResource_() {

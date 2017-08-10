@@ -245,7 +245,7 @@ namespace GT {
             struct sockaddr_in *remote_ipv4 = (struct sockaddr_in *)pRemoteAddr;
             GT_LOG_DEBUG("get new connection and local sockaddr = " << inet_ntoa(local_ipv4->sin_addr) << ", remote sockaddr = " << inet_ntoa(remote_ipv4->sin_addr) << ", remote port = " << remote_ipv4->sin_port);
 			//printf("get new connection and local sockaddr = %s, remote sockaddr = %s , remote port = %d\n", inet_ntoa(local_ipv4->sin_addr) ,inet_ntoa(remote_ipv4->sin_addr), remote_ipv4->sin_port);
-			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(thread_id, io_context->GetClientSocketPtr(), ACCEPTED_SOCKET);
+			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(io_context->GetClientSocketPtr(), ACCEPTED_SOCKET);
 			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
 			if (overlappe_ptr == nullptr || completion_key == nullptr) {
 				GT_LOG_ERROR("IO Buffer allocate failed!");
@@ -389,11 +389,8 @@ namespace GT {
 				}
 			}
 			else {
-				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_cache;
-				if (!GTSERVER_RESOURCE_MANAGER.GetCompletionKeyCacheByThreadID(std::this_thread::get_id(), completion_key_cache)) { /* the accepted socket completion are store in the thread cache */
-					/* the connection check worker will release the gt_context and gt_io source */
-					return;
-				}
+				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& completion_key_cache = GTSERVER_RESOURCE_MANAGER.GetCompletionKeyCache();
+				
 				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_cache.find((ULONG_PTR)gt_context);
 				if (iter != completion_key_cache.end()) {
 					gt_completion_key_ptr = iter->second;
