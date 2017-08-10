@@ -13,7 +13,7 @@
 #include <chrono>
 #include <mutex>
 #include <condition_variable>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 namespace GT {
@@ -38,7 +38,7 @@ namespace GT {
 			void					SetSocketContexAddr(SOCKETCONTEXT_SHAREPTR s_ptr, SOCKADDR_IN sock_addr);
 			void					PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IO_BUFFER_PTR io_ptr);
 			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(std::thread::id thread_id, SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type = NULL_SOCKET);			// completion key
-            bool GetCompletionKeyCacheByThreadID(std::thread::id thread_id, std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>&);
+            bool GetCompletionKeyCacheByThreadID(std::thread::id thread_id, std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>&);
 			SOCKETCONTEXT_SHAREPTR GetListenSocketCompletionKey(SOCKET_SHAREPTR sock_ptr);
 
 
@@ -71,7 +71,7 @@ namespace GT {
 			int connect_check_interval_;
 			std::thread connect_check_thread_;
 
-			std::map<std::thread::id, std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>*> completion_key_ptr_cache_by_thread_id_; /* each thread have its own cache */
+			std::unordered_map<std::thread::id, std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>*> completion_key_ptr_cache_by_thread_id_; /* each thread have its own cache */
 		};
 	}
 }

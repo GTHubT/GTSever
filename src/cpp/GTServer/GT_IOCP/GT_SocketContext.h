@@ -10,7 +10,7 @@
 #include <WinSock2.h>
 #include <memory>
 #include <chrono>
-#include <map>
+#include <unordered_map>
 #include <mutex>
 
 /************************************************************************/
@@ -67,14 +67,14 @@ namespace GT {
 
 			void AddIOContext2Cache(IO_BUFFER_PTR io_ptr);
 			void ReleaseUsedIOContext(IO_BUFFER_PTR io_context);
-			std::map<ULONG_PTR, IO_BUFFER_PTR>&   GetIOBufferCache();
+			std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>&   GetIOBufferCache();
 
 
 		private:
 			SOCKET_TYPE								sock_type_;
 			SOCKET_SHAREPTR							socket_shared_ptr_;
 			SOCKADDR_IN								socket_addr_;
-			std::map<ULONG_PTR, IO_BUFFER_PTR>		socket_io_buffer_cache_;
+			std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>		socket_io_buffer_cache_;
 			/***********************************************************************************************************/
 			/*another way to lean the close socket, I set timer for each completion key, every time the completion have*/
 			/*send or recv event happen, reset the timer, if the completion key have not got any event within config "out_date_control" */

@@ -97,7 +97,7 @@ namespace GT {
 
 		bool GT_Resource_Manager::InitializeCache_(std::vector<std::thread::id>& thread_id) {
 			for (auto iter : thread_id) {
-				std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>* temp_ptr = new std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>;
+				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>* temp_ptr = new std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>;
 				completion_key_ptr_cache_by_thread_id_.insert(std::make_pair(iter, temp_ptr));
 			}
 			return true;
@@ -111,7 +111,7 @@ namespace GT {
 			return temp_ptr;
 		}
 
-        bool GT_Resource_Manager::GetCompletionKeyCacheByThreadID(std::thread::id thread_id, std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& cache) {
+        bool GT_Resource_Manager::GetCompletionKeyCacheByThreadID(std::thread::id thread_id, std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& cache) {
             GT_RESOURCE_LOCK;
 			if (completion_key_ptr_cache_by_thread_id_.find(thread_id) != completion_key_ptr_cache_by_thread_id_.end()) {
 				cache = *completion_key_ptr_cache_by_thread_id_[thread_id];
@@ -144,7 +144,7 @@ namespace GT {
 			GT_RESOURCE_LOCK;
 
             /* release socket context IO buffer first */
-            std::map<ULONG_PTR, IO_BUFFER_PTR>& io_ptr_set = sockcontext_ptr->GetIOBufferCache();
+            std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_ptr_set = sockcontext_ptr->GetIOBufferCache();
             std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr.second);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
 		}
@@ -199,8 +199,8 @@ namespace GT {
 
 		void GT_Resource_Manager::ConnectChecker() {
 			for (auto& cache_reverse : completion_key_ptr_cache_by_thread_id_) {
-				std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& cache = *cache_reverse.second;
-				std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = cache.begin();
+				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& cache = *cache_reverse.second;
+				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = cache.begin();
 				for (; iter != cache.end();) {
 					auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - (*iter).second->GetTimer()).count();
 					if (d > out_date_time_control_ && (*iter).second->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/ {

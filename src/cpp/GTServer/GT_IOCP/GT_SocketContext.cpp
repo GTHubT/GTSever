@@ -30,7 +30,7 @@ namespace GT {
 			}
 		}
 
-		std::map<ULONG_PTR, IO_BUFFER_PTR>& GT_SocketConetxt::GetIOBufferCache() {
+		std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& GT_SocketConetxt::GetIOBufferCache() {
 			std::lock_guard<std::mutex> lk(sock_context_mutex_);
 			return socket_io_buffer_cache_;
 		}

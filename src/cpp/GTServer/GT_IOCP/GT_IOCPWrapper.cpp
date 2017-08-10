@@ -331,7 +331,8 @@ namespace GT {
 						GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(temp_ptr);
 					}
 					else {
-						GT_LOG_INFO("Post Accept Event Success!");
+                        GT_LOG_INFO("Post Accept Event Success!");
+                        return;
 					}
 				}
 				try_time++;
@@ -378,23 +379,23 @@ namespace GT {
 			
 
 			if (gt_io->GetIOEventType() == IO_EVENT_ACCEPT) { /* if the event is listen socket's event, just return the listen socket completion key */
-				gt_completion_key_ptr = accept_socket_completion_key_; std::map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
-				std::map<ULONG_PTR, IO_BUFFER_PTR>::iterator io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
+				gt_completion_key_ptr = accept_socket_completion_key_; std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
+				std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>::iterator io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
 				if (io_iter != io_buffer_cache.end()) {
 					gt_io_buffer_ptr = io_iter->second;
 				}
 			}
 			else {
-				std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_cache;
+				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_cache;
 				if (!GTSERVER_RESOURCE_MANAGER.GetCompletionKeyCacheByThreadID(std::this_thread::get_id(), completion_key_cache)) { /* the accepted socket completion are store in the thread cache */
 					/* the connection check worker will release the gt_context and gt_io source */
 					return;
 				}
-				std::map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_cache.find((ULONG_PTR)gt_context);
+				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_cache.find((ULONG_PTR)gt_context);
 				if (iter != completion_key_cache.end()) {
 					gt_completion_key_ptr = iter->second;
-					std::map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
-					std::map<ULONG_PTR, IO_BUFFER_PTR>::iterator io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
+					std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
+					std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>::iterator io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
 					if (io_iter != io_buffer_cache.end()) {
 						gt_io_buffer_ptr = io_iter->second;
 					}

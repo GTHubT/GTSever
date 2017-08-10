@@ -3,7 +3,7 @@
 
 #include <thread>
 #include <atomic>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <mutex>
 #include <memory>
@@ -43,8 +43,8 @@ namespace GT {
 			std::thread			clean_thread_;
 			static  std::mutex	socket_pool_mutex_;
 			std::deque<SOCKET>	socket_pool_;
-			std::map<ULONG_PTR, SOCKET>	tobereuse_socket_pool_;
-			std::map<ULONG_PTR, std::shared_ptr<SOCKET>>	socket_inuse_pool_;
+			std::unordered_map<ULONG_PTR, SOCKET>	tobereuse_socket_pool_;
+			std::unordered_map<ULONG_PTR, std::shared_ptr<SOCKET>>	socket_inuse_pool_;
 			std::atomic<bool>	end_socket_clean_thread_;
 
 
