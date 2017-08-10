@@ -244,7 +244,7 @@ namespace GT {
             struct sockaddr_in *local_ipv4 = (struct sockaddr_in *)pLocalAddr;
             struct sockaddr_in *remote_ipv4 = (struct sockaddr_in *)pRemoteAddr;
             GT_LOG_DEBUG("get new connection and local sockaddr = " << inet_ntoa(local_ipv4->sin_addr) << ", remote sockaddr = " << inet_ntoa(remote_ipv4->sin_addr) << ", remote port = " << remote_ipv4->sin_port);
-			printf("get new connection and local sockaddr = %s, remote sockaddr = %s , remote port = %d\n", inet_ntoa(local_ipv4->sin_addr) ,inet_ntoa(remote_ipv4->sin_addr), remote_ipv4->sin_port);
+			//printf("get new connection and local sockaddr = %s, remote sockaddr = %s , remote port = %d\n", inet_ntoa(local_ipv4->sin_addr) ,inet_ntoa(remote_ipv4->sin_addr), remote_ipv4->sin_port);
 			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(thread_id, io_context->GetClientSocketPtr(), ACCEPTED_SOCKET);
 			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
 			if (overlappe_ptr == nullptr || completion_key == nullptr) {
@@ -254,26 +254,29 @@ namespace GT {
 			overlappe_ptr->SetIOBufferEventType(IO_EVENT_READ);
 			overlappe_ptr->SetIOBufferSocket(io_context->GetClientSocketPtr());
             completion_key->SetContextSocketAddr(*remote_ipv4);
-			BindSocketToCompletionPort(completion_key->GetContextSocketPtr(), (ULONG_PTR)completion_key.get());
+			completion_key->AddIOContext2Cache(overlappe_ptr);
+			bool ret = BindSocketToCompletionPort(completion_key->GetContextSocketPtr(), (ULONG_PTR)completion_key.get());
+			if (!ret) {
+				GT_LOG_ERROR("bind completion key to completion port failed!");
+				accept_socket_completion_key_->ReleaseUsedIOContext(io_context);
+				return;
+			}
 			PostReadRequestEvent_(completion_key, overlappe_ptr);
 			accept_socket_completion_key_->ReleaseUsedIOContext(io_context);
         }
 
         void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_context) {
             GT_LOG_DEBUG("Post Read Request Event!");
-			completion_key_->ReleaseUsedIOContext(io_context);
             DWORD bytes_recved_ = 0;
             DWORD flag = 0;
-            IO_BUFFER_PTR temp_io_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
-			if (temp_io_ptr == nullptr) {
-				GT_LOG_ERROR("IO Buffer allocate failed!");
-				return;
-			}
-            int ret = WSARecv(*(completion_key_->GetContextSocketPtr().get()), &temp_io_ptr->GetWsaBuf(), 1, &bytes_recved_, &flag, (LPOVERLAPPED)temp_io_ptr.get(), nullptr);
+            int ret = WSARecv(*(completion_key_->GetContextSocketPtr().get()), &io_context->GetWsaBuf(), 1, &bytes_recved_, &flag, (LPOVERLAPPED)io_context.get(), nullptr);
             DWORD err = WSAGetLastError();
-            if (ret == SOCKET_ERROR && (WSA_IO_PENDING != err)) {
-                GT_LOG_ERROR("Send Socket recv event failed!");
-            }
+			if (ret == SOCKET_ERROR) {
+				if (!(WSA_IO_PENDING == err)) {
+					GT_LOG_ERROR("Send Socket recv event failed! error code = " << err);
+					GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(io_context);
+				}
+			}
         }
 
         void GT_IOCPWrapper::PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
@@ -369,7 +372,7 @@ namespace GT {
 			GT_IOContextBuffer* gt_io = (GT_IOContextBuffer*)overlapped;
 			if (gt_io == NULL || gt_context == NULL || gt_io->GetIOEventType() == IO_EVENT_NULL)
 			{
-				GT_LOG_ERROR("completion key or io buffer empty...");	/* why the logic can occured at this place ??? */
+				GT_LOG_ERROR("completion key or io buffer empty...");	/* why the logic can occur at this place ??? */
 				return;
 			}
 
@@ -403,12 +406,12 @@ namespace GT {
 			}
 
 			if (gt_io_buffer_ptr == nullptr || gt_completion_key_ptr == nullptr) {
-				GT_LOG_INFO("completion key or io buffer context empty...");
+				GT_LOG_ERROR("completion key or io buffer context empty...");
 				return;
 			}
 
 			if (ret && gt_io->GetIOEventType() == IO_EVENT_EXIT) {
-				GT_LOG_INFO("Get exit IO event, set the is_need_continue_wait flag to false!");
+				GT_LOG_ERROR("Get exit IO event, set the is_need_continue_wait flag to false!");
 				is_need_continue_wait = false;
 			}
 			else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_ACCEPT) { /* when accept the socket, AccepEX will get the first data, so the Nnumofbytestransfered may not zero, if the client send data after connect success!*/
