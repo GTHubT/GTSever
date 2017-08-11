@@ -1,5 +1,5 @@
 #include "GT_Util_OSInfo.h"
-
+#include <random>
 #ifdef _WIN
 #include <Windows.h>
 #endif
@@ -29,6 +29,13 @@ namespace GT {
 #endif
 			return path_;
 		}
+
+        int GT_Util_OSInfo::GetRandomInt() {
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_int_distribution<> dist(1,10);
+            return dist(gen);
+        }
 
     }
 }

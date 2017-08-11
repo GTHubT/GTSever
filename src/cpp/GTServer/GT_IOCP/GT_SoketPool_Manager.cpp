@@ -1,7 +1,9 @@
 #include "GTUtlity/GT_Util_GlogWrapper.h"
 #include "GTUtlity/GT_Util_CfgHelper.h"
 #include "GT_SocketPool_Manager.h"
+#include "GTUtlity/GT_Util_OSInfo.h"
 
+#include <random>
 #include <chrono>
 #include <algorithm>
 
@@ -86,7 +88,7 @@ namespace GT {
 				return socket_inuse_pool_[(ULONG_PTR)temp_ptr.get()];
             }
             else {
-                SOCKET temp_sock = std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED));
+                SOCKET temp_sock(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)));
                 std::shared_ptr<SOCKET> temp_ptr(new (SOCKET)(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)));
                 socket_pool_.push_back(temp_sock);
                 socket_inuse_pool_.insert(std::make_pair((ULONG_PTR)temp_ptr.get(), temp_ptr));
@@ -138,6 +140,7 @@ namespace GT {
 
 		void GT_SocketPool_Manager::CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET> sock_ptr) {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
+            return;
 			if (sock_ptr != nullptr) {
 				closesocket(*sock_ptr);
 				auto iter = socket_inuse_pool_.find((ULONG_PTR)sock_ptr.get());
@@ -147,9 +150,13 @@ namespace GT {
 				else {
 					GT_LOG_INFO("did not find the socket in the socket inuse cache!");
 				}
-                GT_LOG_INFO("tobe use socket pool size = " << tobereuse_socket_pool_.size());
-				tobereuse_socket_pool_.insert(std::make_pair((ULONG_PTR)(sock_ptr.get()), std::move(*sock_ptr)));
-				//*sock_ptr = INVALID_SOCKET;
+                if (GT::UTIL::GT_Util_OSInfo::GetRandomInt() > 8) {
+                    GT_LOG_INFO("tobe use socket pool size = " << tobereuse_socket_pool_.size());
+                    tobereuse_socket_pool_.insert(std::make_pair((ULONG_PTR)(sock_ptr.get()), std::move(*sock_ptr)));
+                }
+                else {
+                    sock_ptr.reset();
+                }
 			}		
 		}
 

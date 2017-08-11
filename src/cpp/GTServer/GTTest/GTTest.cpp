@@ -13,6 +13,8 @@
 #include <deque>
 #include <memory>
 #include <set>
+#include <unordered_map>
+#include <windows.h>
 
 using namespace GT::UTIL;
 void thredfunc() {
@@ -62,8 +64,44 @@ void test_stl_set() {
 
 }
 
+void test_map() {
+    struct item {
+        int i;
+    };
+    std::unordered_map<ULONG_PTR, item> u_map;
+    std::map<ULONG_PTR, item> o_map;
+
+    for (int i = 0; i < 10; i++) {
+        item* it = new item;
+        it->i = i;
+        u_map.insert(std::make_pair((ULONG_PTR)it, *it));
+        o_map.insert(std::make_pair((ULONG_PTR)it, *it));
+        printf("i = %d, item addr = %p \n", i, it);
+    }
+    std::unordered_map<ULONG_PTR, item>::iterator it = u_map.begin();
+    std::map<ULONG_PTR, item>::iterator iter = o_map.begin();
+
+    for (int i = 0; i < 10; i++) {
+        printf("i = %d, F item addr = %p \n", i, it->first);
+        //printf("i = %d, F item addr = %p \n", i, iter->first);
+        it++;
+        iter++;
+    }
+    std::unordered_map<ULONG_PTR, item>::iterator it_ = u_map.begin();
+    std::map<ULONG_PTR, item>::iterator iter_ = o_map.begin();
+    it_ = u_map.erase(it_);
+
+    for (int i = 0; i < 9; i++) {
+        printf("i = %d, G item addr = %p \n", i, it_->first);
+        //printf("i = %d, G item addr = %p \n", i, iter_->first);
+        it_++;
+        iter_++;
+    }
+}
+
 int main()
 {
+    test_map();
 	test_stl_set();
 	GT::UTIL::GT_Util_GlogWrapper gt = GT::UTIL::GT_Util_GlogWrapper::GetInstance();
 	gt.GT_LogInitialize("test.log", GT_LOG_LEVEL_WARNING, 1);

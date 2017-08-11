@@ -1,4 +1,5 @@
 #include "GT_IOContextBuffer.h"
+#include "GTUtlity/GT_Util_GlogWrapper.h"
 
 namespace GT {
 
@@ -16,6 +17,7 @@ namespace GT {
 		}
 
 		GT_IOContextBuffer::~GT_IOContextBuffer() {
+            GT_LOG_DEBUG("delete io buffer resource!");
 			delete[] io_buffer_;
 		}
 

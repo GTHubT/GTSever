@@ -1,6 +1,7 @@
 #include "GT_IOContextBuffer_Manager.h"
 #include "GTUtlity/GT_Util_CfgHelper.h"
 #include "GTUtlity/GT_Util_GlogWrapper.h"
+#include "GTUtlity/GT_Util_OSInfo.h"
 
 namespace GT {
 
@@ -111,8 +112,13 @@ namespace GT {
 			if (buffer_ptr != nullptr) {
 				buffer_ptr->ResetBuffer();
 			}
-			io_buffer_cache_.push_back(buffer_ptr);
-            GT_LOG_INFO("io buffer cache size = " << io_buffer_cache_.size());
+            if (GT::UTIL::GT_Util_OSInfo::GetRandomInt() > 8){
+			    io_buffer_cache_.push_back(buffer_ptr);
+                GT_LOG_INFO("io buffer cache size = " << io_buffer_cache_.size());
+            }
+            else {
+                buffer_ptr.reset();
+            }
 		}
 
 		void GT_IOContextBuffer_Manager::Finalize() {

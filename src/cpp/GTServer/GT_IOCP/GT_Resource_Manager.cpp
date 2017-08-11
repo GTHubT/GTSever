@@ -194,6 +194,7 @@ namespace GT {
                         comp_key->ResetCheckTime();
                         ReleaseCompletionKey(comp_key);
                         GT_RESOURCE_LOCK;
+                        iter->second.reset();
                         completion_key_ptr_cache_.erase(iter);
                         key_iter = map_key_vector_.erase(key_iter);
                         GT_LOG_DEBUG("delete the out date completion key!");

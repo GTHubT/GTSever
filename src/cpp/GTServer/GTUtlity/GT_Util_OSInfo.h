@@ -10,6 +10,9 @@ namespace GT {
         public:
             static int GetCPUNum();
 			static std::string GetCurrentFolder();
+            static int GetRandomInt();
+        private:
+
         };
     }
 }
