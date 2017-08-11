@@ -140,7 +140,6 @@ namespace GT {
 
 		void GT_SocketPool_Manager::CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET> sock_ptr) {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
-            return;
 			if (sock_ptr != nullptr) {
 				closesocket(*sock_ptr);
 				auto iter = socket_inuse_pool_.find((ULONG_PTR)sock_ptr.get());
