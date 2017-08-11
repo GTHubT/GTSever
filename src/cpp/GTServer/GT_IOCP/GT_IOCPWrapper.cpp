@@ -432,7 +432,7 @@ namespace GT {
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
 				gt_completion_key_ptr->ReleaseUsedIOContext(gt_io_buffer_ptr);
             }
-            else if (gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_READ && Nnumofbytestransfered == 0 && WSAGetLastError() != 0) /* client exit */
+            else if (gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_READ && Nnumofbytestransfered == 0) /* client exit */
             {
                 GT_LOG_DEBUG("client exit : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 GTSERVER_RESOURCE_MANAGER.ReleaseCompletionKey(gt_completion_key_ptr);
@@ -441,7 +441,7 @@ namespace GT {
                 GT_LOG_ERROR("GetQueuedCompletionStatus failed, error code = " << WSAGetLastError());
             }
             else {
-                GT_LOG_DEBUG("Unkonwn Event!");
+                GT_LOG_DEBUG("Unkonwn Event! ret = " << ret << ", Nnumofbytestransfered = " << Nnumofbytestransfered);
             }
 		}
 
