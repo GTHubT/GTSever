@@ -8,6 +8,7 @@ namespace GT {
 
 		GT_SocketConetxt::GT_SocketConetxt() {
 			sock_type_ = NULL_SOCKET;
+            check_time_ = 1;
 			time_control_ = std::chrono::system_clock::now();
 		}
 

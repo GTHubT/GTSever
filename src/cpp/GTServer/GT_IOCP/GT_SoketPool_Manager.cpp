@@ -74,8 +74,8 @@ namespace GT {
 		std::shared_ptr<SOCKET> GT_SocketPool_Manager::GetNextUnuseSocket() {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
 
-            GT_LOG_INFO("inuse socket pool size = " << socket_inuse_pool_.size());
-            GT_LOG_INFO("socket pool size = " << socket_pool_.size());
+            GT_LOG_WARN("inuse socket pool size = " << socket_inuse_pool_.size());
+            GT_LOG_WARN("socket pool size = " << socket_pool_.size());
 			if (socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
 				UpdateSocketPool_();
 			}

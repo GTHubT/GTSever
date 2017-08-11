@@ -5,8 +5,6 @@
 #include "GT_SocketPool_Manager.h"
 #include "GT_IOContextBuffer_Manager.h"
 
-
-#include <set>
 #include <atomic>
 #include <thread>
 #include <functional>
@@ -68,7 +66,7 @@ namespace GT {
 			int out_date_time_control_;
 			int connect_check_interval_;
 			std::thread connect_check_thread_;
-
+            std::vector<ULONG_PTR> map_key_vector_;
 			std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_ptr_cache_; /* each thread have its own cache */
 		};
 	}

@@ -111,9 +111,8 @@ namespace GT {
 			if (buffer_ptr != nullptr) {
 				buffer_ptr->ResetBuffer();
 			}
-            GT_LOG_INFO("io buffer cache size = " << io_buffer_cache_.size());
 			io_buffer_cache_.push_back(buffer_ptr);
-            GT_LOG_INFO("after collect io buffer cache size = " << io_buffer_cache_.size());
+            GT_LOG_INFO("io buffer cache size = " << io_buffer_cache_.size());
 		}
 
 		void GT_IOContextBuffer_Manager::Finalize() {

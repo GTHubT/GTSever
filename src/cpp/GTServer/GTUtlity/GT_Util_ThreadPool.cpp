@@ -27,7 +27,7 @@ namespace GT {
                 thread_tuple->this_thread_ = std::move(std::thread(&GT_Util_ThreadPool::LongTimeWorker_, this, thread_func, std::ref(thread_tuple->end_thread_)));
                 workpool_.push_back(thread_tuple);
 				thread_pool_id_.push_back(thread_tuple->this_thread_.get_id());
-                printf("create thread TID = %d \n", thread_tuple->this_thread_.get_id());
+                //printf("create thread TID = %d \n", thread_tuple->this_thread_.get_id());
 			}
 			workpool_started_ = true;
         }
@@ -51,7 +51,7 @@ namespace GT {
             while (!end_thread) {
                 f();
             }
-            printf("thread TID = %d exit! \n", std::this_thread::get_id());
+            //printf("thread TID = %d exit! \n", std::this_thread::get_id());
         }
 
 

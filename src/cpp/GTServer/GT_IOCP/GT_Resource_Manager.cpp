@@ -27,7 +27,7 @@ namespace GT {
 												   end_connect_check_ato_(false),
 												   connect_check_interval_(20000){
 			completion_key_ptr_cache_.clear();
-
+            map_key_vector_.clear();
 		}
 
 		GT_Resource_Manager::~GT_Resource_Manager() {
@@ -81,8 +81,8 @@ namespace GT {
 												  std::ref(end_connect_check_ato_),
 												  connect_check_interval_));
 
-
-				GT_LOG_INFO("GT Resource Collector Worker Start, Thread id = " << resource_collector_thread_.get_id());
+                printf("GT Resource Collect Worker Start. \n");
+				GT_LOG_INFO("GT Resource Collect Worker Start, Thread id = " << connect_check_thread_.get_id());
 				GT_LOG_INFO("GT Resource Manager Init Success!");
 
 			} while (0);
@@ -139,6 +139,7 @@ namespace GT {
 			temp->SetContextSocket(sock_ptr);
 			temp->SetSocketType(type);
 			completion_key_ptr_cache_.insert(std::make_pair((ULONG_PTR)temp.get(), temp));
+            map_key_vector_.push_back((ULONG_PTR)temp.get());
 			return temp;
 		}
 
@@ -175,18 +176,31 @@ namespace GT {
 		}
 
 		void GT_Resource_Manager::ConnectChecker() {
-			auto iter = completion_key_ptr_cache_.begin();
-			for ( ;iter != completion_key_ptr_cache_.end(); ) {
-					auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - iter->second->GetTimer()).count();
-					if (d > out_date_time_control_ && iter->second->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/ {
-						ReleaseCompletionKey(iter->second);
-						GT_RESOURCE_LOCK;
-						iter = completion_key_ptr_cache_.erase(iter);
-						GT_LOG_DEBUG("delete the out date completion key!");
-					}
-					else {
-						++iter;
-					}
+            auto key_iter = map_key_vector_.begin();
+            for (; key_iter != map_key_vector_.end();) {
+                auto iter = completion_key_ptr_cache_.find(*key_iter);
+                if (iter == completion_key_ptr_cache_.end()) {
+                    continue;
+                }
+                auto& comp_key = completion_key_ptr_cache_[*key_iter];
+				auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - comp_key->GetTimer()).count();
+				if (d > out_date_time_control_ && comp_key->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/ {
+                    if (comp_key->GetCheckTime() == 1) /* first check */
+                    {
+                        /* send heart beat package */
+                        comp_key->IncremCheckTime();
+                    }
+                    else if (comp_key->GetCheckTime() == 2) { /* second check */
+                        comp_key->ResetCheckTime();
+                        ReleaseCompletionKey(comp_key);
+                        GT_RESOURCE_LOCK;
+                        completion_key_ptr_cache_.erase(iter);
+                        key_iter = map_key_vector_.erase(key_iter);
+                        GT_LOG_DEBUG("delete the out date completion key!");
+                        continue;
+                    }
+				}
+                ++key_iter;
 			}
 		}
 
@@ -197,9 +211,11 @@ namespace GT {
 													int check_interval) {
 			GT_TRACE_FUNCTION;
 			std::unique_lock<std::mutex> lk(mu);
-			while (!end_thread && cv.wait_for(lk, std::chrono::microseconds(check_interval)) == std::cv_status::timeout)
+			while (!end_thread)
 			{
-				func();
+                if (cv.wait_for(lk, std::chrono::microseconds(check_interval)) == std::cv_status::timeout) {
+                    func();
+                }
 			}
 			GT_LOG_INFO("Connection check worker exit!");
 			printf("Connection check worker exit! \n");

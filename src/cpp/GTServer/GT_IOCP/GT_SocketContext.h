@@ -64,6 +64,15 @@ namespace GT {
 			inline SOCKET_TYPE GetSocketType() { 
 				return sock_type_; 
 			}
+            inline int GetCheckTime() {
+                return check_time_;
+            }
+            inline void IncremCheckTime() {
+                check_time_++;
+            }
+            inline void ResetCheckTime() {
+                check_time_ = 1;
+            }
 
 			void AddIOContext2Cache(IO_BUFFER_PTR io_ptr);
 			void ReleaseUsedIOContext(IO_BUFFER_PTR io_context);
@@ -79,7 +88,8 @@ namespace GT {
 			/*another way to lean the close socket, I set timer for each completion key, every time the completion have*/
 			/*send or recv event happen, reset the timer, if the completion key have not got any event within config "out_date_control" */
 			/***********************************************************************************************************/
-			std::chrono::system_clock::time_point	time_control_;	
+			std::chrono::system_clock::time_point	time_control_;
+            int                                     check_time_; /* will check two times, first time will send heart package, second check will if exceed time, will end the completionkey*/
 			std::mutex								sock_context_mutex_;
 		};
 	}

@@ -84,14 +84,14 @@ namespace GT {
 			{
 			case IO_EVENT_READ:
 				read_event_call_back_ = func_;
-				GT_LOG_DEBUG("register read event call back success!");
+				GT_LOG_INFO("register read event call back success!");
 				break;
 			case IO_EVENT_WRITE:
 				write_event_call_back_ = func_;
-				GT_LOG_DEBUG("register write event call back success!");
+				GT_LOG_INFO("register write event call back success!");
 				break;
 			default:
-				GT_LOG_DEBUG("unknown io type!");
+				GT_LOG_INFO("unknown io type!");
 				break;
 			}
 		}
@@ -103,11 +103,11 @@ namespace GT {
 			{
 			case IO_EVENT_READ:
 				read_event_call_back_ = nullptr;
-				GT_LOG_DEBUG("unregister read event call back success!");
+				GT_LOG_INFO("unregister read event call back success!");
 				break;
 			case IO_EVENT_WRITE:
 				write_event_call_back_ = nullptr;
-				GT_LOG_DEBUG("unregister write event call back success!");
+				GT_LOG_INFO("unregister write event call back success!");
 				break;
 			default:
 				GT_LOG_DEBUG("unknown io type!");

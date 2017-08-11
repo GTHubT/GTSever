@@ -228,7 +228,7 @@ namespace GT {
 		}
 
         void GT_IOCPWrapper::ProcessAcceptEvent_(std::thread::id thread_id, IO_BUFFER_PTR io_context) { /* use AcceptEX, when new connection comes, the first message may come together */
-            GT_LOG_DEBUG("Process Accept Event!");
+            GT_LOG_INFO("Process Accept Event!");
             
             int nLocalLen = 0, nRmoteLen = 0;
             LPSOCKADDR pLocalAddr, pRemoteAddr;
@@ -243,7 +243,7 @@ namespace GT {
             /* convert sockaddr to sockaddr_in struct */
             struct sockaddr_in *local_ipv4 = (struct sockaddr_in *)pLocalAddr;
             struct sockaddr_in *remote_ipv4 = (struct sockaddr_in *)pRemoteAddr;
-            GT_LOG_DEBUG("get new connection and local sockaddr = " << inet_ntoa(local_ipv4->sin_addr) << ", remote sockaddr = " << inet_ntoa(remote_ipv4->sin_addr) << ", remote port = " << remote_ipv4->sin_port);
+            GT_LOG_INFO("get new connection and local sockaddr = " << inet_ntoa(local_ipv4->sin_addr) << ", remote sockaddr = " << inet_ntoa(remote_ipv4->sin_addr) << ", remote port = " << remote_ipv4->sin_port);
 			//printf("get new connection and local sockaddr = %s, remote sockaddr = %s , remote port = %d\n", inet_ntoa(local_ipv4->sin_addr) ,inet_ntoa(remote_ipv4->sin_addr), remote_ipv4->sin_port);
 			SOCKETCONTEXT_SHAREPTR completion_key = GTSERVER_RESOURCE_MANAGER.CreateNewSocketContext(io_context->GetClientSocketPtr(), ACCEPTED_SOCKET);
 			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
@@ -266,7 +266,7 @@ namespace GT {
         }
 
         void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_context) {
-            GT_LOG_DEBUG("Post Read Request Event!");
+            GT_LOG_INFO("Post Read Request Event!");
             DWORD bytes_recved_ = 0;
             DWORD flag = 0;
             int ret = WSARecv(*(completion_key_->GetContextSocketPtr().get()), &io_context->GetWsaBuf(), 1, &bytes_recved_, &flag, (LPOVERLAPPED)io_context.get(), nullptr);
@@ -280,7 +280,7 @@ namespace GT {
         }
 
         void GT_IOCPWrapper::PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
-            GT_LOG_DEBUG("Post Write Event Request!");
+            GT_LOG_INFO("Post Write Event Request!");
             DWORD transfersize = 0;
             int ret = WSASend(*(completion_key_->GetContextSocketPtr().get()), &io_event_->GetWsaBuf(), io_event_->GetBufferSize(), &transfersize, 0, (LPOVERLAPPED)io_event_.get(), nullptr);
             if (ret == SOCKET_ERROR && (WSA_IO_PENDING != WSAGetLastError())) {
@@ -289,7 +289,7 @@ namespace GT {
         }
 
 		void GT_IOCPWrapper::PostWriteRequestEvent(PULONG_PTR completion_key_pointer, IO_BUFFER_PTR io_event_) {
-			GT_LOG_DEBUG("Post Write Event Request!");
+			GT_LOG_INFO("Post Write Event Request!");
 			DWORD transfersize = 0;
 			int ret = WSASend(*(((GT_SocketConetxt*)(completion_key_pointer))->GetContextSocketPtr().get()), &io_event_->GetWsaBuf(), io_event_->GetBufferSize(), &transfersize, 0, (LPOVERLAPPED)io_event_.get(), nullptr);
 			if (ret == SOCKET_ERROR && (WSA_IO_PENDING != WSAGetLastError())) {
@@ -299,14 +299,14 @@ namespace GT {
 
         void GT_IOCPWrapper::PrePostAcceptEvent_() {
             /* post accept event for listen socket and post num determined by thread num */
-            GT_LOG_DEBUG("Post Accept Event for listen socket!");
+            GT_LOG_INFO("Post Accept Event for listen socket!");
             for (int i = 0; i < std::thread::hardware_concurrency() * 2; i++) {
                 PostAnotherAcceptEvent_();
             }
         }
         
         void GT_IOCPWrapper::PostAnotherAcceptEvent_() {
-            GT_LOG_DEBUG("Post Another Accept Event for listen socket!");
+            GT_LOG_INFO("Post Another Accept Event for listen socket!");
 			int try_time = 0;
 			while( try_time < 2){
 				IO_BUFFER_PTR temp_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
@@ -360,7 +360,7 @@ namespace GT {
 				//GT_LOG_INFO("[Thread] " << std::this_thread::get_id() << ":, its time to end GT Service, Do not need continue wait for completion port...");
                 return;
             }
-            GT_LOG_DEBUG("Get completion port status...");
+            //GT_LOG_DEBUG("Get completion port status...");
             DWORD Nnumofbytestransfered = 0;
 
 			ULONG_PTR completion_key;
@@ -412,7 +412,7 @@ namespace GT {
 				is_need_continue_wait = false;
 			}
 			else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_ACCEPT) { /* when accept the socket, AccepEX will get the first data, so the Nnumofbytestransfered may not zero, if the client send data after connect success!*/
-                GT_LOG_DEBUG("Get Accept Event!");
+                GT_LOG_INFO("Get Accept Event!");
 				if (Nnumofbytestransfered != 0) { /* the accept socket send data after connect success */
 					GT_LOG_INFO("the accept socket bind the first data!");
 					call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
@@ -420,23 +420,25 @@ namespace GT {
                 ProcessAcceptEvent_(std::this_thread::get_id(), gt_io_buffer_ptr);
                 PostAnotherAcceptEvent_();
             }
-            else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_READ) {
-                GT_LOG_DEBUG("Get read event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
+            else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_READ && Nnumofbytestransfered != 0 ) {
+                GT_LOG_INFO("Get read event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
                 gt_completion_key_ptr->ResetTimer();
 				PostReadRequestEvent_(gt_completion_key_ptr, gt_io_buffer_ptr);
             }
             else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_WRITE) {
-                GT_LOG_DEBUG("Get write event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
+                GT_LOG_INFO("Get write event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 gt_completion_key_ptr->ResetTimer();
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
 				gt_completion_key_ptr->ReleaseUsedIOContext(gt_io_buffer_ptr);
             }
-            else if (ret == false && Nnumofbytestransfered == 0 && WSAGetLastError() != 0) /* client exit */
+            else if (gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_READ && Nnumofbytestransfered == 0 && WSAGetLastError() != 0) /* client exit */
             {
-                GT_LOG_ERROR("GetQueuedCompletionStatus failed, error code = " << WSAGetLastError());
                 GT_LOG_DEBUG("client exit : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 GTSERVER_RESOURCE_MANAGER.ReleaseCompletionKey(gt_completion_key_ptr);
+            }
+            else if (!ret) {
+                GT_LOG_ERROR("GetQueuedCompletionStatus failed, error code = " << WSAGetLastError());
             }
             else {
                 GT_LOG_DEBUG("Unkonwn Event!");
