@@ -63,7 +63,7 @@ namespace GT {
 			for (size_t buffer_size = 0; buffer_size < pre_allocate_size_; buffer_size++) {
 				IO_BUFFER_PTR temp_ptr = IO_BUFFER_PTR(new GT_IOContextBuffer(io_buffer_size_));
 				if (temp_ptr->AllocateIOBuffer())
-					io_buffer_cache_.push_back(temp_ptr);
+					io_buffer_cache_.insert(temp_ptr);
 				else
 					continue;
 			}
@@ -76,7 +76,7 @@ namespace GT {
 			for (size_t s = 0; s < re_allocate_size_; s++) {
 				IO_BUFFER_PTR temp_ptr = IO_BUFFER_PTR(new GT_IOContextBuffer(io_buffer_size_));
 				if (temp_ptr->AllocateIOBuffer())
-					io_buffer_cache_.push_back(temp_ptr);
+					io_buffer_cache_.insert(temp_ptr);
 				else
 					continue;
 			}
@@ -94,32 +94,34 @@ namespace GT {
 				ReAllocateSomeIOBuffer_();
             }
             if (io_buffer_cache_.size() > 0){
-                IO_BUFFER_PTR temp_ptr;
-				temp_ptr = io_buffer_cache_.front();
-				io_buffer_cache_.pop_front();
-				io_buffer_in_use_.push_back(temp_ptr);
-				return io_buffer_in_use_.back();
+                auto iter = io_buffer_cache_.begin();
+				io_buffer_in_use_.insert(std::make_pair((ULONG_PTR)((*iter).get()), *iter));
+				IO_BUFFER_PTR temp_ptr = io_buffer_in_use_[(ULONG_PTR)((*iter).get())];
+				io_buffer_cache_.erase(iter);
+				return temp_ptr;
 			}else {
                 IO_BUFFER_PTR temp_ptr(new GT_IOContextBuffer);
                 temp_ptr->AllocateIOBuffer();
-                io_buffer_in_use_.push_back(temp_ptr);
+                io_buffer_in_use_.insert(std::make_pair((ULONG_PTR)temp_ptr.get(), temp_ptr));
                 return temp_ptr;
             }
 		}
 
 		void GT_IOContextBuffer_Manager::ReleaseIOBuffer(IO_BUFFER_PTR buffer_ptr) {
 			IOBUFFER_MANAGER_LOCK_THIS_SCOPE;
-			if (buffer_ptr != nullptr) {
-				buffer_ptr->ResetBuffer();
-			}
-			else {
+			if (buffer_ptr == nullptr)
 				return;
-			}
-            if (GT::UTIL::GT_Util_OSInfo::GetRandomInt() > 8){
-			    io_buffer_cache_.push_back(buffer_ptr);
+
+			if (GT::UTIL::GT_Util_OSInfo::GetRandomInt() > 9) {
+				buffer_ptr->ResetBuffer();
+			    io_buffer_cache_.insert(buffer_ptr);
                 GT_LOG_INFO("io buffer cache size = " << io_buffer_cache_.size());
             }
             else {
+				auto iter = io_buffer_in_use_.find((ULONG_PTR)buffer_ptr.get());
+				if (iter != io_buffer_in_use_.end()) {
+					io_buffer_in_use_.erase(iter);
+				}
                 buffer_ptr.reset();
             }
 		}

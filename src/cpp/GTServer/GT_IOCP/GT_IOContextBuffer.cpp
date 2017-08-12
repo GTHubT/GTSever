@@ -17,7 +17,6 @@ namespace GT {
 		}
 
 		GT_IOContextBuffer::~GT_IOContextBuffer() {
-            GT_LOG_DEBUG("delete io buffer resource!");
 			delete[] io_buffer_;
 		}
 

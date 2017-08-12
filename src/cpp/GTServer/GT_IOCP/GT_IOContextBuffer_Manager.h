@@ -5,8 +5,9 @@
 
 
 #include <memory>
-#include <deque>
 #include <mutex>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace GT {
 
@@ -37,8 +38,8 @@ namespace GT {
 			size_t			pre_allocate_size_;
 			size_t			re_allocate_size_;
 			size_t			size_need_reallocate_;
-			std::deque<IO_BUFFER_PTR> io_buffer_cache_;
-			std::deque<IO_BUFFER_PTR> io_buffer_in_use_;
+			std::unordered_set<IO_BUFFER_PTR> io_buffer_cache_;
+			std::unordered_map<ULONG_PTR, IO_BUFFER_PTR> io_buffer_in_use_;
 			static std::mutex		io_buffer_manager_mutex_;
         };
     }

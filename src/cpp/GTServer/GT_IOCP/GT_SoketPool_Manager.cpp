@@ -20,7 +20,7 @@ namespace GT {
 		std::mutex GT_SocketPool_Manager::socket_pool_mutex_;
 
 		GT_SocketPool_Manager::GT_SocketPool_Manager():poolsize_(0), end_socket_clean_thread_(false){
-			socket_pool_.clear();
+			shared_socket_pool_.clear();
 			socket_inuse_pool_.clear();
 			tobereuse_socket_pool_.clear();
 		}
@@ -64,8 +64,7 @@ namespace GT {
 			}
 			
 			while (poolsize_ < pre_allocate_num) {
-				GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))) :
-																	   socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, WSA_FLAG_OVERLAPPED)));
+				shared_socket_pool_.insert(SOCKET_SHARED_PTR(new (SOCKET)(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))));
 				++ poolsize_;
 			}
 
@@ -78,23 +77,21 @@ namespace GT {
 			//std::shared_ptr<SOCKET> temp_ptr(new (SOCKET)(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)));
 			//return temp_ptr;
             GT_LOG_WARN("inuse socket pool size = " << socket_inuse_pool_.size());
-            GT_LOG_WARN("socket pool size = " << socket_pool_.size());
-			if (socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
+            GT_LOG_WARN("socket pool size = " << shared_socket_pool_.size());
+			if (shared_socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
 				UpdateSocketPool_();
 			}
-			if (socket_pool_.size() > 0) {
-				std::shared_ptr<SOCKET> temp_ptr(new SOCKET(std::move(socket_pool_.front())));
-				socket_inuse_pool_.insert(std::make_pair((ULONG_PTR)temp_ptr.get(), temp_ptr));
-				socket_pool_.pop_front();	
-				return socket_inuse_pool_[(ULONG_PTR)temp_ptr.get()];
+			if (shared_socket_pool_.size() > 0) {
+				auto iter = shared_socket_pool_.begin();
+				socket_inuse_pool_.insert(std::make_pair((ULONG_PTR)((*iter).get()),*iter));
+				SOCKET_SHARED_PTR temp_ptr = socket_inuse_pool_[(ULONG_PTR)((*iter).get())];
+				shared_socket_pool_.erase(iter);
+				return temp_ptr;
             }
             else {
-                SOCKET temp_sock(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)));
                 std::shared_ptr<SOCKET> temp_ptr(new (SOCKET)(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)));
-                socket_pool_.push_back(temp_sock);
                 socket_inuse_pool_.insert(std::make_pair((ULONG_PTR)temp_ptr.get(), temp_ptr));
-                socket_pool_.pop_front();
-                return socket_inuse_pool_[(ULONG_PTR)temp_ptr.get()];
+                return temp_ptr;
             }
 			
 		}
@@ -104,22 +101,21 @@ namespace GT {
 		void GT_SocketPool_Manager::UpdateSocketPool_() {
 			GT_TRACE_FUNCTION;
 
-			std::for_each(tobereuse_socket_pool_.begin(), tobereuse_socket_pool_.end(), [&](auto iter) {socket_pool_.push_back(std::move(iter.second)); });
+			//std::for_each(tobereuse_socket_pool_.begin(), tobereuse_socket_pool_.end(), [&](auto iter) {shared_socket_pool_.insert(iter.second); });
 
 			if (tobereuse_socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
 				ReAllocateSocket4Pool_();
 			}
 
-			tobereuse_socket_pool_.clear();
+			//tobereuse_socket_pool_.clear();
 		}
 
 		/* if the socket pool is not enough, will call ReAllocateSocket4Pool to reallocate sockets for further use */
 		void GT_SocketPool_Manager::ReAllocateSocket4Pool_() {
 			size_t newsize_ = poolsize_ + GT_READ_CFG_INT("socket_pool_cfg", "reallocate_socket_num_pertime", 300);
 			while (poolsize_ < newsize_) {
-				GT_READ_CFG_BOOL("server_cfg", "enable_tcp_mode", 1) ? socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))) :
-																	   socket_pool_.push_back(std::move(WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, WSA_FLAG_OVERLAPPED)));
-				++ poolsize_;
+				shared_socket_pool_.insert(SOCKET_SHARED_PTR(new (SOCKET)(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED))));
+				++poolsize_;
 			}
 		}
 
@@ -134,9 +130,9 @@ namespace GT {
 
 			std::for_each(socket_inuse_pool_.begin(), socket_inuse_pool_.end(), [] (auto iter){ closesocket(*iter.second); });
 
-			socket_pool_.clear();
+			shared_socket_pool_.clear();
 			socket_inuse_pool_.clear();
-			tobereuse_socket_pool_.clear();
+			//tobereuse_socket_pool_.clear();
 		}
 
 		void GT_SocketPool_Manager::CloseSockAndPush2ReusedPool(std::shared_ptr<SOCKET> sock_ptr) {
@@ -148,22 +144,20 @@ namespace GT {
 					socket_inuse_pool_.erase(iter);
 				}
 				else {
-					GT_LOG_INFO("did not find the socket in the socket inuse cache!");
+					GT_LOG_WARN("did not find the socket in the socket inuse cache!");
 				}
-                if (GT::UTIL::GT_Util_OSInfo::GetRandomInt() > 8) {
-                    GT_LOG_INFO("tobe use socket pool size = " << tobereuse_socket_pool_.size());
-                    tobereuse_socket_pool_.insert(std::make_pair((ULONG_PTR)(sock_ptr.get()), std::move(*sock_ptr)));
-                }
-                else {
-                    sock_ptr.reset();
-                }
-			}		
+				sock_ptr.reset();
+				/*if (GT::UTIL::GT_Util_OSInfo::GetRandomInt() > 8) {
+					GT_LOG_WARN("to be use socket pool size = " << tobereuse_socket_pool_.size());
+					tobereuse_socket_pool_.insert(std::make_pair((ULONG_PTR)(sock_ptr.get()), sock_ptr));
+				}*/
+			}
 		}
 
 		/* will not use for the cache change to hash map */
         void GT_SocketPool_Manager::CollectUnuseSocket() {
             GT_LOG_INFO("Collect Unuse Socket!");
-            for (auto iter = socket_inuse_pool_.begin(); iter != socket_inuse_pool_.end();) { /* this collector is to collect the inuse socket cache who has already closed */
+            for (auto iter = socket_inuse_pool_.begin(); iter != socket_inuse_pool_.end();) { /* this collector is to collect the in use socket cache who has already closed */
                 if (*iter->second == INVALID_SOCKET) {
                     SOCKETPOOL_LOCK_THIS_SCOPE;
 					GT_LOG_INFO("release invalid socket");

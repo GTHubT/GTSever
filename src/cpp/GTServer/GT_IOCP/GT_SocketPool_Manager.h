@@ -3,11 +3,12 @@
 
 #include <thread>
 #include <atomic>
-#include <unordered_map>
 #include <vector>
 #include <mutex>
 #include <memory>
 #include <deque>
+#include <unordered_set>
+#include <unordered_map>
 #include <WinSock2.h>
 
 /***************************************************************************************************/
@@ -19,6 +20,9 @@
 namespace GT {
 
 	namespace NET {
+#ifndef SOCKET_SHARED_PTR
+#define SOCKET_SHARED_PTR std::shared_ptr<SOCKET>
+#endif
 		
 		class GT_SocketPool_Manager {
 
@@ -42,9 +46,9 @@ namespace GT {
 			size_t				poolsize_;
 			std::thread			clean_thread_;
 			static  std::mutex	socket_pool_mutex_;
-			std::deque<SOCKET>	socket_pool_;
-			std::unordered_map<ULONG_PTR, SOCKET>	tobereuse_socket_pool_;
-			std::unordered_map<ULONG_PTR, std::shared_ptr<SOCKET>>	socket_inuse_pool_;
+			std::unordered_set<SOCKET_SHARED_PTR>	shared_socket_pool_;
+			std::unordered_map<ULONG_PTR, SOCKET_SHARED_PTR>	tobereuse_socket_pool_;
+			std::unordered_map<ULONG_PTR, SOCKET_SHARED_PTR>	socket_inuse_pool_;
 			std::atomic<bool>	end_socket_clean_thread_;
 
 

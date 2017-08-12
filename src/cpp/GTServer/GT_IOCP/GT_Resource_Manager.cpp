@@ -219,8 +219,8 @@ namespace GT {
                     func();
                 }
 			}
-			GT_LOG_INFO("Connection check worker exit!");
-			printf("Connection check worker exit! \n");
+			GT_LOG_INFO("GT Resource Collect Worker Exit!");
+			printf("GT Resource Collect Worker Exit! \n");
  		}
 
 		void GT_Resource_Manager::Finalize() {
