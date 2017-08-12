@@ -28,7 +28,7 @@ namespace GT {
 												   end_connect_check_ato_(false),
 												   connect_check_interval_(20000){
 			completion_key_ptr_cache_.clear();
-            map_key_hash_set_.clear();
+            completion_key_address_hash_set_.clear();
 		}
 
 		GT_Resource_Manager::~GT_Resource_Manager() {
@@ -130,6 +130,16 @@ namespace GT {
             std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_ptr_set = sockcontext_ptr->GetIOBufferCache();
             std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr.second);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
+			/* remove the key from completion cache */
+			auto iter = completion_key_ptr_cache_.find((ULONG_PTR)sockcontext_ptr.get());
+			if (iter != completion_key_ptr_cache_.end()) {
+				completion_key_ptr_cache_.erase(iter);
+				/* remove completion key from completion_key_address_hash_set_ */
+				auto iter_ = completion_key_address_hash_set_.find((ULONG_PTR)sockcontext_ptr.get());
+				if (iter_ != completion_key_address_hash_set_.end()) {
+					completion_key_address_hash_set_.erase(iter_);
+				}
+			}
 			sockcontext_ptr.reset();
 		}
 
@@ -141,7 +151,7 @@ namespace GT {
 			temp->SetContextSocket(sock_ptr);
 			temp->SetSocketType(type);
 			completion_key_ptr_cache_.insert(std::make_pair((ULONG_PTR)temp.get(), temp));
-            map_key_hash_set_.insert((ULONG_PTR)temp.get());
+            completion_key_address_hash_set_.insert((ULONG_PTR)temp.get());
 			return temp;
 		}
 
@@ -178,8 +188,8 @@ namespace GT {
 		}
 
 		void GT_Resource_Manager::ResourceCollector() {
-            auto key_iter = map_key_hash_set_.begin();
-            for (; key_iter != map_key_hash_set_.end();) {
+            auto key_iter = completion_key_address_hash_set_.begin();
+            for (; key_iter != completion_key_address_hash_set_.end();) {
                 auto iter = completion_key_ptr_cache_.find(*key_iter);
                 if (iter == completion_key_ptr_cache_.end()) {
 					++key_iter;
@@ -197,11 +207,13 @@ namespace GT {
 						//GT_LOG_DEBUG("current process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                         comp_key->ResetCheckTime();
                         ReleaseCompletionKey(comp_key);
-						GT_RESOURCE_LOCK;
-						iter->second.reset();
-						completion_key_ptr_cache_.erase(iter);
-                        key_iter = map_key_hash_set_.erase(key_iter);
-						GT_LOG_DEBUG("delete the out date completion key!");
+						{
+							GT_RESOURCE_LOCK;
+							iter->second.reset();
+							completion_key_ptr_cache_.erase(iter);
+							key_iter = completion_key_address_hash_set_.erase(key_iter);
+							GT_LOG_DEBUG("delete the out date completion key!");
+						}
 						//GT_LOG_DEBUG("current process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                         continue;
                     }

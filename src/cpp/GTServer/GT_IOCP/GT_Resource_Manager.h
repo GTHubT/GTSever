@@ -67,7 +67,7 @@ namespace GT {
 			int out_date_time_control_;
 			int connect_check_interval_;
 			std::thread connect_check_thread_;
-            std::unordered_set<ULONG_PTR> map_key_hash_set_;
+            std::unordered_set<ULONG_PTR> completion_key_address_hash_set_;
 			std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_ptr_cache_; /* each thread have its own cache */
 		};
 	}
