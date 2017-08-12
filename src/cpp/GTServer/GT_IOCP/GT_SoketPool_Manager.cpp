@@ -75,7 +75,8 @@ namespace GT {
 
 		std::shared_ptr<SOCKET> GT_SocketPool_Manager::GetNextUnuseSocket() {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
-
+			//std::shared_ptr<SOCKET> temp_ptr(new (SOCKET)(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)));
+			//return temp_ptr;
             GT_LOG_WARN("inuse socket pool size = " << socket_inuse_pool_.size());
             GT_LOG_WARN("socket pool size = " << socket_pool_.size());
 			if (socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
@@ -159,7 +160,7 @@ namespace GT {
 			}		
 		}
 
-		/* will not use for the cache change to map */
+		/* will not use for the cache change to hash map */
         void GT_SocketPool_Manager::CollectUnuseSocket() {
             GT_LOG_INFO("Collect Unuse Socket!");
             for (auto iter = socket_inuse_pool_.begin(); iter != socket_inuse_pool_.end();) { /* this collector is to collect the inuse socket cache who has already closed */

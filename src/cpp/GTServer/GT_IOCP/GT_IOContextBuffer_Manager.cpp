@@ -112,6 +112,9 @@ namespace GT {
 			if (buffer_ptr != nullptr) {
 				buffer_ptr->ResetBuffer();
 			}
+			else {
+				return;
+			}
             if (GT::UTIL::GT_Util_OSInfo::GetRandomInt() > 8){
 			    io_buffer_cache_.push_back(buffer_ptr);
                 GT_LOG_INFO("io buffer cache size = " << io_buffer_cache_.size());

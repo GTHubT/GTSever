@@ -12,6 +12,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace GT {
@@ -27,7 +28,7 @@ namespace GT {
 		public:
 			~GT_Resource_Manager();
 
-			bool					Initialize(std::vector<std::thread::id>& thread_id);
+			bool					Initialize();
 			void					Finalize();
 			SOCKET_SHAREPTR			GetCachedSocket();
 			IO_BUFFER_PTR			GetIOContextBuffer();										// overlapped struct
@@ -66,7 +67,7 @@ namespace GT {
 			int out_date_time_control_;
 			int connect_check_interval_;
 			std::thread connect_check_thread_;
-            std::vector<ULONG_PTR> map_key_vector_;
+            std::unordered_set<ULONG_PTR> map_key_hash_set_;
 			std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR> completion_key_ptr_cache_; /* each thread have its own cache */
 		};
 	}

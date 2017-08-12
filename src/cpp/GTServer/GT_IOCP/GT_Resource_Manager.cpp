@@ -27,7 +27,7 @@ namespace GT {
 												   end_connect_check_ato_(false),
 												   connect_check_interval_(20000){
 			completion_key_ptr_cache_.clear();
-            map_key_vector_.clear();
+            map_key_hash_set_.clear();
 		}
 
 		GT_Resource_Manager::~GT_Resource_Manager() {
@@ -38,7 +38,7 @@ namespace GT {
 			return socket_context_manager_;
 		}
 
-		bool GT_Resource_Manager::Initialize(std::vector<std::thread::id>& thread_id) {
+		bool GT_Resource_Manager::Initialize() {
 			GT_TRACE_FUNCTION;
 			if (is_enabled_) {
 				GT_LOG_WARN("Resource manager has already inited!");
@@ -139,7 +139,7 @@ namespace GT {
 			temp->SetContextSocket(sock_ptr);
 			temp->SetSocketType(type);
 			completion_key_ptr_cache_.insert(std::make_pair((ULONG_PTR)temp.get(), temp));
-            map_key_vector_.push_back((ULONG_PTR)temp.get());
+            map_key_hash_set_.insert((ULONG_PTR)temp.get());
 			return temp;
 		}
 
@@ -176,10 +176,11 @@ namespace GT {
 		}
 
 		void GT_Resource_Manager::ConnectChecker() {
-            auto key_iter = map_key_vector_.begin();
-            for (; key_iter != map_key_vector_.end();) {
+            auto key_iter = map_key_hash_set_.begin();
+            for (; key_iter != map_key_hash_set_.end();) {
                 auto iter = completion_key_ptr_cache_.find(*key_iter);
                 if (iter == completion_key_ptr_cache_.end()) {
+					++key_iter;
                     continue;
                 }
                 auto& comp_key = completion_key_ptr_cache_[*key_iter];
@@ -196,7 +197,7 @@ namespace GT {
                         GT_RESOURCE_LOCK;
                         iter->second.reset();
                         completion_key_ptr_cache_.erase(iter);
-                        key_iter = map_key_vector_.erase(key_iter);
+                        key_iter = map_key_hash_set_.erase(key_iter);
                         GT_LOG_DEBUG("delete the out date completion key!");
                         continue;
                     }

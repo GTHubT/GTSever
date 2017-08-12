@@ -9,6 +9,7 @@
 #include "GT_Resource_Manager.h"
 #include "GT_Definition.h"
 
+#include <mutex>
 #include <vector>
 #include <memory>
 #include <Windows.h>
@@ -44,8 +45,9 @@ namespace GT {
             bool	InitializeListenSocket_();
             void    PrePostAcceptEvent_();
             void    PostAnotherAcceptEvent_();
-            void    ProcessAcceptEvent_(std::thread::id, IO_BUFFER_PTR io_context);
+            void    ProcessAcceptEvent_(IO_BUFFER_PTR io_context);
 			void    PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_context);
+			void	PostAnotherReadRequest_(SOCKETCONTEXT_SHAREPTR completion_key);
 			void    PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_);
 			void    PostWriteRequestEvent(PULONG_PTR completion_key_pointer, IO_BUFFER_PTR io_event_);
 			bool	GetAcceptEXFuncAddress_();
@@ -69,7 +71,6 @@ namespace GT {
             bool						is_write_callback_setted_;
 			LPFN_ACCEPTEX				paccpetex_func_;
 			LPFN_GETACCEPTEXSOCKADDRS	pgetacceptex_sockaddrs_func_;
-
         };
     }
 }

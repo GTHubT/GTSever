@@ -80,7 +80,7 @@ namespace GT {
 
 				InitThreadPool_(call_back_func_);
 
-                ret = GTSERVER_RESOURCE_MANAGER.Initialize(thread_pool_.GetThreadID()); /* when to get the thread id is proper time */
+                ret = GTSERVER_RESOURCE_MANAGER.Initialize(); /* when to get the thread id is proper time */
                 if (!ret) {
                     GT_LOG_ERROR("init resource manager failed!");
                     break;
@@ -227,7 +227,8 @@ namespace GT {
 			return SOCKET_SHAREPTR(new (SOCKET)(WSASocket(af, type, protocl, nullptr, 0, WSA_FLAG_OVERLAPPED)));
 		}
 
-        void GT_IOCPWrapper::ProcessAcceptEvent_(std::thread::id thread_id, IO_BUFFER_PTR io_context) { /* use AcceptEX, when new connection comes, the first message may come together */
+        void GT_IOCPWrapper::ProcessAcceptEvent_(IO_BUFFER_PTR io_context) { /* use AcceptEX, when new connection comes, the first message may come together */
+
             GT_LOG_INFO("Process Accept Event!");
             
             int nLocalLen = 0, nRmoteLen = 0;
@@ -258,11 +259,9 @@ namespace GT {
 			bool ret = BindSocketToCompletionPort(completion_key->GetContextSocketPtr(), (ULONG_PTR)completion_key.get());
 			if (!ret) {
 				GT_LOG_ERROR("bind completion key to completion port failed!");
-				accept_socket_completion_key_->ReleaseUsedIOContext(io_context);
 				return;
 			}
 			PostReadRequestEvent_(completion_key, overlappe_ptr);
-			accept_socket_completion_key_->ReleaseUsedIOContext(io_context);
         }
 
         void GT_IOCPWrapper::PostReadRequestEvent_(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_context) {
@@ -272,12 +271,25 @@ namespace GT {
             int ret = WSARecv(*(completion_key_->GetContextSocketPtr().get()), &io_context->GetWsaBuf(), 1, &bytes_recved_, &flag, (LPOVERLAPPED)io_context.get(), nullptr);
             DWORD err = WSAGetLastError();
 			if (ret == SOCKET_ERROR) {
-				if (!(WSA_IO_PENDING == err)) {
+				if (WSA_IO_PENDING != err) {
 					GT_LOG_ERROR("Send Socket recv event failed! error code = " << err);
 					GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(io_context);
 				}
 			}
         }
+
+		void GT_IOCPWrapper::PostAnotherReadRequest_(SOCKETCONTEXT_SHAREPTR completion_key) {
+			IO_BUFFER_PTR overlappe_ptr = GTSERVER_RESOURCE_MANAGER.GetIOContextBuffer();
+			if (overlappe_ptr == nullptr || completion_key == nullptr) {
+				GT_LOG_ERROR("IO Buffer allocate failed!");
+				return;
+			}
+			overlappe_ptr->SetIOBufferEventType(IO_EVENT_READ);
+			overlappe_ptr->SetIOBufferSocket(completion_key->GetContextSocketPtr());
+			completion_key->SetContextSocketAddr(completion_key->GetSocketAddr());
+			completion_key->AddIOContext2Cache(overlappe_ptr);
+			PostReadRequestEvent_(completion_key, overlappe_ptr);
+		}
 
         void GT_IOCPWrapper::PostWriteRequestEvent(SOCKETCONTEXT_SHAREPTR completion_key_, IO_BUFFER_PTR io_event_) {
             GT_LOG_INFO("Post Write Event Request!");
@@ -305,7 +317,7 @@ namespace GT {
             }
         }
         
-        void GT_IOCPWrapper::PostAnotherAcceptEvent_() {
+		void GT_IOCPWrapper::PostAnotherAcceptEvent_() {
             GT_LOG_INFO("Post Another Accept Event for listen socket!");
 			int try_time = 0;
 			while( try_time < 2){
@@ -379,10 +391,10 @@ namespace GT {
 			SOCKETCONTEXT_SHAREPTR gt_completion_key_ptr;;
 			IO_BUFFER_PTR gt_io_buffer_ptr;
 
-			
 
-			if (gt_io->GetIOEventType() == IO_EVENT_ACCEPT) { /* if the event is listen socket's event, just return the listen socket completion key */
-				gt_completion_key_ptr = accept_socket_completion_key_; std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
+			if (gt_io->GetIOEventType() == IO_EVENT_ACCEPT || gt_io->GetIOEventType() == IO_EVENT_EXIT) { /* if the event is listen socket's event, just return the listen socket completion key */
+				gt_completion_key_ptr = accept_socket_completion_key_; 
+				std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
 				std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>::iterator io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
 				if (io_iter != io_buffer_cache.end()) {
 					gt_io_buffer_ptr = io_iter->second;
@@ -404,6 +416,7 @@ namespace GT {
 
 			if (gt_io_buffer_ptr == nullptr || gt_completion_key_ptr == nullptr) {
 				GT_LOG_ERROR("completion key or io buffer context empty...");
+				GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(gt_io_buffer_ptr);
 				return;
 			}
 
@@ -417,14 +430,16 @@ namespace GT {
 					GT_LOG_INFO("the accept socket bind the first data!");
 					call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
 				}
-                ProcessAcceptEvent_(std::this_thread::get_id(), gt_io_buffer_ptr);
+                ProcessAcceptEvent_(gt_io_buffer_ptr);
                 PostAnotherAcceptEvent_();
+				gt_completion_key_ptr->ReleaseUsedIOContext(gt_io_buffer_ptr);
             }
             else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_READ && Nnumofbytestransfered != 0 ) {
                 GT_LOG_INFO("Get read event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
                 call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);
                 gt_completion_key_ptr->ResetTimer();
-				PostReadRequestEvent_(gt_completion_key_ptr, gt_io_buffer_ptr);
+				PostAnotherReadRequest_(gt_completion_key_ptr);
+				gt_completion_key_ptr->ReleaseUsedIOContext(gt_io_buffer_ptr);
             }
             else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_WRITE) {
                 GT_LOG_INFO("Get write event from : " << inet_ntoa(gt_completion_key_ptr->GetSocketAddr().sin_addr));
@@ -438,11 +453,13 @@ namespace GT {
                 GTSERVER_RESOURCE_MANAGER.ReleaseCompletionKey(gt_completion_key_ptr);
             }
             else if (!ret) {
+				GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(gt_io_buffer_ptr);
                 GT_LOG_ERROR("GetQueuedCompletionStatus failed, error code = " << WSAGetLastError());
             }
-            else {
+			else {
+				GTSERVER_RESOURCE_MANAGER.ReleaseIOBuffer(gt_io_buffer_ptr);
                 GT_LOG_DEBUG("Unkonwn Event! ret = " << ret << ", Nnumofbytestransfered = " << Nnumofbytestransfered);
-            }
+			}
 		}
 
         void GT_IOCPWrapper::PostExitEvent_() {
