@@ -1,6 +1,7 @@
 #include "GT_Resource_Manager.h"
 #include "GTUtlity/GT_Util_GlogWrapper.h"
 #include "GTUtlity/GT_Util_CfgHelper.h"
+#include "GTUtlity/GT_Util_OSInfo.h"
 
 #include <algorithm>
 
@@ -62,7 +63,7 @@ namespace GT {
 				}
 
 
-				/* init Resource Collector Worker */
+				
 				//resource_collect_cycle_time_ = GT_READ_CFG_INT("resource_control", "resource_collect_cycle_time", 30000); /* (ms) */
 				//resource_collector_thread_ = std::move(std::thread(&GT_Resource_Manager::Resource_Collect_Worker_, this, 
 				//										std::bind(&GT_Resource_Manager::Resource_Collect_Func_, this), 
@@ -71,11 +72,11 @@ namespace GT {
 				//										std::ref(resource_cv_),
 				//										resource_collect_cycle_time_));
 
-				/* init out date connection checker */
+				/* init Resource Collector Worker */
 				out_date_time_control_ = GT_READ_CFG_INT("server_cfg", "out_date_control", 120) * 1000;
 				connect_check_interval_ = GT_READ_CFG_INT("server_cfg","connect_check_interval", 30000) * 1000;
-				connect_check_thread_ = std::move(std::thread(&GT_Resource_Manager::ConnectCheckWorker, this,
-												  std::bind(&GT_Resource_Manager::ConnectChecker, this),
+				connect_check_thread_ = std::move(std::thread(&GT_Resource_Manager::Collect_Worker_, this,
+												  std::bind(&GT_Resource_Manager::ResourceCollector, this),
 												  std::ref(connect_check_mutex_),
 												  std::ref(connect_check_cv_),
 												  std::ref(end_connect_check_ato_),
@@ -129,6 +130,7 @@ namespace GT {
             std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_ptr_set = sockcontext_ptr->GetIOBufferCache();
             std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr.second);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
+			sockcontext_ptr.reset();
 		}
 
 		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type) {
@@ -175,7 +177,7 @@ namespace GT {
             GT_SOCKET_CACHE_MANAGER.CollectUnuseSocket();
 		}
 
-		void GT_Resource_Manager::ConnectChecker() {
+		void GT_Resource_Manager::ResourceCollector() {
             auto key_iter = map_key_hash_set_.begin();
             for (; key_iter != map_key_hash_set_.end();) {
                 auto iter = completion_key_ptr_cache_.find(*key_iter);
@@ -192,13 +194,15 @@ namespace GT {
                         comp_key->IncremCheckTime();
                     }
                     else if (comp_key->GetCheckTime() == 2) { /* second check */
+						//GT_LOG_DEBUG("current process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                         comp_key->ResetCheckTime();
                         ReleaseCompletionKey(comp_key);
-                        GT_RESOURCE_LOCK;
-                        iter->second.reset();
-                        completion_key_ptr_cache_.erase(iter);
+						GT_RESOURCE_LOCK;
+						iter->second.reset();
+						completion_key_ptr_cache_.erase(iter);
                         key_iter = map_key_hash_set_.erase(key_iter);
-                        GT_LOG_DEBUG("delete the out date completion key!");
+						GT_LOG_DEBUG("delete the out date completion key!");
+						//GT_LOG_DEBUG("current process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                         continue;
                     }
 				}
@@ -206,7 +210,7 @@ namespace GT {
 			}
 		}
 
-		void GT_Resource_Manager::ConnectCheckWorker(std::function<void()> func,
+		void GT_Resource_Manager::Collect_Worker_(std::function<void()> func,
 													std::mutex& mu,
 													std::condition_variable& cv,
 													std::atomic_bool& end_thread,
@@ -216,7 +220,10 @@ namespace GT {
 			while (!end_thread)
 			{
                 if (cv.wait_for(lk, std::chrono::microseconds(check_interval)) == std::cv_status::timeout) {
+					//GT_LOG_WARN("before resource collect, process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                     func();
+					//GT::UTIL::GT_Util_OSInfo::Try2CollectProcessMem();
+					//GT_LOG_WARN("after resource collect, process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                 }
 			}
 			GT_LOG_INFO("GT Resource Collect Worker Exit!");

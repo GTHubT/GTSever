@@ -49,8 +49,8 @@ namespace GT {
 			void	Resource_Collect_Func_();
 			void	Resource_Collect_Worker_(std::function<void()> func_, std::atomic_bool& end_thread_, std::mutex& resource_lock, std::condition_variable& source_cv, int cycle_time_);
 
-			void	ConnectChecker(); /* check the connection by timer control, if the timer is expired, will close the connection */
-			void	ConnectCheckWorker(std::function<void()> func, std::mutex& mu, std::condition_variable& cv, std::atomic_bool& end_thread, int check_interval);
+			void	ResourceCollector(); /* collect resource and check the connection by timer control, if the timer is expired, will close the connection */
+			void	Collect_Worker_(std::function<void()> func, std::mutex& mu, std::condition_variable& cv, std::atomic_bool& end_thread, int check_interval);
 		private:
 			bool is_enabled_;
 			std::mutex resource_global_lock_;

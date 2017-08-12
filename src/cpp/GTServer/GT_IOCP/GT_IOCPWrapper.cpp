@@ -258,7 +258,7 @@ namespace GT {
 			completion_key->AddIOContext2Cache(overlappe_ptr);
 			bool ret = BindSocketToCompletionPort(completion_key->GetContextSocketPtr(), (ULONG_PTR)completion_key.get());
 			if (!ret) {
-				GT_LOG_ERROR("bind completion key to completion port failed!");
+				GT_LOG_ERROR("bind completion key to completion port failed! error code = " << GetLastError());
 				return;
 			}
 			PostReadRequestEvent_(completion_key, overlappe_ptr);
@@ -394,8 +394,8 @@ namespace GT {
 
 			if (gt_io->GetIOEventType() == IO_EVENT_ACCEPT || gt_io->GetIOEventType() == IO_EVENT_EXIT) { /* if the event is listen socket's event, just return the listen socket completion key */
 				gt_completion_key_ptr = accept_socket_completion_key_; 
-				std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
-				std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>::iterator io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
+				auto& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
+				auto io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
 				if (io_iter != io_buffer_cache.end()) {
 					gt_io_buffer_ptr = io_iter->second;
 				}
@@ -406,8 +406,8 @@ namespace GT {
 				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_cache.find((ULONG_PTR)gt_context);
 				if (iter != completion_key_cache.end()) {
 					gt_completion_key_ptr = iter->second;
-					std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
-					std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>::iterator io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
+					auto& io_buffer_cache = gt_completion_key_ptr->GetIOBufferCache();
+					auto io_iter = io_buffer_cache.find((ULONG_PTR)gt_io);
 					if (io_iter != io_buffer_cache.end()) {
 						gt_io_buffer_ptr = io_iter->second;
 					}

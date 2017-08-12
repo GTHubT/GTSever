@@ -1,6 +1,12 @@
 #ifndef GT_UTIL_OSINFO_H_
 #define GT_UTIL_OSINFO_H_
 
+#ifdef _WIN
+#include <Windows.h>
+#include <Psapi.h>
+#pragma comment(lib, "psapi.lib")
+#endif
+
 #include <string>
 namespace GT {
     namespace UTIL {
@@ -11,6 +17,8 @@ namespace GT {
             static int GetCPUNum();
 			static std::string GetCurrentFolder();
             static int GetRandomInt();
+			static long long  Win_GetCurrentMemorySize();
+			static void Try2CollectProcessMem();
         private:
 
         };

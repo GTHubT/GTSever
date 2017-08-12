@@ -74,8 +74,6 @@ namespace GT {
 
 		std::shared_ptr<SOCKET> GT_SocketPool_Manager::GetNextUnuseSocket() {
 			SOCKETPOOL_LOCK_THIS_SCOPE;
-			//std::shared_ptr<SOCKET> temp_ptr(new (SOCKET)(WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)));
-			//return temp_ptr;
             GT_LOG_WARN("inuse socket pool size = " << socket_inuse_pool_.size());
             GT_LOG_WARN("socket pool size = " << shared_socket_pool_.size());
 			if (shared_socket_pool_.size() < GT_READ_CFG_INT("socket_pool_cfg", "size_to_rellocate", 30)) {
@@ -141,12 +139,13 @@ namespace GT {
 				closesocket(*sock_ptr);
 				auto iter = socket_inuse_pool_.find((ULONG_PTR)sock_ptr.get());
 				if (iter != socket_inuse_pool_.end()) {
+					iter->second.reset();
 					socket_inuse_pool_.erase(iter);
 				}
 				else {
 					GT_LOG_WARN("did not find the socket in the socket inuse cache!");
 				}
-				sock_ptr.reset();
+				sock_ptr.reset(); /* release socket resource */
 				/*if (GT::UTIL::GT_Util_OSInfo::GetRandomInt() > 8) {
 					GT_LOG_WARN("to be use socket pool size = " << tobereuse_socket_pool_.size());
 					tobereuse_socket_pool_.insert(std::make_pair((ULONG_PTR)(sock_ptr.get()), sock_ptr));

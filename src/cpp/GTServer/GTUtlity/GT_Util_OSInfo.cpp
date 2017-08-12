@@ -1,8 +1,6 @@
 #include "GT_Util_OSInfo.h"
 #include <random>
-#ifdef _WIN
-#include <Windows.h>
-#endif
+
 
 namespace GT {
 
@@ -36,6 +34,17 @@ namespace GT {
             std::uniform_int_distribution<> dist(1,10);
             return dist(gen);
         }
+
+		long long GT_Util_OSInfo::Win_GetCurrentMemorySize() {
+			HANDLE handle = GetCurrentProcess();
+			PROCESS_MEMORY_COUNTERS pmc;
+			GetProcessMemoryInfo(handle, &pmc, sizeof(pmc));
+			return pmc.WorkingSetSize;
+		}
+
+		void GT_Util_OSInfo::Try2CollectProcessMem() {
+			EmptyWorkingSet(GetCurrentProcess());
+		}
 
     }
 }
