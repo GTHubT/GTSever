@@ -131,10 +131,11 @@ namespace GT {
             GT_IO_BUFFER_CACHE_MANAGER.ReleaseIOBuffer(ptr);
 		}
 
-		void GT_Resource_Manager::ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sockcontext_ptr) {
+		void GT_Resource_Manager::ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sockcontext_ptr, bool private_clean) {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Collect Socket Resource!");
-			GT_RESOURCE_LOCK;
+			if (!private_clean)
+				GT_RESOURCE_LOCK;
 
             /* release socket context IO buffer first */
             std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_ptr_set = sockcontext_ptr->GetIOBufferCache();
@@ -199,6 +200,7 @@ namespace GT {
 
 		void GT_Resource_Manager::ResourceCollector() {
 			GT_RESOURCE_LOCK;
+			printf("GT Server Have Process Client : %ld \n", client_num_processed);
 			std::unordered_set<ULONG_PTR>::iterator key_iter = completion_key_address_hash_set_.begin();
             for (; key_iter != completion_key_address_hash_set_.end();) {
 				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_ptr_cache_.find(*key_iter);
@@ -206,7 +208,6 @@ namespace GT {
 					++key_iter;
                     continue;
                 }
-				printf("GT Server Have Process Client : %ld \n", client_num_processed);
                 SOCKETCONTEXT_SHAREPTR comp_key = iter->second;
 				auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - comp_key->GetTimer()).count();
 				if (d > out_date_time_control_ && comp_key->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/ {
@@ -218,7 +219,7 @@ namespace GT {
                     else if (comp_key->GetCheckTime() == 2) { /* second check */
 						//GT_LOG_DEBUG("current process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                         comp_key->ResetCheckTime();
-                        ReleaseCompletionKey(comp_key);
+                        ReleaseCompletionKey(comp_key, true);
 						{
 							iter->second.reset();
 							completion_key_ptr_cache_.erase(iter);
