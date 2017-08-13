@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+long long client_num_processed = 0;
 using namespace GT::UTIL;
 namespace GT {
 
@@ -415,6 +416,7 @@ namespace GT {
 			}
 			else if (ret && gt_io_buffer_ptr->GetIOEventType() == IO_EVENT_ACCEPT) { /* when accept the socket, AccepEX will get the first data, so the Nnumofbytestransfered may not zero, if the client send data after connect success!*/
                 GT_LOG_INFO("Get Accept Event!");
+				++ client_num_processed;
 				if (Nnumofbytestransfered != 0) { /* the accept socket send data after connect success */
 					GT_LOG_INFO("the accept socket bind the first data!");
 					call_back_func_(IO_EVENT_READ, gt_completion_key_ptr, gt_io_buffer_ptr, Nnumofbytestransfered);

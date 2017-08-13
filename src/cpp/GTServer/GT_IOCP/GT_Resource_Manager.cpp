@@ -5,6 +5,7 @@
 
 #include <algorithm>
 
+extern long long client_num_processed;
 namespace GT {
 
 	namespace NET {
@@ -205,7 +206,7 @@ namespace GT {
 					++key_iter;
                     continue;
                 }
-
+				printf("GT Server Have Process Client : %ld \n", client_num_processed);
                 SOCKETCONTEXT_SHAREPTR comp_key = iter->second;
 				auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - comp_key->GetTimer()).count();
 				if (d > out_date_time_control_ && comp_key->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/ {
