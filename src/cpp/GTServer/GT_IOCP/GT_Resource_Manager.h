@@ -39,6 +39,7 @@ namespace GT {
 			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type = NULL_SOCKET);			// completion key
 			SOCKETCONTEXT_SHAREPTR GetListenSocketCompletionKey(SOCKET_SHAREPTR sock_ptr);
 			std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>& GetCompletionKeyCache();
+			SOCKETCONTEXT_SHAREPTR GetCompletionKeyPtr(ULONG_PTR);
 
 			static GT_Resource_Manager& GetInstance();
 

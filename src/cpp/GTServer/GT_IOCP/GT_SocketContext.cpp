@@ -36,5 +36,14 @@ namespace GT {
 			return socket_io_buffer_cache_;
 		}
 
+		IO_BUFFER_PTR GT_SocketConetxt::GetIOBufferPtr(ULONG_PTR addr_key) {
+			std::lock_guard<std::mutex> lk(sock_context_mutex_);
+			auto io_iter = socket_io_buffer_cache_.find(addr_key);
+			if (io_iter != socket_io_buffer_cache_.end()) {
+				return io_iter->second;
+			}
+			return nullptr;
+		}
+
 	}
 }

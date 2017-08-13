@@ -77,7 +77,7 @@ namespace GT {
 			void AddIOContext2Cache(IO_BUFFER_PTR io_ptr);
 			void ReleaseUsedIOContext(IO_BUFFER_PTR io_context);
 			std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>&   GetIOBufferCache();
-
+			IO_BUFFER_PTR GetIOBufferPtr(ULONG_PTR);
 
 		private:
 			SOCKET_TYPE								sock_type_;

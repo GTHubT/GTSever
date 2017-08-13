@@ -97,6 +97,15 @@ namespace GT {
 			return completion_key_ptr_cache_;
 		}
 
+		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::GetCompletionKeyPtr(ULONG_PTR addr_key) {
+			GT_RESOURCE_LOCK;
+			auto iter = completion_key_ptr_cache_.find(addr_key);
+			if (iter != completion_key_ptr_cache_.end()) {
+				return iter->second;
+			}
+			return nullptr;
+		}
+
 
 		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::GetListenSocketCompletionKey(SOCKET_SHAREPTR sock_ptr) {
 			SOCKETCONTEXT_SHAREPTR temp_ptr(new GT_SocketConetxt());
