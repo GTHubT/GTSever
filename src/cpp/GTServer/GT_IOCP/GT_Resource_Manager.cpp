@@ -188,15 +188,16 @@ namespace GT {
 		}
 
 		void GT_Resource_Manager::ResourceCollector() {
+			GT_RESOURCE_LOCK;
 			std::unordered_set<ULONG_PTR>::iterator key_iter = completion_key_address_hash_set_.begin();
             for (; key_iter != completion_key_address_hash_set_.end();) {
-                auto iter = completion_key_ptr_cache_.find(*key_iter);
+				std::unordered_map<ULONG_PTR, SOCKETCONTEXT_SHAREPTR>::iterator iter = completion_key_ptr_cache_.find(*key_iter);
                 if (iter == completion_key_ptr_cache_.end()) {
 					++key_iter;
                     continue;
                 }
 
-                auto comp_key = iter->second;
+                SOCKETCONTEXT_SHAREPTR comp_key = iter->second;
 				auto d = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - comp_key->GetTimer()).count();
 				if (d > out_date_time_control_ && comp_key->GetSocketType() == ACCEPTED_SOCKET) /*connection have too many time uncomunication*/ {
                     if (comp_key->GetCheckTime() == 1) /* first check */
@@ -209,7 +210,6 @@ namespace GT {
                         comp_key->ResetCheckTime();
                         ReleaseCompletionKey(comp_key);
 						{
-							GT_RESOURCE_LOCK;
 							iter->second.reset();
 							completion_key_ptr_cache_.erase(iter);
 							key_iter = completion_key_address_hash_set_.erase(key_iter);
