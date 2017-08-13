@@ -274,8 +274,8 @@ namespace GT {
 		void GT_Resource_Manager::CleanCache_() {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Clean the completion key cache...");
-			std::for_each(completion_key_ptr_cache_.begin(), completion_key_ptr_cache_.end(), [&](auto iter)->void {ReleaseCompletionKey(iter.second); });
-			
+			completion_key_ptr_cache_.clear();
+			completion_key_address_hash_set_.clear();
 		}
 
 		void GT_Resource_Manager::ClearResource_() {
