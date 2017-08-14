@@ -33,7 +33,7 @@ namespace GT {
 			SOCKET_SHAREPTR			GetCachedSocket();
 			IO_BUFFER_PTR			GetIOContextBuffer();										// overlapped struct
 			void					ReleaseIOBuffer(IO_BUFFER_PTR ptr);
-			void					ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, bool private_clean = false);
+			void					ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr);
 			void					SetSocketContexAddr(SOCKETCONTEXT_SHAREPTR s_ptr, SOCKADDR_IN sock_addr);
 			void					PushIOEvent2CompletionKey(SOCKETCONTEXT_SHAREPTR sock_ptr, IO_BUFFER_PTR io_ptr);
 			SOCKETCONTEXT_SHAREPTR	CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type = NULL_SOCKET);			// completion key
@@ -48,6 +48,8 @@ namespace GT {
 			void	ClearResource_();
 			void	CleanCache_();
 			void	Resource_Collect_Func_();
+            void    ReleaseContext_(SOCKETCONTEXT_SHAREPTR sockcontext_ptr);
+            void    pri_ReleaseCompletionKey_(SOCKETCONTEXT_SHAREPTR sockcontext_ptr);
 			void	Resource_Collect_Worker_(std::function<void()> func_, std::atomic_bool& end_thread_, std::mutex& resource_lock, std::condition_variable& source_cv, int cycle_time_);
 
 			void	ResourceCollector(); /* collect resource and check the connection by timer control, if the timer is expired, will close the connection */

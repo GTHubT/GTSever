@@ -131,28 +131,34 @@ namespace GT {
             GT_IO_BUFFER_CACHE_MANAGER.ReleaseIOBuffer(ptr);
 		}
 
-		void GT_Resource_Manager::ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sockcontext_ptr, bool private_clean) {
+		void GT_Resource_Manager::ReleaseCompletionKey(SOCKETCONTEXT_SHAREPTR sockcontext_ptr) {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Collect Socket Resource!");
-			if (!private_clean)
-				GT_RESOURCE_LOCK;
+            GT_RESOURCE_LOCK;
+            ReleaseContext_(sockcontext_ptr);
+		}
 
+        void GT_Resource_Manager::pri_ReleaseCompletionKey_(SOCKETCONTEXT_SHAREPTR sockcontext_ptr) {
+            ReleaseContext_(sockcontext_ptr);
+        }
+
+        void GT_Resource_Manager::ReleaseContext_(SOCKETCONTEXT_SHAREPTR sockcontext_ptr) {
             /* release socket context IO buffer first */
             std::unordered_map<ULONG_PTR, IO_BUFFER_PTR>& io_ptr_set = sockcontext_ptr->GetIOBufferCache();
             std::for_each(io_ptr_set.begin(), io_ptr_set.end(), [&](auto io_ptr)->void {ReleaseIOBuffer(io_ptr.second);});
             GT_SOCKET_CACHE_MANAGER.CloseSockAndPush2ReusedPool(sockcontext_ptr->GetContextSocketPtr());
-			/* remove the key from completion cache */
-			auto iter = completion_key_ptr_cache_.find((ULONG_PTR)sockcontext_ptr.get());
-			if (iter != completion_key_ptr_cache_.end()) {
-				completion_key_ptr_cache_.erase(iter);
-				/* remove completion key from completion_key_address_hash_set_ */
-				auto iter_ = completion_key_address_hash_set_.find((ULONG_PTR)sockcontext_ptr.get());
-				if (iter_ != completion_key_address_hash_set_.end()) {
-					completion_key_address_hash_set_.erase(iter_);
-				}
-			}
-			sockcontext_ptr.reset();
-		}
+            /* remove the key from completion cache */
+            auto iter = completion_key_ptr_cache_.find((ULONG_PTR)sockcontext_ptr.get());
+            if (iter != completion_key_ptr_cache_.end()) {
+                completion_key_ptr_cache_.erase(iter);
+                /* remove completion key from completion_key_address_hash_set_ */
+                auto iter_ = completion_key_address_hash_set_.find((ULONG_PTR)sockcontext_ptr.get());
+                if (iter_ != completion_key_address_hash_set_.end()) {
+                    completion_key_address_hash_set_.erase(iter_);
+                }
+            }
+            sockcontext_ptr.reset();
+        }
 
 		SOCKETCONTEXT_SHAREPTR GT_Resource_Manager::CreateNewSocketContext(SOCKET_SHAREPTR sock_ptr, SOCKET_TYPE type) {
 			GT_TRACE_FUNCTION;
@@ -219,7 +225,7 @@ namespace GT {
                     else if (comp_key->GetCheckTime() == 2) { /* second check */
 						//GT_LOG_DEBUG("current process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                         comp_key->ResetCheckTime();
-                        ReleaseCompletionKey(comp_key, true);
+                        pri_ReleaseCompletionKey_(comp_key);
 						{
 							iter->second.reset();
 							completion_key_ptr_cache_.erase(iter);
