@@ -6,6 +6,7 @@ namespace GT {
 
         GT_Select_Core::GT_Select_Core()
         {
+			select_cb_func_ = NULL;
         }
 
 

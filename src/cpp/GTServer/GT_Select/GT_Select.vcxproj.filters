@@ -32,6 +32,9 @@
     <ClInclude Include="GT_Select_Resource_Manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GT_Definition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
