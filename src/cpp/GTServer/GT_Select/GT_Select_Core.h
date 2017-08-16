@@ -23,7 +23,7 @@ namespace GT {
 			void	StartService();
 			void	StopService();
 			bool	Finalize();
-			void	RegisterCallback(gt_event_callback* cb);
+			void	RegisterCallback(gt_event_callback cb);
 			void	UnRegisterCallback();
 		private:
 			void	Select_service_();
