@@ -29,6 +29,7 @@ namespace GT {
 			void	Select_service_();
 			void	DispatchEvent_(EVENT_TYPE, ULONG_PTR, char*, size_t);
 			gt_event_callback select_cb_func_;
+			SOCKET	listen_socket_;
         };
     }
 }
