@@ -45,7 +45,7 @@ namespace GT {
 		}
 
 		bool GT_Select_Core::Finalize() {
-
+            return false;
 		}
 
     }
