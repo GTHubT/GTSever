@@ -7,12 +7,19 @@
 
 #include <windows.h>
 
-
-enum EVENT_TYPE {		/* GT Select Event type */
+/* GT Select Event type */
+enum EVENT_TYPE {		
 	EVENT_ACCEPT = 0,
 	EVENT_READ,
 	EVENT_WRITE,
 	EVENT_EXCEPTION
+};
+
+
+/* this idea is from libevent */
+struct fd_set_pri {
+    unsigned int sock_count;
+    SOCKET fd_sock_array[1];
 };
 
 

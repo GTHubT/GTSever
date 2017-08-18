@@ -28,6 +28,10 @@ namespace GT {
 		private:
 			void	Select_service_();
 			void	DispatchEvent_(EVENT_TYPE, ULONG_PTR, char*, size_t);
+
+            void    AddEvent_(EVENT_TYPE, fd_set_pri*);
+            void    DelEvent_(EVENT_TYPE, fd_set_pri*);
+        private:
 			gt_event_callback select_cb_func_;
 			SOCKET	listen_socket_;
         };
