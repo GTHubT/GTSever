@@ -2,12 +2,17 @@
 #include "GTUtlity/GT_Util_GlogWrapper.h"
 #include "GTUtlity/GT_Util_CfgHelper.h"
 
+#include <algorithm>
 
 namespace GT {
     namespace NET {
 
-        GT_Select_Core::GT_Select_Core()
+        GT_Select_Core::GT_Select_Core():end_thread_(false)
         {
+			
+			for (auto& i : socket_set_pos_) {
+				i = 0;
+			}
 			select_cb_func_ = NULL;
         }
 
@@ -22,6 +27,11 @@ namespace GT {
 
 			do 
 			{
+				/* reset fd set */
+				for (auto& iter : socketset) {
+					FD_ZERO((fd_set*)&iter);
+				}
+
 				/* init socket environment */
 				int err;
 				WORD	version = MAKEWORD(2, 2);
@@ -58,6 +68,10 @@ namespace GT {
 					GT_LOG_ERROR("listen socket failed, error code = " << WSAGetLastError());
 					break;
 				}
+
+				/* add listen socket to fd read sockets set */
+				AddEvent_(EVENT_ACCEPT, listen_socket_);
+
 				ret = true;
 
 			} while (0);
@@ -66,10 +80,57 @@ namespace GT {
 		}
 
 		void GT_Select_Core::StartService() {
-			
+			GT_TRACE_FUNCTION;
+			GT_LOG_INFO("GT Select Service Start!");
+			server_thread_ = std::thread(&GT_Select_Core::Select_service_, this);
 		}
 
 		void GT_Select_Core::Select_service_() {
+			GT_TRACE_FUNCTION;
+			while (!end_thread_) {
+				fd_set_pri& readset = socketset[0];
+				fd_set_pri& writeset = socketset[1];
+				fd_set_pri& expset = socketset[2];
+
+				int fd_count = readset.sock_count > writeset.sock_count ? readset.sock_count > expset.sock_count ? readset.sock_count : expset.sock_count : writeset.sock_count;
+				if (!fd_count) {
+					GT_LOG_ERROR("Select Service Got No Socket to Serve, Just Break Out!");
+					end_thread_ = true;
+					return;
+				}
+
+				int ret = select(NULL, (fd_set*)&readset, (fd_set*)&writeset, (fd_set*)&expset, NULL);
+
+				if (ret == SOCKET_ERROR) {
+					GT_LOG_ERROR("got error from select, error code = " << WSAGetLastError());
+					continue;
+				}
+				else if (!ret) {
+					GT_LOG_DEBUG("select returned may got timeout!");
+					continue;
+				}
+
+				
+			}
+		}
+
+		void GT_Select_Core::AddEvent_(EVENT_TYPE type, SOCKET s) {
+		
+			if (socket_set_pos_[type] == socketset[type].sock_count) {	/* socket pos record the next used socket position */
+				GrowSet_(type);
+			}
+			socketset[type].fd_sock_array[socket_set_pos_[type]] = s;
+			socket_set_pos_[type] ++;
+		}
+
+		void GT_Select_Core::GrowSet_(EVENT_TYPE type) {
+			GT_TRACE_FUNCTION;
+			int grow_size = GT_READ_CFG_INT("select_control", "fd_grow_size", 100);
+			SOCKET* set_pos = socketset[type].fd_sock_array + socket_set_pos_[type];
+			set_pos = new SOCKET[grow_size];
+		}
+
+		void GT_Select_Core::DelEvent_(EVENT_TYPE, SOCKET, int index) {
 
 		}
 
@@ -82,7 +143,7 @@ namespace GT {
 		}
 
 		void GT_Select_Core::DispatchEvent_(EVENT_TYPE type, ULONG_PTR sock_ptr, char* data, size_t len) {
-
+			select_cb_func_(type, sock_ptr, data, len);
 		}
 
 		void GT_Select_Core::StopService() {

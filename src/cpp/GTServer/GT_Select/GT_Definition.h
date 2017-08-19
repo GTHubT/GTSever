@@ -9,10 +9,10 @@
 
 /* GT Select Event type */
 enum EVENT_TYPE {		
-	EVENT_ACCEPT = 0,
-	EVENT_READ,
+	EVENT_READ = 0,
 	EVENT_WRITE,
-	EVENT_EXCEPTION
+	EVENT_EXCEPTION,
+	EVENT_ACCEPT = EVENT_READ
 };
 
 
@@ -23,6 +23,6 @@ struct fd_set_pri {
 };
 
 
-typedef void(*gt_event_callback)(EVENT_TYPE, ULONG_PTR* fd, char* data, size_t len);
+typedef void(*gt_event_callback)(EVENT_TYPE, ULONG_PTR fd, char* data, size_t len);
 
 #endif //  GT_DEFINITION_
