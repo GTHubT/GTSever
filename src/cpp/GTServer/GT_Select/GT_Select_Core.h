@@ -23,16 +23,21 @@ namespace GT {
 		public:
 			bool	Initialize();
 			void	StartService();
-			void	StopService();
+			void	StopService_();
 			bool	Finalize();
 			void	RegisterCallback(gt_event_callback cb);
 			void	UnRegisterCallback();
 		private:
 			void	Select_service_();
+			void	CollectResource_();
+			void	ProcessAcceptEvent_();
+			void	ProcessReadEvent_(SOCKET&);
+			void	ProcessWriteEvent_(SOCKET&);
+			void	ProcessExpEvent_(SOCKET&);
 			void	DispatchEvent_(EVENT_TYPE, ULONG_PTR, char*, size_t);
 
             void    AddEvent_(EVENT_TYPE, SOCKET);
-            void    DelEvent_(EVENT_TYPE, SOCKET, int index);
+            void    DelEvent_(EVENT_TYPE, SOCKET);
 			void	GrowSet_(EVENT_TYPE);
 
 		private:

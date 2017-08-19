@@ -1,11 +1,16 @@
 #include "GT_Select_Core.h"
 #include "GTUtlity/GT_Util_GlogWrapper.h"
 #include "GTUtlity/GT_Util_CfgHelper.h"
+#include "GT_Select_Resource_Manager.h"
 
 #include <algorithm>
 
 namespace GT {
     namespace NET {
+
+#ifndef GT_SELECT_RESOURCE_MANAGER
+#define GT_SELECT_RESOURCE_MANAGER GT_Select_Resource_Manager::GetInstance()
+#endif
 
         GT_Select_Core::GT_Select_Core():end_thread_(false)
         {
@@ -110,8 +115,67 @@ namespace GT {
 					continue;
 				}
 
-				
+				for (auto& iter : readset.fd_sock_array) {
+					if (FD_ISSET(iter, (fd_set*)&readset)) {
+						ProcessReadEvent_(iter);
+					}
+				}
+
+				for (auto& iter : writeset.fd_sock_array) {
+					if (FD_ISSET(iter, (fd_set*)&writeset)) {
+						ProcessWriteEvent_(iter);
+					}
+				}
+
+				for (auto& iter : expset.fd_sock_array) {
+					if (FD_ISSET(iter, (fd_set*)&expset)) {
+						ProcessExpEvent_(iter);
+					}
+				}
 			}
+			GT_LOG_DEBUG("service thread exit!");
+		}
+
+		void GT_Select_Core::ProcessAcceptEvent_() {
+			GT_TRACE_FUNCTION;
+			SOCKADDR_IN client_addr;
+			int size_ = sizeof(client_addr);
+			SOCKET s = accept(listen_socket_, (SOCKADDR*)&client_addr, &size_);
+			AddEvent_(EVENT_ACCEPT, s);
+		}
+
+		void GT_Select_Core::ProcessExpEvent_(SOCKET& s) {
+			GT_TRACE_FUNCTION;
+			GT_LOG_DEBUG("Got exception event!");
+		}
+
+		void GT_Select_Core::ProcessReadEvent_(SOCKET& s) {
+			if (s == listen_socket_){
+				ProcessAcceptEvent_();
+			}
+			else {
+				select_buffer* bu = GT_SELECT_RESOURCE_MANAGER.GetSelectBuffer();
+				int ret = recv(s, bu->data, bu->buffer_len, NULL);
+				if (!ret) {
+					SOCKADDR_IN client_addr;
+					int size_ = sizeof(SOCKADDR_IN);
+					getpeername(s, (SOCKADDR*)&client_addr, &size_);
+					GT_LOG_DEBUG("client exit, client ip addr = " << inet_ntoa(client_addr.sin_addr) << ", port = " << client_addr.sin_port);
+					DelEvent_(EVENT_READ, s);
+				}
+				else if(ret == SOCKET_ERROR){
+					GT_LOG_ERROR("recv got error, error code = " << WSAGetLastError());
+				}
+				else {
+					DispatchEvent_(EVENT_READ, (ULONG_PTR)&s, bu->data, ret);
+				}
+			}
+
+		}
+
+		void GT_Select_Core::ProcessWriteEvent_(SOCKET& s) {
+			GT_TRACE_FUNCTION;
+			GT_LOG_DEBUG("Got write event!");
 		}
 
 		void GT_Select_Core::AddEvent_(EVENT_TYPE type, SOCKET s) {
@@ -128,10 +192,24 @@ namespace GT {
 			int grow_size = GT_READ_CFG_INT("select_control", "fd_grow_size", 100);
 			SOCKET* set_pos = socketset[type].fd_sock_array + socket_set_pos_[type];
 			set_pos = new SOCKET[grow_size];
+			socketset[type].sock_count += grow_size;
 		}
 
-		void GT_Select_Core::DelEvent_(EVENT_TYPE, SOCKET, int index) {
-
+		void GT_Select_Core::DelEvent_(EVENT_TYPE type, SOCKET s) {
+			GT_TRACE_FUNCTION;
+			GT_LOG_DEBUG("Collect Socket Resource...");
+			int type_t = 0;
+			for (auto& ss : socketset) {
+				for (auto& iter : ss.fd_sock_array) {
+					if (iter == s) {
+						delete &iter;
+						iter = ss.fd_sock_array[--ss.sock_count];/* move the end socket behind the del index to the index of the del */
+						socket_set_pos_[type_t]--;
+						break;
+					}
+				}
+				type_t++;
+			}
 		}
 
 		void GT_Select_Core::RegisterCallback(gt_event_callback cb) {
@@ -143,14 +221,33 @@ namespace GT {
 		}
 
 		void GT_Select_Core::DispatchEvent_(EVENT_TYPE type, ULONG_PTR sock_ptr, char* data, size_t len) {
-			select_cb_func_(type, sock_ptr, data, len);
+			if (!select_cb_func_)
+				select_cb_func_(type, sock_ptr, data, len);
 		}
 
-		void GT_Select_Core::StopService() {
+		void GT_Select_Core::StopService_() {
+			GT_TRACE_FUNCTION;
+			if (!end_thread_) {
+				end_thread_ = true;
+				if (server_thread_.joinable()) {
+					server_thread_.join();
+				}
+				GT_LOG_DEBUG("select server service thread exited!");
+			}
+		}
 
+		void GT_Select_Core::CollectResource_() {
+			GT_TRACE_FUNCTION;
+			for (auto& iter : socketset) {
+				delete[] socketset->fd_sock_array;
+			}
+			
 		}
 
 		bool GT_Select_Core::Finalize() {
+			GT_TRACE_FUNCTION;
+			StopService_();
+			CollectResource_();
             return false;
 		}
 
