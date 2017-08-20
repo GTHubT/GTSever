@@ -5,6 +5,8 @@
 
 #include "GT_Select_Core.h"
 #include "GT_Definition.h"
+#include "GTUtlity/GT_Util_CfgHelper.h"
+#include "GTUtlity/GT_Util_GlogWrapper.h"
 
 namespace GT {
     namespace NET {
@@ -22,13 +24,15 @@ namespace GT {
 			void	RegisterSelectCallBack();
 			void	RegisterCallBack(gt_event_callback cb, EVENT_TYPE type);
 			void	StartService();
-			void	DispatchEvent(EVENT_TYPE type, intptr_t, char*, int);
+			static  void	DispatchEvent(EVENT_TYPE type, intptr_t, char*, int);
 		private:
-			gt_event_callback read_cb;
-			gt_event_callback write_cb;
-			gt_event_callback select_cb;
+			static gt_event_callback read_cb;
+			static gt_event_callback write_cb;
+			GT_LOG_LEVEL LoglevelConvert(std::string loglevel);
 		private:
 			GT_Select_Core	select_core_;
+			bool	service_started_;
+			bool	service_inited_;
         };
     }
 }
