@@ -4,8 +4,6 @@
 
 #include "GT_Definition.h"
 
-#include <WinSock2.h>
-#include <Windows.h>
 #include <thread>
 #include <atomic>
 
@@ -23,11 +21,11 @@ namespace GT {
 		public:
 			bool	Initialize();
 			void	StartService();
-			void	StopService_();
 			bool	Finalize();
 			void	RegisterCallback(gt_event_callback cb);
 			void	UnRegisterCallback();
 		private:
+			void	StopService_();
 			void	Select_service_();
 			void	CollectResource_();
 			void	ProcessAcceptEvent_();

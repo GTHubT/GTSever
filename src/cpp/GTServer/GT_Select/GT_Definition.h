@@ -6,6 +6,8 @@
 #endif
 
 #include <windows.h>
+#include <winsock2.h>
+
 
 /* GT Select Event type */
 enum EVENT_TYPE {		
