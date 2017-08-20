@@ -34,7 +34,7 @@ GT_SELECT_API void StartGTService() {
 GT_SELECT_API bool Finalize() {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("Now End GT Select Service!");
-	GT_SELECT_WRAPPER.Finalize();
+	return GT_SELECT_WRAPPER.Finalize();
 }
 
 
