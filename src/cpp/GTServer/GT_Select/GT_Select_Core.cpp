@@ -84,7 +84,7 @@ namespace GT {
 			return ret;
 		}
 
-		void GT_Select_Core::StartService() {
+		void GT_Select_Core::StartGTService() {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("GT Select Service Start!");
 			server_thread_ = std::thread(&GT_Select_Core::Select_service_, this);

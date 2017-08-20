@@ -14,20 +14,21 @@ namespace GT {
         class GT_Select_Wrapper
         {
         public:
-            GT_Select_Wrapper();
+			static GT_Select_Wrapper& GetInstance();
             ~GT_Select_Wrapper();
 
 		public:
 			bool	Initialize(std::string cfg_path);
 			bool	Finalize();
 
-			void	RegisterSelectCallBack();
 			void	RegisterCallBack(gt_event_callback cb, EVENT_TYPE type);
-			void	StartService();
+			void	StartGTService();
 			static  void	DispatchEvent(EVENT_TYPE type, intptr_t, char*, int);
 		private:
-			static gt_event_callback read_cb;
-			static gt_event_callback write_cb;
+			GT_Select_Wrapper();
+			static	gt_event_callback read_cb;
+			static	gt_event_callback write_cb;
+			void	RegisterSelectCallBack_();
 			GT_LOG_LEVEL LoglevelConvert(std::string loglevel);
 		private:
 			GT_Select_Core	select_core_;

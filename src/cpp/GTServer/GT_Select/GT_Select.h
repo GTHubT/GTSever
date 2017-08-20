@@ -10,13 +10,14 @@
 #define GT_SELECT_API __declspec(dllimport)
 #endif
 
-// This class is exported from the GT_Select.dll
-class GT_SELECT_API CGT_Select {
-public:
-	CGT_Select(void);
-	// TODO: add your methods here.
-};
+#include "GT_Definition.h"
 
-extern GT_SELECT_API int nGT_Select;
+#include <string>
 
-GT_SELECT_API int fnGT_Select(void);
+GT_SELECT_API bool	Initialize(std::string cfg_path);
+
+GT_SELECT_API void	StartGTService();
+
+GT_SELECT_API bool	Finalize();
+
+GT_SELECT_API void	RegisterCallBack(EVENT_TYPE, gt_event_callback);

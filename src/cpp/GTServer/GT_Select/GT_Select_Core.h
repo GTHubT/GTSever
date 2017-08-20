@@ -21,7 +21,7 @@ namespace GT {
 
 		public:
 			bool	Initialize();
-			void	StartService();
+			void	StartGTService();
 			bool	Finalize();
 			void	RegisterCallback(gt_event_callback cb);
 			void	UnRegisterCallback();

@@ -16,6 +16,12 @@ namespace GT {
         }
 
 
+		GT_Select_Wrapper& GT_Select_Wrapper::GetInstance() {
+			static GT_Select_Wrapper select_wrapper_;
+			return select_wrapper_;
+		}
+
+
         GT_Select_Wrapper::~GT_Select_Wrapper()
         {
         }
@@ -40,11 +46,14 @@ namespace GT {
 			if (!service_inited_) {
 				GT_LOG_ERROR("Service Init Failed!");
 			}
+
+			RegisterSelectCallBack_();
+
 			return service_inited_;
 		}
 
-		void GT_Select_Wrapper::StartService() {
-			select_core_.StartService();
+		void GT_Select_Wrapper::StartGTService() {
+			select_core_.StartGTService();
 		}
 
 		bool GT_Select_Wrapper::Finalize() {
@@ -67,7 +76,7 @@ namespace GT {
 			}
 		}
 
-		void GT_Select_Wrapper::RegisterSelectCallBack() {
+		void GT_Select_Wrapper::RegisterSelectCallBack_() {
 			select_core_.RegisterCallback((gt_event_callback)SelectCallBack);
 		}
 
