@@ -6,6 +6,7 @@
 
 #include <thread>
 #include <atomic>
+#include <functional>
 
 #pragma comment(lib, "Ws2_32.lib")
 

@@ -19,14 +19,14 @@ namespace GT {
 			bool	Initialize(std::string cfg_path);
 			bool	Finalize();
 
+			void	RegisterSelectCallBack();
 			void	RegisterCallBack(gt_event_callback cb, EVENT_TYPE type);
 			void	StartService();
-			void	DispatchEvent(EVENT_TYPE ty);
-
+			void	DispatchEvent(EVENT_TYPE type, intptr_t, char*, int);
 		private:
 			gt_event_callback read_cb;
 			gt_event_callback write_cb;
-
+			gt_event_callback select_cb;
 		private:
 			GT_Select_Core	select_core_;
         };

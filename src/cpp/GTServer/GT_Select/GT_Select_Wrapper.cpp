@@ -6,7 +6,7 @@
 namespace GT {
     namespace NET {
 
-        GT_Select_Wrapper::GT_Select_Wrapper():read_cb(nullptr), write_cb(nullptr)
+        GT_Select_Wrapper::GT_Select_Wrapper():read_cb(nullptr), write_cb(nullptr),select_cb(nullptr)
         {
         }
 
@@ -25,6 +25,10 @@ namespace GT {
 
 		bool GT_Select_Wrapper::Finalize() {
 
+		}
+
+		void GT_Select_Wrapper::RegisterSelectCallBack() {
+			select_core_.RegisterCallback(select_cb);
 		}
 
 		void GT_Select_Wrapper::RegisterCallBack(gt_event_callback cb, EVENT_TYPE type) {
