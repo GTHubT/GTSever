@@ -32,7 +32,7 @@ namespace GT {
 			return manager_instance;
 		}
 
-		void GT_ServerManager::InitLogAndCfgSrvice(std::string cfg_path) {
+		void GT_ServerManager::InitLogAndCfgSrvice_(std::string cfg_path) {
 			/* load config */
 			cfg_path_ = cfg_path;
 			GT::UTIL::GT_Util_CfgHelper::LoadCfg(cfg_path_);
@@ -45,9 +45,11 @@ namespace GT {
 			GT::UTIL::GT_Util_GlogWrapper::GetInstance().GT_LogInitialize(log_name_, log_level_, max_logsize_);
 		}
 
-		bool GT_ServerManager::Initialize() {
+		bool GT_ServerManager::Initialize(std::string cfg_path) {
 			if (server_manager_initted_)
 				return server_manager_initted_;
+
+			InitLogAndCfgSrvice_(cfg_path);
 
 			dispatch_event_func_ = std::bind(&GT_ServerManager::DispatchEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
 

@@ -159,7 +159,7 @@ namespace GT {
                 // create socket addr
                 serveraddr_.sin_family   = AF_INET;
                 serveraddr_.sin_port     = htons(GT_READ_CFG_INT("server_cfg","server_port",5555));
-                serveraddr_.sin_addr.S_un.S_addr = inet_addr(INADDR_ANY);
+                serveraddr_.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
 
                 // bind socket to server IP
                 if (SOCKET_ERROR == bind(*(listen_socket_ptr_.get()), (SOCKADDR*)(&serveraddr_), sizeof(SOCKADDR_IN))) {

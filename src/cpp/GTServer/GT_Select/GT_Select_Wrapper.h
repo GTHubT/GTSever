@@ -22,8 +22,9 @@ namespace GT {
 			bool	Finalize();
 
 			void	RegisterCallBack(gt_event_callback cb, EVENT_TYPE type);
+			void	UnRegisterCallBack(EVENT_TYPE type);
 			void	StartGTService();
-			static  void	DispatchEvent(EVENT_TYPE type, intptr_t, char*, int);
+			static  void	DispatchEvent(EVENT_TYPE type, PULONG_PTR, char*, int);
 		private:
 			GT_Select_Wrapper();
 			static	gt_event_callback read_cb;

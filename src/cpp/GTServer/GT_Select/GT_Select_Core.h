@@ -13,6 +13,8 @@
 namespace GT {
     namespace NET {
 
+		typedef void(*internal_call_back)(EVENT_TYPE, PULONG_PTR, const char*, int);
+
         class GT_Select_Core
         {
         public:
@@ -23,7 +25,7 @@ namespace GT {
 			bool	Initialize();
 			void	StartGTService();
 			bool	Finalize();
-			void	RegisterCallback(gt_event_callback cb);
+			void	RegisterCallback(internal_call_back cb);
 			void	UnRegisterCallback();
 		private:
 			void	StopService_();
@@ -33,7 +35,7 @@ namespace GT {
 			void	ProcessReadEvent_(SOCKET&);
 			void	ProcessWriteEvent_(SOCKET&);
 			void	ProcessExpEvent_(SOCKET&);
-			void	DispatchEvent_(EVENT_TYPE, ULONG_PTR, char*, size_t);
+			void	DispatchEvent_(EVENT_TYPE, PULONG_PTR, char*, size_t);
 
             void    AddEvent_(EVENT_TYPE, SOCKET);
             void    DelEvent_(EVENT_TYPE, SOCKET);
@@ -46,11 +48,12 @@ namespace GT {
 			int	socket_set_pos_[3];			/* record the position of the used socket in set: 0 for read , 1 for write , 2 for exp */
 
         private:
-			gt_event_callback	select_cb_func_;
+			internal_call_back	select_cb_func_;
 			SOCKET				listen_socket_;
 			std::thread			server_thread_;
 			std::atomic_bool	end_thread_;
-
+			bool				service_started_;
+			bool				service_inited_;
             int                 udp_port_;
         };
     }

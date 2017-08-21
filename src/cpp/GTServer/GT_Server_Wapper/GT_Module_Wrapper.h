@@ -3,8 +3,11 @@
 
 
 #include "GT_IOCP/GTIOCP.h"
+#include "GT_Select/GT_Select.h"
 #include "GT_IOCP/GT_Definition.h"
 #include "GTUtlity/GT_Util_GlogWrapper.h"
+
+#include <string>
 
 namespace GT {
     namespace   MODULE {
@@ -23,7 +26,7 @@ namespace GT {
 
 			void SetModuleType(MODULE_TYPE);
 			void InitLogService(std::string cfg_pth = DEFAULT_CFG_PATH);
-			bool Initialize();
+			bool Initialize(std::string cfg_path);
 			bool StartGTService();
 			void ExitGTService();
 

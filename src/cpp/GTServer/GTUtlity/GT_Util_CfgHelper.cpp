@@ -9,6 +9,7 @@ namespace GT {
 
 		std::string GT_Util_CfgHelper::cfg_content_ = "";
 		Json::Value GT_Util_CfgHelper::cfg_root_;
+		bool GT_Util_CfgHelper::cfg_load_ = false;
 
         GT_Util_CfgHelper::GT_Util_CfgHelper()
         {
@@ -20,12 +21,17 @@ namespace GT {
         }
 
 		bool GT_Util_CfgHelper::LoadCfg(std::string cfgpath) {
+			if (cfg_load_)
+				return cfg_load_;
+
 			cfg_content_ = GT_Util_FileHelper::ReadFileContent(cfgpath);
 			if (!cfg_content_.empty()) {
 				Json::Reader reader;
 				bool ret = reader.parse(cfg_content_, cfg_root_);
 				if (!ret)
 					printf("CFG parser failed!");
+				else
+					cfg_load_ = true;
 				return ret;
 			}
 			printf("CFG file not found or the file is empty!\n");

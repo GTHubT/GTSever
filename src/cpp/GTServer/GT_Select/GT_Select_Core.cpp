@@ -19,6 +19,8 @@ namespace GT {
 			}
             udp_port_ = -1;
 			select_cb_func_ = NULL;
+			service_started_ = false;
+			service_inited_ = false;
         }
 
 
@@ -28,7 +30,8 @@ namespace GT {
 
 
 		bool GT_Select_Core::Initialize() {
-			bool ret = false;
+			if (service_inited_)
+				return true;
 
 			do 
 			{
@@ -42,7 +45,7 @@ namespace GT {
 				WORD	version = MAKEWORD(2, 2);
 				WSADATA wsadata;
 				err = WSAStartup(version, &wsadata);
-				if (!err) {
+				if (err != 0) {
 					GT_LOG_ERROR("WSAStartup failed, error code = " << WSAGetLastError());
 					WSACleanup();
 					break;
@@ -58,7 +61,7 @@ namespace GT {
 				/* bind local address */
 				SOCKADDR_IN server_sock_addr;
 				memset(&server_sock_addr, 0, sizeof(SOCKADDR_IN));
-				server_sock_addr.sin_addr.S_un.S_addr = inet_addr(INADDR_ANY);
+				server_sock_addr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
 				server_sock_addr.sin_family =  AF_INET;
 				server_sock_addr.sin_port = htons(GT_READ_CFG_INT("server_cfg", "server_port", 2020));
 				err = bind(listen_socket_, (sockaddr*)&server_sock_addr, sizeof(SOCKADDR_IN));
@@ -77,17 +80,20 @@ namespace GT {
 				/* add listen socket to fd read sockets set */
 				AddEvent_(EVENT_ACCEPT, listen_socket_);
 
-				ret = true;
+				service_inited_ = true;
 
 			} while (0);
 
-			return ret;
+			return service_inited_;
 		}
 
 		void GT_Select_Core::StartGTService() {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("GT Select Service Start!");
+			if (service_started_)
+				return;
 			server_thread_ = std::thread(&GT_Select_Core::Select_service_, this);
+			service_started_ = true;
 		}
 
 		void GT_Select_Core::Select_service_() {
@@ -173,7 +179,7 @@ namespace GT {
 					GT_LOG_ERROR("recv got error, error code = " << WSAGetLastError());
 				}
 				else {
-					DispatchEvent_(EVENT_READ, (ULONG_PTR)&s, bu->data, ret);
+					DispatchEvent_(EVENT_READ, (PULONG_PTR)&s, bu->data, ret);
 				}
 			}
 
@@ -218,7 +224,7 @@ namespace GT {
 			}
 		}
 
-		void GT_Select_Core::RegisterCallback(gt_event_callback cb) {
+		void GT_Select_Core::RegisterCallback(internal_call_back cb) {
 			select_cb_func_ = cb;
 		}
 
@@ -226,7 +232,7 @@ namespace GT {
 			select_cb_func_ = NULL;
 		}
 
-		void GT_Select_Core::DispatchEvent_(EVENT_TYPE type, ULONG_PTR sock_ptr, char* data, size_t len) {
+		void GT_Select_Core::DispatchEvent_(EVENT_TYPE type, PULONG_PTR sock_ptr, char* data, size_t len) {
 			if (!select_cb_func_)
 				select_cb_func_(type, sock_ptr, data, len);
 		}
@@ -281,9 +287,11 @@ namespace GT {
 
 		bool GT_Select_Core::Finalize() {
 			GT_TRACE_FUNCTION;
-			StopService_();
-			CollectResource_();
-            return false;
+			if (service_started_) {
+				StopService_();
+				CollectResource_();
+			}
+            return true;
 		}
 
     }

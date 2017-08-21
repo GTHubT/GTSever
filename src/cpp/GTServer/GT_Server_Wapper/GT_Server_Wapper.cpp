@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "GTUtlity/GT_Util_CfgHelper.h"
 #include "GTUtlity/GT_Util_CmdParser.h"
 #include "GTUtlity/GT_Util_OSInfo.h"
 #include "GT_Module_Wrapper.h"
@@ -56,7 +57,7 @@ int main(int argc, const char* argv[])
     GT::UTIL::GT_Util_CmdParser cmdparser;
     cmdparser.ParserCmd(argc, argv);
 
-    if (cmdparser.IsCmdExists("type")) {
+    /*if (cmdparser.IsCmdExists("type")) {
         std::string value = cmdparser.GetCmdValue("type");
         if (value == "IOCP") {
             GTSERVER.SetModuleType(GT::MODULE::GT_IOCP);
@@ -67,13 +68,21 @@ int main(int argc, const char* argv[])
         else {
             CmdHelper();
         }
-    }
+    }*/
 
 
 	std::string config_path = GT::UTIL::GT_Util_OSInfo::GetCurrentFolder() + "GTServer.cfg";
-	GTSERVER.InitLogService(config_path);
+	GT::UTIL::GT_Util_CfgHelper::LoadCfg(config_path);
 
-	bool ret = GTSERVER.Initialize();
+	std::string module_type = GT_READ_CFG_STRING("server_cfg", "server_type", "iocp");
+	if (module_type == "iocp") {
+		GTSERVER.SetModuleType(GT::MODULE::GT_IOCP);
+	}
+	else if (module_type == "select") {
+		GTSERVER.SetModuleType(GT::MODULE::GT_Select);
+	}
+
+	bool ret = GTSERVER.Initialize(config_path);
 	if (!ret) {
 		printf("GT Service Init Failed! ");
         GTSERVER.ExitGTService();

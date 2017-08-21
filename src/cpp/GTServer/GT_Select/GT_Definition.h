@@ -25,6 +25,6 @@ struct fd_set_pri {
 };
 
 
-typedef void(*gt_event_callback)(EVENT_TYPE, ULONG_PTR fd, char* data, size_t len);
+typedef void(*gt_event_callback)(PULONG_PTR fd, const char* data, int len);
 
 #endif //  GT_DEFINITION_

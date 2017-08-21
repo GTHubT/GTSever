@@ -24,6 +24,7 @@ namespace GT {
         private:
             static std::string  cfg_content_;
 			static Json::Value	cfg_root_;
+			static bool			cfg_load_;
         };
 
     }

@@ -4,7 +4,7 @@
 namespace GT {
     namespace NET {
 
-		void SelectCallBack(EVENT_TYPE type, intptr_t ptr, char* data, int len) {
+		void SelectCallBack(EVENT_TYPE type, PULONG_PTR ptr, char* data, int len) {
 			GT_Select_Wrapper::DispatchEvent(type, ptr, data, len);
 		}
 
@@ -62,14 +62,14 @@ namespace GT {
 			return select_core_.Finalize();
 		}
 
-		void GT_Select_Wrapper::DispatchEvent(EVENT_TYPE type, intptr_t sock_ptr, char* data, int len) {
+		void GT_Select_Wrapper::DispatchEvent(EVENT_TYPE type, PULONG_PTR sock_ptr, char* data, int len) {
 			switch (type)
 			{
 			case EVENT_READ:
-				read_cb == nullptr ? NULL : read_cb(type, sock_ptr, data, len);
+				read_cb == nullptr ? NULL : read_cb(sock_ptr, data, len);
 				break;
 			case EVENT_WRITE:
-				write_cb == nullptr ? NULL : write_cb(type, sock_ptr, data, len);
+				write_cb == nullptr ? NULL : write_cb(sock_ptr, data, len);
 				break;
 			default:
 				break;
@@ -77,7 +77,7 @@ namespace GT {
 		}
 
 		void GT_Select_Wrapper::RegisterSelectCallBack_() {
-			select_core_.RegisterCallback((gt_event_callback)SelectCallBack);
+			select_core_.RegisterCallback((internal_call_back)SelectCallBack);
 		}
 
 		void GT_Select_Wrapper::RegisterCallBack(gt_event_callback cb, EVENT_TYPE type) {
@@ -114,6 +114,23 @@ namespace GT {
 			else {
 				printf("unknown log level! \n");
 				return GT_LOG_LEVEL_OFF;
+			}
+		}
+
+		void GT_Select_Wrapper::UnRegisterCallBack(EVENT_TYPE type) {
+			switch (type)
+			{
+			case EVENT_READ:
+				read_cb = nullptr;
+				GT_LOG_INFO("Unregister read call back success!");
+				break;
+			case EVENT_WRITE:
+				write_cb = nullptr;
+				GT_LOG_INFO("Unregister write call back success!");
+				break;
+			default:
+				GT_LOG_DEBUG("Unregister callback got unknow callback type!");
+				break;
 			}
 		}
     }

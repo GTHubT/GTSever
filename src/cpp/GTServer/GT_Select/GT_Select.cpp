@@ -12,7 +12,7 @@
 #endif
 
 
-GT_SELECT_API bool Initialize(std::string cfg_path) {
+GT_SELECT_API bool GTSelect_Initialize(std::string cfg_path) {
 	bool ret = GT_SELECT_WRAPPER.Initialize(cfg_path);
 	if (ret) {
 		GT_LOG_INFO("GT Select Service Init Success!");
@@ -24,21 +24,21 @@ GT_SELECT_API bool Initialize(std::string cfg_path) {
 }
 
 
-GT_SELECT_API void StartGTService() {
+GT_SELECT_API void GTSelect_StartGTService() {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("Now Start GT Select Service!");
 	GT_SELECT_WRAPPER.StartGTService();
 }
 
 
-GT_SELECT_API bool Finalize() {
+GT_SELECT_API bool GTSelect_Finalize() {
 	GT_TRACE_FUNCTION;
 	GT_LOG_INFO("Now End GT Select Service!");
 	return GT_SELECT_WRAPPER.Finalize();
 }
 
 
-GT_SELECT_API void RegisterCallBack(EVENT_TYPE type, gt_event_callback cb) {	/* should invoke after Init */
+GT_SELECT_API void GTSelect_RegisterCallBack(EVENT_TYPE type, gt_event_callback cb) {	/* should invoke after Init */
 	GT_TRACE_FUNCTION;
 	switch (type)
 	{
@@ -49,6 +49,24 @@ GT_SELECT_API void RegisterCallBack(EVENT_TYPE type, gt_event_callback cb) {	/* 
 	case EVENT_WRITE:
 		GT_LOG_INFO("Now Register Write Event CallBack!");
 		GT_SELECT_WRAPPER.RegisterCallBack(cb, EVENT_WRITE);
+		break;
+	default:
+		break;
+	}
+}
+
+
+GT_SELECT_API void GTSelect_UnRegisterCallBack(EVENT_TYPE type) {
+	GT_TRACE_FUNCTION;
+	switch (type)
+	{
+	case EVENT_READ:
+		GT_LOG_INFO("Now UnRegister Read Event CallBack!");
+		GT_SELECT_WRAPPER.UnRegisterCallBack(EVENT_READ);
+		break;
+	case EVENT_WRITE:
+		GT_LOG_INFO("Now UnRegister Write Event CallBack!");
+		GT_SELECT_WRAPPER.UnRegisterCallBack(EVENT_WRITE);
 		break;
 	default:
 		break;

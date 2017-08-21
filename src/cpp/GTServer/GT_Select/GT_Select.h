@@ -14,10 +14,12 @@
 
 #include <string>
 
-GT_SELECT_API bool	Initialize(std::string cfg_path);
+GT_SELECT_API bool	GTSelect_Initialize(std::string cfg_path);
 
-GT_SELECT_API void	StartGTService();
+GT_SELECT_API void	GTSelect_StartGTService();
 
-GT_SELECT_API bool	Finalize();
+GT_SELECT_API bool	GTSelect_Finalize();
 
-GT_SELECT_API void	RegisterCallBack(EVENT_TYPE, gt_event_callback);
+GT_SELECT_API void	GTSelect_RegisterCallBack(EVENT_TYPE, gt_event_callback);
+
+GT_SELECT_API void	GTSelect_UnRegisterCallBack(EVENT_TYPE);

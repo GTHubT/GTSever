@@ -22,8 +22,8 @@ namespace GT {
 
 			static GT_ServerManager& GetInstance();
 
-			void InitLogAndCfgSrvice(std::string cfg_path);
-			bool Initialize();
+			void InitLogAndCfgSrvice_(std::string cfg_path);
+			bool Initialize(std::string cfg_ath);
 			void GTStartService();
 			void StopService();
 

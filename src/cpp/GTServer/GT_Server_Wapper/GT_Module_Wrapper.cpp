@@ -21,14 +21,14 @@ namespace GT {
         {
         }
 
-		void GT_Module_Wrapper::InitLogService(std::string cfg_pth /* = DEFAULT_CFG_PATH */) {
-			if (cfg_pth.empty()) {
-				GT_LOG_INFO("config path empty, use default config path.");
-			}
-			GTIOCP_InitLogService(cfg_pth);
-		}
+		//void GT_Module_Wrapper::InitLogService(std::string cfg_pth /* = DEFAULT_CFG_PATH */) {
+		//	if (cfg_pth.empty()) {
+		//		GT_LOG_INFO("config path empty, use default config path.");
+		//	}
+		//	//GTIOCP_InitLogService(cfg_pth);
+		//}
 
-		bool GT_Module_Wrapper::Initialize() {
+		bool GT_Module_Wrapper::Initialize(std::string cfg_path) {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("initialize GT service...");
 			if (is_module_initted_) {
@@ -36,28 +36,23 @@ namespace GT {
 				return is_module_initted_;
 			}
 
-
+			GT_ERROR_CODE errcode = GT_ERROR_CODE::GT_ERROR_FAILED;
 			if (module_type_ == GT_IOCP) {
 
+				errcode = GTIOCP_Initialize(cfg_path);
 				/* register callback function */
 				GTIOCP_RegisterEventCallBack(IO_EVENT_READ, ReadCallback);
 				GTIOCP_RegisterEventCallBack(IO_EVENT_WRITE, WriteCallback);
-
-				GT_ERROR_CODE errcode = GTIOCP_Initialize();
-				if (errcode == GT_ERROR_FAILED) {
-					is_module_initted_ = false;
-					GT_LOG_ERROR("GT service initialize failed!");
-					return is_module_initted_;
-                }
-                else {
-                    is_module_initted_ = true;
-                }
+				
 			}
 			else {
 				//TODO:
+				bool ret = GTSelect_Initialize(cfg_path);
+				GTSelect_RegisterCallBack(EVENT_READ, ReadCallback);
+				GTSelect_RegisterCallBack(EVENT_WRITE, WriteCallback);
+				ret ? errcode = GT_ERROR_CODE::GT_ERROR_SUCCESS : GT_ERROR_CODE::GT_ERROR_FAILED;
 			}
-
-			GT_LOG_INFO("GT Service init success!");
+			errcode == GT_ERROR_FAILED ? is_module_initted_ = false : is_module_initted_ = true;
 			return is_module_initted_;
 		}
 
@@ -69,21 +64,15 @@ namespace GT {
 			GT_TRACE_FUNCTION;
 			GT_LOG_INFO("Start GT Service...");
 
+			GT_ERROR_CODE errcode = GT_ERROR_CODE::GT_ERROR_FAILED;
 			if (module_type_ == GT_IOCP) {
-				GT_ERROR_CODE errcode = GTIOCP_StartService();
-				if (errcode == GT_ERROR_FAILED) {
-					is_module_initted_ = false;
-					GT_LOG_ERROR("GT Service Start Failed!");
-				}
-				else {
-					is_module_initted_ = true;
-					GT_LOG_INFO("GT Service start success!");
-				}
+				 errcode = GTIOCP_StartService();
 			}
-			else {
+			else if (module_type_ == GT_Select){
 				//TODO:
+				GTSelect_StartGTService();
 			}
-
+			errcode == GT_ERROR_FAILED ? is_module_initted_ = false : is_module_initted_ = true;
 			return is_module_initted_;
 		}
 
@@ -97,7 +86,9 @@ namespace GT {
 				GTIOCP_Uninitialize();
 			}
 			else {
-
+				GTSelect_UnRegisterCallBack(EVENT_READ);
+				GTSelect_UnRegisterCallBack(EVENT_WRITE);
+				GTSelect_Finalize();
 			}
 		}
 
@@ -108,7 +99,7 @@ namespace GT {
 
 		void GT_Module_Wrapper::ReadEventCallback(PULONG_PTR ptr, const char* data, int len) {
 			GT_LOG_ERROR("reading data...");
-			//printf("get data from client data len = %d, content: %s \n", len, data);
+			printf("get data from client data len = %d, content: %s \n", len, data);
 		}
 
 		void GT_Module_Wrapper::WriteEventCallBack(PULONG_PTR ptr, const char* data, int len) {
