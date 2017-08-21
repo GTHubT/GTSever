@@ -35,7 +35,10 @@ namespace GT {
 
 			do 
 			{
-				/* reset fd set */
+				/* reset fd set and pre allocate some socket as a buffer */
+				GrowSet_(EVENT_READ);
+				GrowSet_(EVENT_WRITE);
+				GrowSet_(EVENT_EXCEPTION);
 				for (auto& iter : socketset) {
 					FD_ZERO((fd_set*)&iter);
 				}
@@ -65,14 +68,14 @@ namespace GT {
 				server_sock_addr.sin_family =  AF_INET;
 				server_sock_addr.sin_port = htons(GT_READ_CFG_INT("server_cfg", "server_port", 2020));
 				err = bind(listen_socket_, (sockaddr*)&server_sock_addr, sizeof(SOCKADDR_IN));
-				if (!err) {
+				if (err != 0) {
 					GT_LOG_ERROR("bind socket to local failed, error code = " << WSAGetLastError());
 					break;
 				}
 
 				/* listen on the socket */
 				err = listen(listen_socket_, SOMAXCONN);
-				if (!err) {
+				if (err != 0) {
 					GT_LOG_ERROR("listen socket failed, error code = " << WSAGetLastError());
 					break;
 				}
@@ -98,19 +101,20 @@ namespace GT {
 
 		void GT_Select_Core::Select_service_() {
 			GT_TRACE_FUNCTION;
+			int fd_count = 0;
 			while (!end_thread_) {
-				fd_set_pri& readset = socketset[0];
-				fd_set_pri& writeset = socketset[1];
-				fd_set_pri& expset = socketset[2];
+				fd_set* readset = (fd_set*)&socketset[0];
+				fd_set* writeset = (fd_set*)&socketset[1];
+				fd_set* expset = (fd_set*)&socketset[2];
 
-				int fd_count = readset.sock_count > writeset.sock_count ? readset.sock_count > expset.sock_count ? readset.sock_count : expset.sock_count : writeset.sock_count;
+				int fd_count = readset->fd_count > writeset->fd_count ? readset->fd_count > expset->fd_count ? readset->fd_count : expset->fd_count : writeset->fd_count;
 				if (!fd_count) {
 					GT_LOG_ERROR("Select Service Got No Socket to Serve, Just Break Out!");
 					end_thread_ = true;
 					return;
 				}
 
-				int ret = select(NULL, (fd_set*)&readset, (fd_set*)&writeset, (fd_set*)&expset, NULL);
+				int ret = select(fd_count, readset, writeset, expset, NULL);
 
 				if (ret == SOCKET_ERROR) {
 					GT_LOG_ERROR("got error from select, error code = " << WSAGetLastError());
@@ -121,20 +125,20 @@ namespace GT {
 					continue;
 				}
 
-				for (auto& iter : readset.fd_sock_array) {
-					if (FD_ISSET(iter, (fd_set*)&readset)) {
+				for (auto& iter : readset->fd_array) {
+					if (FD_ISSET(iter, readset)) {
 						ProcessReadEvent_(iter);
 					}
 				}
 
-				for (auto& iter : writeset.fd_sock_array) {
-					if (FD_ISSET(iter, (fd_set*)&writeset)) {
+				for (auto& iter : writeset->fd_array) {
+					if (FD_ISSET(iter, writeset)) {
 						ProcessWriteEvent_(iter);
 					}
 				}
 
-				for (auto& iter : expset.fd_sock_array) {
-					if (FD_ISSET(iter, (fd_set*)&expset)) {
+				for (auto& iter : expset->fd_array) {
+					if (FD_ISSET(iter, expset)) {
 						ProcessExpEvent_(iter);
 					}
 				}
@@ -202,8 +206,9 @@ namespace GT {
 		void GT_Select_Core::GrowSet_(EVENT_TYPE type) {
 			GT_TRACE_FUNCTION;
 			int grow_size = GT_READ_CFG_INT("select_control", "fd_grow_size", 100);
-			SOCKET* set_pos = socketset[type].fd_sock_array + socket_set_pos_[type];
-			set_pos = new SOCKET[grow_size];
+			SOCKET* set_pos = new SOCKET[grow_size];
+			SOCKET* temp = socketset[type].fd_sock_array + socket_set_pos_[type];			/*FIXME: The socket array is not fd set socket array address*/
+			*temp = *set_pos;
 			socketset[type].sock_count += grow_size;
 		}
 
@@ -280,7 +285,7 @@ namespace GT {
 		void GT_Select_Core::CollectResource_() {
 			GT_TRACE_FUNCTION;
 			for (auto& iter : socketset) {
-				delete[] socketset->fd_sock_array;
+				delete[] (socketset->fd_sock_array + 1);
 			}
 			
 		}
