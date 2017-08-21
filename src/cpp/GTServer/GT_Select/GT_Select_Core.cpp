@@ -14,10 +14,10 @@ namespace GT {
 
         GT_Select_Core::GT_Select_Core():end_thread_(false)
         {
-			
 			for (auto& i : socket_set_pos_) {
 				i = 0;
 			}
+            udp_port_ = -1;
 			select_cb_func_ = NULL;
         }
 
@@ -155,13 +155,19 @@ namespace GT {
 			}
 			else {
 				select_buffer* bu = GT_SELECT_RESOURCE_MANAGER.GetSelectBuffer();
-				int ret = recv(s, bu->data, bu->buffer_len, NULL);
+                SOCKADDR_IN client_addr;
+                int size_ = sizeof(SOCKADDR_IN);
+                getpeername(s, (SOCKADDR*)&client_addr, &size_);
+                int ret = recv(s, bu->data, bu->buffer_len, NULL);
+
+                if (client_addr.sin_port == udp_port_) {
+                    GT_LOG_DEBUG("get exit flag, service will exit!");
+                    return;
+                }
+
 				if (!ret) {
-					SOCKADDR_IN client_addr;
-					int size_ = sizeof(SOCKADDR_IN);
-					getpeername(s, (SOCKADDR*)&client_addr, &size_);
-					GT_LOG_DEBUG("client exit, client ip addr = " << inet_ntoa(client_addr.sin_addr) << ", port = " << client_addr.sin_port);
-					DelEvent_(EVENT_READ, s);
+                    DelEvent_(EVENT_READ, s);
+                    GT_LOG_DEBUG("client exit, client ip addr = " << inet_ntoa(client_addr.sin_addr) << ", port = " << client_addr.sin_port);
 				}
 				else if(ret == SOCKET_ERROR){
 					GT_LOG_ERROR("recv got error, error code = " << WSAGetLastError());
@@ -229,6 +235,9 @@ namespace GT {
 			GT_TRACE_FUNCTION;
 			if (!end_thread_) {
 				end_thread_ = true;
+
+                WakeupSelectThread_();  /* wake up select before join on the server thread */
+
 				if (server_thread_.joinable()) {
 					server_thread_.join();
 				}
@@ -236,6 +245,32 @@ namespace GT {
 			}
 		}
 
+
+        void GT_Select_Core::WakeupSelectThread_() {
+            GT_TRACE_FUNCTION;
+            GT_LOG_INFO("trying wakeup select thread...");
+            
+            /* use UDP connect to itself to wakeup select within timeout */
+                        
+            SOCKET udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);/* create a UDP socket */
+            
+            sockaddr_in udp_addr;
+            udp_addr.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
+            udp_addr.sin_port = htons(0);
+            udp_addr.sin_family = AF_INET;
+            bind(udp_sock, (sockaddr*)&udp_addr, sizeof(sockaddr_in));/* bind the socket */
+
+            sockaddr_in temp_addr;
+            int addr_len = sizeof(temp_addr);
+            getsockname(udp_sock, (sockaddr*)&temp_addr, &addr_len);
+            udp_port_ = temp_addr.sin_port;
+
+            AddEvent_(EVENT_READ, udp_sock);/* add the socket to select fd set */
+           
+            connect(udp_sock, (sockaddr*)&udp_addr, sizeof(sockaddr_in)); /* connect UDP socket to itself, this will wakeup the select */
+        }
+
+        
 		void GT_Select_Core::CollectResource_() {
 			GT_TRACE_FUNCTION;
 			for (auto& iter : socketset) {
