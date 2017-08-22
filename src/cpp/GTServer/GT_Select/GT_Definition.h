@@ -21,7 +21,7 @@ enum EVENT_TYPE {
 /* this idea is from libevent */
 struct fd_set_pri {
     unsigned int sock_count;
-    SOCKET fd_sock_array[1];
+    SOCKET fd_sock_array[2];
 };
 
 

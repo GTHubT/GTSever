@@ -17,6 +17,9 @@ namespace GT {
 			for (auto& i : socket_set_pos_) {
 				i = 0;
 			}
+			for (auto&i : socket_set_total_size_) {
+				i = 0;
+			}
             udp_port_ = -1;
 			select_cb_func_ = NULL;
 			service_started_ = false;
@@ -113,7 +116,7 @@ namespace GT {
 					return;
 				}
 
-				int ret = select(fd_count, readset, writeset, expset, NULL);
+				int ret = select(fd_count, readset, writeset, expset, NULL); /* the fd_set must have a valid socket and the fd_count must equal to the valid socket*/
 
 				if (ret == SOCKET_ERROR) {
 					GT_LOG_ERROR("got error from select, error code = " << WSAGetLastError());
@@ -195,27 +198,28 @@ namespace GT {
 
 		void GT_Select_Core::AddEvent_(EVENT_TYPE type, SOCKET s) {
 		
-			if (socket_set_pos_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
+			if (socket_set_total_size_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
 				GrowSet_(type);
 			}
-			(*socketset)[type].fd_sock_array[socket_set_pos_[type]] = s;
-			socket_set_pos_[type] ++;
+			(*socketset)[type].fd_sock_array[(*socketset)[type].sock_count++] = s;
 		}
 
 		void GT_Select_Core::GrowSet_(EVENT_TYPE type, int grow_size) {
 			GT_TRACE_FUNCTION;
 			if (socketset[type] == nullptr) {
-				socketset[type] = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size]);
-				socketset[type]->sock_count = grow_size;
+				socketset[type] = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*(grow_size -1)]); /* the fd_set have already get one */
+				socket_set_total_size_[type] = grow_size;
+				socketset[type]->sock_count = 0;
 			}
 			else {
 				unsigned int sock_count = socketset[type]->sock_count;
 				grow_size += sock_count;
-				fd_set_pri* temp = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size]);
-				temp->sock_count = grow_size;
+				fd_set_pri* temp = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*(grow_size - 1)]);
+				socket_set_total_size_[type] = grow_size;
 				for (auto i = 0; i < sock_count; i++) {
 					temp->fd_sock_array[i] = socketset[type]->fd_sock_array[i];
 				}
+				delete socketset[type];/* delete the old socket set */
 				memcpy(socketset[type], temp, sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size);
 				delete[](char*)temp; /* delete the memory by the char mode to ensure the memory can be all release */
 			}
@@ -232,8 +236,7 @@ namespace GT {
 				for (auto& iter : ss->fd_sock_array) {
 					if (iter == s) {
 						delete &iter;
-						iter = ss->fd_sock_array[--ss->sock_count];/* move the end socket behind the del index to the index of the del */
-						socket_set_pos_[type_t]--;
+						iter = ss->fd_sock_array[--socket_set_total_size_[type]];/* move the end socket behind the del index to the index of the del */
 						break;
 					}
 				}
