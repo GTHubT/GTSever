@@ -39,7 +39,7 @@ namespace GT {
 
             void    AddEvent_(EVENT_TYPE, SOCKET);
             void    DelEvent_(EVENT_TYPE, SOCKET);
-			void	GrowSet_(EVENT_TYPE);
+			void	GrowSet_(EVENT_TYPE, int default_grow_size = 100);
 
             void    WakeupSelectThread_();
 

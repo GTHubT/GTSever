@@ -12,8 +12,8 @@
 /* GT Select Event type */
 enum EVENT_TYPE {		
 	EVENT_READ = 0,
-	EVENT_WRITE,
-	EVENT_EXCEPTION,
+	EVENT_WRITE = 1,
+	EVENT_EXCEPTION = 2,
 	EVENT_ACCEPT = EVENT_READ
 };
 
@@ -21,7 +21,7 @@ enum EVENT_TYPE {
 /* this idea is from libevent */
 struct fd_set_pri {
     unsigned int sock_count;
-    SOCKET fd_sock_array[1];
+    SOCKET fd_sock_array[0];
 };
 
 

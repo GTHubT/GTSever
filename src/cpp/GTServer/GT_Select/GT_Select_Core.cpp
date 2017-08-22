@@ -36,16 +36,18 @@ namespace GT {
 			do 
 			{
 				/* reset fd set and pre allocate some socket as a buffer */
-				GrowSet_(EVENT_READ);
-				GrowSet_(EVENT_WRITE);
-				GrowSet_(EVENT_EXCEPTION);
+
 				for (auto& iter : socketset) {
-					FD_ZERO((fd_set*)&iter);
+					iter.sock_count = 0;
 				}
+				int grow_size = GT_READ_CFG_INT("select_control", "fd_grow_size", 100);
+				GrowSet_(EVENT_READ, grow_size);
+				GrowSet_(EVENT_WRITE, grow_size);
+				GrowSet_(EVENT_EXCEPTION, grow_size);
 
 				/* init socket environment */
 				int err;
-				WORD	version = MAKEWORD(2, 2);
+ 				WORD	version = MAKEWORD(2, 2);
 				WSADATA wsadata;
 				err = WSAStartup(version, &wsadata);
 				if (err != 0) {
@@ -203,13 +205,12 @@ namespace GT {
 			socket_set_pos_[type] ++;
 		}
 
-		void GT_Select_Core::GrowSet_(EVENT_TYPE type) {
+		void GT_Select_Core::GrowSet_(EVENT_TYPE type, int grow_size) {
 			GT_TRACE_FUNCTION;
-			int grow_size = GT_READ_CFG_INT("select_control", "fd_grow_size", 100);
-			SOCKET* set_pos = new SOCKET[grow_size];
-			SOCKET* temp = socketset[type].fd_sock_array + socket_set_pos_[type];			/*FIXME: The socket array is not fd set socket array address*/
-			*temp = *set_pos;
+			fd_set_pri* data  = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size]);
+			memcpy(socketset[type].fd_sock_array + socket_set_pos_[type], data->fd_sock_array, sizeof(SOCKET)*grow_size);
 			socketset[type].sock_count += grow_size;
+			//socketset[type].fd_sock_array + socket_set_pos_[type];			/*FIXME: The socket array is not fd set socket array address*/
 		}
 
 		void GT_Select_Core::DelEvent_(EVENT_TYPE type, SOCKET s) {
