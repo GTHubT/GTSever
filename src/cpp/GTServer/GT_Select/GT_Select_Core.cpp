@@ -178,7 +178,7 @@ namespace GT {
                 }
 
 				if (!ret) {
-                    DelEvent_(EVENT_READ, s);
+                    //DelEvent_(EVENT_READ, s); /* FIXME: why ret == 0, and the socket is not closed */
                     GT_LOG_DEBUG("client exit, client ip addr = " << inet_ntoa(client_addr.sin_addr) << ", port = " << client_addr.sin_port);
 				}
 				else if(ret == SOCKET_ERROR){
@@ -235,8 +235,8 @@ namespace GT {
 			for (auto& ss : socketset) {
 				for (auto& iter : ss->fd_sock_array) {
 					if (iter == s) {
-						delete &iter;
-						iter = ss->fd_sock_array[--socket_set_total_size_[type]];/* move the end socket behind the del index to the index of the del */
+						iter = ss->fd_sock_array[ss->sock_count];/* move the end socket behind the del index to the index of the del */
+						--socket_set_total_size_[type];
 						break;
 					}
 				}

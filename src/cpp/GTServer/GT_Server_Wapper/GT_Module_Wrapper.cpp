@@ -67,12 +67,12 @@ namespace GT {
 			GT_ERROR_CODE errcode = GT_ERROR_CODE::GT_ERROR_FAILED;
 			if (module_type_ == GT_IOCP) {
 				 errcode = GTIOCP_StartService();
+				 errcode == GT_ERROR_FAILED ? is_module_initted_ = false : is_module_initted_ = true;
 			}
 			else if (module_type_ == GT_Select){
 				//TODO:
 				GTSelect_StartGTService();
 			}
-			errcode == GT_ERROR_FAILED ? is_module_initted_ = false : is_module_initted_ = true;
 			return is_module_initted_;
 		}
 
