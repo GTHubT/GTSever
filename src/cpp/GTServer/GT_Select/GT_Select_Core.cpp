@@ -37,9 +37,6 @@ namespace GT {
 			{
 				/* reset fd set and pre allocate some socket as a buffer */
 
-				for (auto& iter : socketset) {
-					iter.sock_count = 0;
-				}
 				int grow_size = GT_READ_CFG_INT("select_control", "fd_grow_size", 100);
 				GrowSet_(EVENT_READ, grow_size);
 				GrowSet_(EVENT_WRITE, grow_size);
@@ -105,9 +102,9 @@ namespace GT {
 			GT_TRACE_FUNCTION;
 			int fd_count = 0;
 			while (!end_thread_) {
-				fd_set* readset = (fd_set*)&socketset[0];
-				fd_set* writeset = (fd_set*)&socketset[1];
-				fd_set* expset = (fd_set*)&socketset[2];
+				fd_set* readset = (fd_set*)socketset[0];
+				fd_set* writeset = (fd_set*)socketset[1];
+				fd_set* expset = (fd_set*)socketset[2];
 
 				int fd_count = readset->fd_count > writeset->fd_count ? readset->fd_count > expset->fd_count ? readset->fd_count : expset->fd_count : writeset->fd_count;
 				if (!fd_count) {
@@ -198,18 +195,32 @@ namespace GT {
 
 		void GT_Select_Core::AddEvent_(EVENT_TYPE type, SOCKET s) {
 		
-			if (socket_set_pos_[type] == socketset[type].sock_count) {	/* socket pos record the next used socket position */
+			if (socket_set_pos_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
 				GrowSet_(type);
 			}
-			socketset[type].fd_sock_array[socket_set_pos_[type]] = s;
+			(*socketset)[type].fd_sock_array[socket_set_pos_[type]] = s;
 			socket_set_pos_[type] ++;
 		}
 
 		void GT_Select_Core::GrowSet_(EVENT_TYPE type, int grow_size) {
 			GT_TRACE_FUNCTION;
-			fd_set_pri* data  = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size]);
-			memcpy(socketset[type].fd_sock_array + socket_set_pos_[type], data->fd_sock_array, sizeof(SOCKET)*grow_size);
-			socketset[type].sock_count += grow_size;
+			if (socketset[type] == nullptr) {
+				socketset[type] = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size]);
+				socketset[type]->sock_count = grow_size;
+			}
+			else {
+				unsigned int sock_count = socketset[type]->sock_count;
+				grow_size += sock_count;
+				fd_set_pri* temp = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size]);
+				temp->sock_count = grow_size;
+				for (auto i = 0; i < sock_count; i++) {
+					temp->fd_sock_array[i] = socketset[type]->fd_sock_array[i];
+				}
+				memcpy(socketset[type], temp, sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size);
+				delete[](char*)temp; /* delete the memory by the char mode to ensure the memory can be all release */
+			}
+
+			//socketset[type].sock_count += grow_size;
 			//socketset[type].fd_sock_array + socket_set_pos_[type];			/*FIXME: The socket array is not fd set socket array address*/
 		}
 
@@ -218,10 +229,10 @@ namespace GT {
 			GT_LOG_DEBUG("Collect Socket Resource...");
 			int type_t = 0;
 			for (auto& ss : socketset) {
-				for (auto& iter : ss.fd_sock_array) {
+				for (auto& iter : ss->fd_sock_array) {
 					if (iter == s) {
 						delete &iter;
-						iter = ss.fd_sock_array[--ss.sock_count];/* move the end socket behind the del index to the index of the del */
+						iter = ss->fd_sock_array[--ss->sock_count];/* move the end socket behind the del index to the index of the del */
 						socket_set_pos_[type_t]--;
 						break;
 					}
@@ -286,7 +297,7 @@ namespace GT {
 		void GT_Select_Core::CollectResource_() {
 			GT_TRACE_FUNCTION;
 			for (auto& iter : socketset) {
-				delete[] (socketset->fd_sock_array + 1);
+				delete iter;
 			}
 			
 		}
