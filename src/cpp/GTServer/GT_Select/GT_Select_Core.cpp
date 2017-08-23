@@ -129,7 +129,7 @@ namespace GT {
 
 				for (auto& iter : readset->fd_array) {
 					if (FD_ISSET(iter, readset)) {
-						ProcessReadEvent_(iter);
+						ProcessReadEvent_(iter);    /* in process event, do not change the address of each fd set */
 					}
 				}
 
@@ -178,7 +178,8 @@ namespace GT {
                 }
 
 				if (!ret) {
-                    //DelEvent_(EVENT_READ, s); /* FIXME: why ret == 0, and the socket is not closed */
+                    DelEvent_(EVENT_READ, s); /* FIXME: why ret == 0, and the socket is not closed */
+                    printf("client exit: IP: %s, port = %d\n", inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
                     GT_LOG_DEBUG("client exit, client ip addr = " << inet_ntoa(client_addr.sin_addr) << ", port = " << client_addr.sin_port);
 				}
 				else if(ret == SOCKET_ERROR){
@@ -215,17 +216,20 @@ namespace GT {
 				socketset[type]->sock_count = 0;
 			}
 			else {
-				unsigned int sock_count = socketset[type]->sock_count;
-				grow_size += sock_count;
-				fd_set_pri* temp = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*(grow_size - 1)]);
-                temp->sock_count = grow_size;
-				socket_set_total_size_[type] = grow_size;
-				for (auto i = 0; i < sock_count; i++) {
-					temp->fd_sock_array[i] = socketset[type]->fd_sock_array[i];
-				}
-				delete socketset[type];/* delete the old socket set */
-				memcpy(socketset[type], temp, sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size);
-				delete[](char*)temp; /* delete the memory by the char mode to ensure the memory can be all release */
+                    unsigned int sock_count = socketset[type]->sock_count;
+                    grow_size += sock_count;
+                    fd_set_pri* temp = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*(grow_size - 1)]);
+                    temp->sock_count = sock_count;  /* sock_count is the used socket count in fd_set */
+                    socket_set_total_size_[type] = grow_size;
+                    for (auto i = 0; i < sock_count; i++) {
+                        temp->fd_sock_array[i] = socketset[type]->fd_sock_array[i];
+                    }
+                    delete socketset[type];/* delete the old socket set */
+                    socketset[type] = temp;
+                    //memcpy(socketset[t], temp, sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size);/* this place got a problem, that after memcpy, sockset[0] may overwrite the socketset[1] memory, this will lead to memory read wrong value*/
+                                                                                                 /* so i place a tricky design here, once a set need grow set, i reallocate other type of set */
+                    //delete[](char*)temp; /* delete the memory by the char mode to ensure the memory can be all release */
+               // }
 			}
 
 			//socketset[type].sock_count += grow_size;
@@ -237,10 +241,9 @@ namespace GT {
 			GT_LOG_DEBUG("Collect Socket Resource...");
 			int type_t = 0;
 			for (auto& ss : socketset) {
-				for (auto& iter : ss->fd_sock_array) {
-					if (iter == s) {
-						iter = ss->fd_sock_array[ss->sock_count];/* move the end socket behind the del index to the index of the del */
-						--socket_set_total_size_[type];
+                for (int i = 0; i < ss->sock_count; i++) {
+					if (ss->fd_sock_array[i] == s) {
+                        ss->fd_sock_array[i] = ss->fd_sock_array[--ss->sock_count];/* move the end socket behind the del index to the index of the del */
 						break;
 					}
 				}
