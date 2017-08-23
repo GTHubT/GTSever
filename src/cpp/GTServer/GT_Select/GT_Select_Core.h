@@ -53,7 +53,7 @@ namespace GT {
 			int	socket_set_total_size_[3];	/* record the total size of the socket set */
 
             std::map<EVENT_TYPE, std::vector<SOCKET>>  new_added_client_vec_;
-            std::map<EVENT_TYPE, std::vector<SOCKET>>  close_client_need_clean_;
+            std::map<EVENT_TYPE, std::vector<SOCKET>>  closed_client_need_clean_;
 
         private:
 			internal_call_back	select_cb_func_;

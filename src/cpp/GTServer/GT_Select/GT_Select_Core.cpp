@@ -245,7 +245,7 @@ namespace GT {
 		void GT_Select_Core::DelEvent_(EVENT_TYPE type, SOCKET s) {
 			GT_TRACE_FUNCTION;
             GT_LOG_DEBUG("Collect Socket Resource...");
-            close_client_need_clean_[type].push_back(s);
+            closed_client_need_clean_[type].push_back(s);
 			//int type_t = 0;
 			//for (auto& ss : socketset) {
             //     for (int i = 0; i < ss->sock_count; i++) {
@@ -259,46 +259,48 @@ namespace GT {
 		}
 
         void GT_Select_Core::RefreshFDSet_() {
-            for (int type = EVENT_READ; type <= EVENT_EXCEPTION; type++) {
-                for (int i = 1; i < socketset[type]->sock_count; i++) {
-                    if (close_client_need_clean_[(EVENT_TYPE)type].empty() && new_added_client_vec_[(EVENT_TYPE)type].empty()) {
+			for (int type = EVENT_READ; type <= EVENT_EXCEPTION; type++) {
+				fd_set* fdset = (fd_set*)socketset[type];
+                for (int sock_index = 1; sock_index < fdset->fd_count; sock_index++) {
+                    if (closed_client_need_clean_[(EVENT_TYPE)type].empty() && new_added_client_vec_[(EVENT_TYPE)type].empty()) {
                         break;
                     }
-                    for (auto&item : close_client_need_clean_[(EVENT_TYPE)type]) {     /* the socket need remove from the socket set */
-                        if (socketset[type]->fd_sock_array[i] != item)
+                    for (auto&item : closed_client_need_clean_[(EVENT_TYPE)type]) {     /* the socket need remove from the socket set */
+                        if (fdset->fd_array[sock_index] != item)
                             continue;
                         if (!new_added_client_vec_[(EVENT_TYPE)type].empty()) {        /* if the new connect map is not empty, use the new socket overwrite the closed socket */
-                            socketset[type]->fd_sock_array[i] = new_added_client_vec_[(EVENT_TYPE)type].back();
-                            new_added_client_vec_[(EVENT_TYPE)type].pop_back();
+                            fdset->fd_array[sock_index] = *new_added_client_vec_[(EVENT_TYPE)type].begin();
+                            new_added_client_vec_[(EVENT_TYPE)type].erase(new_added_client_vec_[(EVENT_TYPE)type].begin());
                         }
                         else {                                                          /* the new connect client now is empty now, then delete the socket */
-                            socketset[type]->fd_sock_array[i] = -1;
+                            fdset->fd_array[sock_index] = -1;
                         }
                     }
                     std::vector<SOCKET> temp;
-                    for (int i = socketset[type]->sock_count - 1; i  > 0; i--) {        /* remove the closed socket */
-                        if (socketset[type]->fd_sock_array[i] == -1) {
+                    for (int fdcount = fdset->fd_count - 1; fdcount > 0; fdcount--) {        /* remove the closed socket */
+                        if (fdset->fd_array[fdcount] == -1) {
                             if (!temp.empty()) {
-                                socketset[type]->fd_sock_array[i] = temp.back();
-                                temp.pop_back();
-                                temp.push_back(socketset[type]->fd_sock_array[i]);
+                                fdset->fd_array[fdcount] = *temp.begin();
+                                temp.erase(temp.begin());
+                                temp.push_back(socketset[type]->fd_sock_array[fdcount]);
                             }
-                            socketset[type]->sock_count--;
+							fdset->fd_count--;
                         }
                         else {
-                            temp.push_back(socketset[type]->fd_sock_array[i]);
+                            temp.push_back(fdset->fd_array[fdcount]);
                         }
                     }
                 }
                 for (auto& item : new_added_client_vec_[(EVENT_TYPE)type]) {
-                    if (socket_set_total_size_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
+                    if (socket_set_total_size_[type] == fdset->fd_count) {	/* socket pos record the next used socket position */
                         GrowSet_((EVENT_TYPE)type);
                     }
-                    (*socketset)[type].fd_sock_array[(*socketset)[type].sock_count++] = item;
+					printf("sock count = %d \n", fdset->fd_count);
+                    fdset->fd_array[fdset->fd_count++] = item;
                 }
             }
             new_added_client_vec_.clear();
-            close_client_need_clean_.clear();
+            closed_client_need_clean_.clear();
         }
 
 		void GT_Select_Core::RegisterCallback(internal_call_back cb) {
