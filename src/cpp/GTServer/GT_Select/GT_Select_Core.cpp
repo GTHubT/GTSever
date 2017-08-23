@@ -83,7 +83,7 @@ namespace GT {
 				}
 
 				/* add listen socket to fd read sockets set */
-				AddEvent_(EVENT_ACCEPT, listen_socket_);
+                AddListenEvent_(listen_socket_);
 
 				service_inited_ = true;
 
@@ -144,6 +144,8 @@ namespace GT {
 						ProcessExpEvent_(iter);
 					}
 				}
+
+                RefreshFDSet_();
 			}
 			GT_LOG_DEBUG("service thread exit!");
 		}
@@ -168,29 +170,30 @@ namespace GT {
 			else {
 				select_buffer* bu = GT_SELECT_RESOURCE_MANAGER.GetSelectBuffer();
                 SOCKADDR_IN client_addr;
-                int size_ = sizeof(SOCKADDR_IN);
-                getpeername(s, (SOCKADDR*)&client_addr, &size_);
-                int ret = recv(s, bu->data, bu->buffer_len, NULL);
+                do {
 
-                if (client_addr.sin_port == udp_port_) {
-                    GT_LOG_DEBUG("get exit flag, service will exit!");
-                    return;
-                }
+                    int size_ = sizeof(SOCKADDR_IN);
+                    getpeername(s, (SOCKADDR*)&client_addr, &size_);
+                    int ret = recv(s, bu->data, bu->buffer_len, NULL);
 
-				if (!ret) {
-                    DelEvent_(EVENT_READ, s); /* FIXME: why ret == 0, and the socket is not closed */
-                    printf("client exit: IP: %s, port = %d\n", inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
-                    GT_LOG_DEBUG("client exit, client ip addr = " << inet_ntoa(client_addr.sin_addr) << ", port = " << client_addr.sin_port);
-				}
-				else if(ret == SOCKET_ERROR){
-					GT_LOG_ERROR("recv got error, error code = " << WSAGetLastError());
-				}
-				else {
-                    std::string str(bu->data, ret);
-                    printf("get client data: %s , IP: %s, port = %d\n", str.c_str(), inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
-					DispatchEvent_(EVENT_READ, (PULONG_PTR)&s, bu->data, ret);
-                    GT_SELECT_RESOURCE_MANAGER.ReleaseSelectBuffer(bu);
-				}
+                    if (client_addr.sin_port == udp_port_) {
+                        GT_LOG_DEBUG("get exit flag, service will exit!");
+                        break;;
+                    }
+
+                    if (!ret || ret == SOCKET_ERROR) {
+                        DelEvent_(EVENT_READ, s);
+                        printf("client exit: IP: %s, port = %d\n", inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
+                        GT_LOG_DEBUG("client exit, client ip addr = " << inet_ntoa(client_addr.sin_addr) << ", port = " << client_addr.sin_port);
+                    }
+                    else {
+                        std::string str(bu->data, ret);
+                        printf("get client data: %s , IP: %s, port = %d\n", str.c_str(), inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
+                        DispatchEvent_(EVENT_READ, (PULONG_PTR)&s, bu->data, ret);
+                    }
+                } while (0);
+
+                GT_SELECT_RESOURCE_MANAGER.ReleaseSelectBuffer(bu);
 			}
 
 		}
@@ -201,12 +204,19 @@ namespace GT {
 		}
 
 		void GT_Select_Core::AddEvent_(EVENT_TYPE type, SOCKET s) {
-		
-			if (socket_set_total_size_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
-				GrowSet_(type);
-			}
-			(*socketset)[type].fd_sock_array[(*socketset)[type].sock_count++] = s;
+            new_added_client_vec_[type].push_back(s);
+			//if (socket_set_total_size_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
+			//	GrowSet_(type);
+			//}
+			//(*socketset)[type].fd_sock_array[(*socketset)[type].sock_count++] = s;
 		}
+
+        void GT_Select_Core::AddListenEvent_(SOCKET s) {
+            if (socket_set_total_size_[EVENT_READ] == (*socketset)[EVENT_READ].sock_count) {	/* socket pos record the next used socket position */
+                GrowSet_(EVENT_READ);
+            }
+            (*socketset)[EVENT_READ].fd_sock_array[(*socketset)[EVENT_READ].sock_count++] = s;
+        }
 
 		void GT_Select_Core::GrowSet_(EVENT_TYPE type, int grow_size) {
 			//GT_TRACE_FUNCTION;
@@ -229,27 +239,67 @@ namespace GT {
                     //memcpy(socketset[t], temp, sizeof(fd_set_pri) + sizeof(SOCKET)*grow_size);/* this place got a problem, that after memcpy, sockset[0] may overwrite the socketset[1] memory, this will lead to memory read wrong value*/
                                                                                                  /* so i place a tricky design here, once a set need grow set, i reallocate other type of set */
                     //delete[](char*)temp; /* delete the memory by the char mode to ensure the memory can be all release */
-               // }
 			}
-
-			//socketset[type].sock_count += grow_size;
-			//socketset[type].fd_sock_array + socket_set_pos_[type];			/*FIXME: The socket array is not fd set socket array address*/
 		}
 
 		void GT_Select_Core::DelEvent_(EVENT_TYPE type, SOCKET s) {
 			GT_TRACE_FUNCTION;
-			GT_LOG_DEBUG("Collect Socket Resource...");
-			int type_t = 0;
-			for (auto& ss : socketset) {
-                for (int i = 0; i < ss->sock_count; i++) {
-					if (ss->fd_sock_array[i] == s) {
-                        ss->fd_sock_array[i] = ss->fd_sock_array[--ss->sock_count];/* move the end socket behind the del index to the index of the del */
-						break;
-					}
-				}
-				type_t++;
-			}
+            GT_LOG_DEBUG("Collect Socket Resource...");
+            close_client_need_clean_[type].push_back(s);
+			//int type_t = 0;
+			//for (auto& ss : socketset) {
+            //     for (int i = 0; i < ss->sock_count; i++) {
+			//		if (ss->fd_sock_array[i] == s) {
+            //          ss->fd_sock_array[i] = ss->fd_sock_array[--ss->sock_count];/* move the end socket behind the del index to the index of the del */
+			//			break;
+			//		}
+			//	}
+			//	type_t++;
+			//}
 		}
+
+        void GT_Select_Core::RefreshFDSet_() {
+            for (int type = EVENT_READ; type <= EVENT_EXCEPTION; type++) {
+                for (auto&sock : socketset[type]->fd_sock_array) {
+                    if (close_client_need_clean_[(EVENT_TYPE)type].empty() && new_added_client_vec_[(EVENT_TYPE)type].empty()) {
+                        break;
+                    }
+                    for (auto&item : close_client_need_clean_[(EVENT_TYPE)type]) {     /* the socket need remove from the socket set */
+                        if (sock != item)
+                            continue;
+                        if (!new_added_client_vec_[(EVENT_TYPE)type].empty()) {        /* if the new connect map is not empty, use the new socket overwrite the closed socket */
+                            sock = new_added_client_vec_[(EVENT_TYPE)type].back();
+                            new_added_client_vec_[(EVENT_TYPE)type].pop_back();
+                        }
+                        else {                                                          /* the new connect client now is empty now, then delete the socket */
+                            sock = -1;
+                        }
+                    }
+                    std::vector<SOCKET> temp;
+                    for (int i = socketset[type]->sock_count - 1; i  > 0; i--) {        /* remove the closed socket */
+                        if (socketset[type]->fd_sock_array[i] == -1) {
+                            if (!temp.empty()) {
+                                socketset[type]->fd_sock_array[i] = temp.back();
+                                temp.pop_back();
+                                temp.push_back(socketset[type]->fd_sock_array[i]);
+                            }
+                            socketset[type]->sock_count--;
+                        }
+                        else {
+                            temp.push_back(socketset[type]->fd_sock_array[i]);
+                        }
+                    }
+                }
+                for (auto& item : new_added_client_vec_[(EVENT_TYPE)type]) {
+                    if (socket_set_total_size_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
+                        GrowSet_((EVENT_TYPE)type);
+                    }
+                    (*socketset)[type].fd_sock_array[(*socketset)[type].sock_count++] = item;
+                }
+            }
+            new_added_client_vec_.clear();
+            close_client_need_clean_.clear();
+        }
 
 		void GT_Select_Core::RegisterCallback(internal_call_back cb) {
 			select_cb_func_ = cb;
