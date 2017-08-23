@@ -185,7 +185,10 @@ namespace GT {
 					GT_LOG_ERROR("recv got error, error code = " << WSAGetLastError());
 				}
 				else {
+                    std::string str(bu->data, ret);
+                    printf("get client data: %s , IP: %s, port = %d\n", str.c_str(), inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
 					DispatchEvent_(EVENT_READ, (PULONG_PTR)&s, bu->data, ret);
+                    GT_SELECT_RESOURCE_MANAGER.ReleaseSelectBuffer(bu);
 				}
 			}
 
@@ -205,7 +208,7 @@ namespace GT {
 		}
 
 		void GT_Select_Core::GrowSet_(EVENT_TYPE type, int grow_size) {
-			GT_TRACE_FUNCTION;
+			//GT_TRACE_FUNCTION;
 			if (socketset[type] == nullptr) {
 				socketset[type] = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*(grow_size -1)]); /* the fd_set have already get one */
 				socket_set_total_size_[type] = grow_size;
@@ -215,6 +218,7 @@ namespace GT {
 				unsigned int sock_count = socketset[type]->sock_count;
 				grow_size += sock_count;
 				fd_set_pri* temp = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*(grow_size - 1)]);
+                temp->sock_count = grow_size;
 				socket_set_total_size_[type] = grow_size;
 				for (auto i = 0; i < sock_count; i++) {
 					temp->fd_sock_array[i] = socketset[type]->fd_sock_array[i];

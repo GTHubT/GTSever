@@ -5,6 +5,10 @@
 #define WIN32_LEAN_AND_MEAN         // https://msdn.microsoft.com/en-us/library/windows/desktop/ms737629(v=vs.85).aspx
 #endif
 
+#ifndef FD_SETSIZE
+#define FD_SETSIZE  1048   /* native select have the 64 limited */
+#endif
+
 #include <windows.h>
 #include <winsock2.h>
 
@@ -21,7 +25,7 @@ enum EVENT_TYPE {
 /* this idea is from libevent */
 struct fd_set_pri {
     unsigned int sock_count;
-    SOCKET fd_sock_array[2];
+    SOCKET fd_sock_array[1];
 };
 
 

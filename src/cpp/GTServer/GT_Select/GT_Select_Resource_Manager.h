@@ -14,7 +14,8 @@ namespace GT {
 				data = new char[buffer_len];
 			}
 			~select_buffer() {
-				if (!data) {
+				if (data != NULL) {
+                    printf("release buffer!\n");
 					delete[] data;
 				}
 				buffer_len = 0;

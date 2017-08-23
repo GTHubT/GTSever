@@ -26,8 +26,8 @@ namespace GT {
 			int buffer_size = GT_READ_CFG_INT("select_control", "buffer_size", 2048);
 
 			for (int i = 0; i < allocat_size; i++) {
-				select_buffer* temp_ptr = new select_buffer(buffer_size);
-				buffer_cache_.insert(temp_ptr);
+				//select_buffer* temp_ptr = new select_buffer(buffer_size);
+				buffer_cache_.insert(new select_buffer(buffer_size));
 			}
 		}
 
