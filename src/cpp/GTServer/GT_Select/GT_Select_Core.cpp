@@ -260,19 +260,19 @@ namespace GT {
 
         void GT_Select_Core::RefreshFDSet_() {
             for (int type = EVENT_READ; type <= EVENT_EXCEPTION; type++) {
-                for (auto&sock : socketset[type]->fd_sock_array) {
+                for (int i = 1; i < socketset[type]->sock_count; i++) {
                     if (close_client_need_clean_[(EVENT_TYPE)type].empty() && new_added_client_vec_[(EVENT_TYPE)type].empty()) {
                         break;
                     }
                     for (auto&item : close_client_need_clean_[(EVENT_TYPE)type]) {     /* the socket need remove from the socket set */
-                        if (sock != item)
+                        if (socketset[type]->fd_sock_array[i] != item)
                             continue;
                         if (!new_added_client_vec_[(EVENT_TYPE)type].empty()) {        /* if the new connect map is not empty, use the new socket overwrite the closed socket */
-                            sock = new_added_client_vec_[(EVENT_TYPE)type].back();
+                            socketset[type]->fd_sock_array[i] = new_added_client_vec_[(EVENT_TYPE)type].back();
                             new_added_client_vec_[(EVENT_TYPE)type].pop_back();
                         }
                         else {                                                          /* the new connect client now is empty now, then delete the socket */
-                            sock = -1;
+                            socketset[type]->fd_sock_array[i] = -1;
                         }
                     }
                     std::vector<SOCKET> temp;
