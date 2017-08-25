@@ -96,7 +96,7 @@ namespace GT {
 					continue;
 				}
 				
-				//printf("client socket = %d \n" ,(int)client_);
+				printf("client socket = %d \n" ,(int)client_);
 
 				SOCKADDR_IN client_addr_;
 				client_addr_.sin_family = AF_INET;

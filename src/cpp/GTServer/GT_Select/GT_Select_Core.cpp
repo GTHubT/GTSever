@@ -128,6 +128,9 @@ namespace GT {
 					continue;
 				}
 
+				if (readset->fd_array[0] > 1000)
+					printf("test\n");
+
 				for (auto& iter : readset->fd_array) {
 					if (FD_ISSET(iter, readset)) {
 						ProcessReadEvent_(iter);    /* in process event, do not change the address of each fd set */
@@ -205,7 +208,7 @@ namespace GT {
 		}
 
 		void GT_Select_Core::AddEvent_(EVENT_TYPE type, SOCKET s) {
-            new_added_client_vec_[type].push_back(s);
+            new_added_client_vec_[type].insert(s);
 			//if (socket_set_total_size_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
 			//	GrowSet_(type);
 			//}
@@ -246,7 +249,7 @@ namespace GT {
 		void GT_Select_Core::DelEvent_(EVENT_TYPE type, SOCKET s) {
 			GT_TRACE_FUNCTION;
             GT_LOG_DEBUG("Collect Socket Resource...");
-            closed_client_need_clean_[type].push_back(s);
+            closed_client_need_clean_[type].insert(s);
 			//int type_t = 0;
 			//for (auto& ss : socketset) {
             //     for (int i = 0; i < ss->sock_count; i++) {
@@ -261,40 +264,49 @@ namespace GT {
 
         void GT_Select_Core::RefreshFDSet_() {
 			for (int type = EVENT_READ; type <= EVENT_EXCEPTION; type++) {
+				std::vector<SOCKET> temp_vec;
 				fd_set* fdset = (fd_set*)socketset[type];
 				std::vector<int> unclean_index;
-                for (int sock_index = 1; sock_index < fdset->fd_count ; sock_index++) {
-                    if (closed_client_need_clean_[(EVENT_TYPE)type].empty() && new_added_client_vec_[(EVENT_TYPE)type].empty()) {
+				if (closed_client_need_clean_[(EVENT_TYPE)type].empty() && new_added_client_vec_[(EVENT_TYPE)type].empty()) {
                         break;
-                    }
+				}
+				if (socket_set_total_size_[type] == fdset->fd_count) {	/* socket position record the next used socket position */
+					GrowSet_((EVENT_TYPE)type);
+					fd_set* fdset = (fd_set*)socketset[type];
+				}
+                for (int sock_index = 0; sock_index < fdset->fd_count ; sock_index++) {
                     for (auto&item : closed_client_need_clean_[(EVENT_TYPE)type]) {     /* the socket need remove from the socket set */
-						if (fdset->fd_array[sock_index] != item)
+						if (fdset->fd_array[sock_index] == item)
 							unclean_index.push_back(sock_index);
                     }
                 }
 				if (unclean_index.size() > new_added_client_vec_.size()) {
 					for (auto& item : new_added_client_vec_[(EVENT_TYPE)type]) {
-						if (socket_set_total_size_[type] == fdset->fd_count) {	/* socket pos record the next used socket position */
-							GrowSet_((EVENT_TYPE)type);
-						}
 						fdset->fd_array[fdset->fd_count++] = item;
 					}
 
 					for (auto in : unclean_index) {
+						if (in == 0)
+							printf("");
 						if ((fdset->fd_count - 1) != in) {
 							fdset->fd_array[in] = fdset->fd_array[fdset->fd_count - 1];
 						}
-						fdset->fd_count--;
+						if (fdset->fd_count == 1)			/* it is a walk around, and should dive into select again */
+							fdset->fd_array[0] = listen_socket_;
+						else
+							fdset->fd_count--;
 					}
 				}
 				else {
 					for (auto in : unclean_index) {
-						fdset->fd_array[in] = new_added_client_vec_[(EVENT_TYPE)type].back();
-						new_added_client_vec_[(EVENT_TYPE)type].pop_back();
+						if (in == 0)
+							printf("");
+						fdset->fd_array[in] = *new_added_client_vec_[(EVENT_TYPE)type].begin();
+						new_added_client_vec_[(EVENT_TYPE)type].erase(new_added_client_vec_[(EVENT_TYPE)type].begin());
 					}
 
 					for (auto& item : new_added_client_vec_[(EVENT_TYPE)type]) {
-						if (socket_set_total_size_[type] == fdset->fd_count) {	/* socket pos record the next used socket position */
+						if (socket_set_total_size_[type] == fdset->fd_count) {	/* socket position record the next used socket position */
 							GrowSet_((EVENT_TYPE)type);
 						}
 						fdset->fd_array[fdset->fd_count++] = item;
