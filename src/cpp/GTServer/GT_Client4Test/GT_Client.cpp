@@ -112,15 +112,35 @@ namespace GT {
 
 				GT_LOG_INFO("connect server success!");
 
-				std::string msg = "hello IOCP!";
+				std::string msg = "hello GTServer!";
 				int num = send(client_, msg.c_str(), msg.length(), 0);
 				if (num == SOCKET_ERROR) {
 					GT_LOG_ERROR("send data error, err code = "<< WSAGetLastError());
 					closesocket(client_);
-					CloseHandle((HANDLE)client_);
+					//CloseHandle((HANDLE)client_); Do not use the CloseHandle function to close a socket. Instead, use the closesocket function, which releases all resources associated with the socket including the handle to the socket object. For more information, see Socket Closure.
 				}
 				closesocket(client_);
-				CloseHandle((HANDLE)client_);
+				//CloseHandle((HANDLE)client_);
+				// CloseHandle only work on the object:
+				//  Access token
+				//  Communications device
+				//	Console input
+				//	Console screen buffer
+				//	Event
+				//	File
+				//	File mapping
+				//	I / O completion port
+				//	Job
+				//	Mailslot
+				//	Memory resource notification
+				//	Mutex
+				//	Named pipe
+				//	Pipe
+				//	Process
+				//	Semaphore
+				//	Thread
+				//	Transaction
+				//	Waitable timer
 			}
 		}
 
