@@ -263,6 +263,8 @@ namespace GT {
 		}
 
         void GT_Select_Core::RefreshFDSet_() {
+			// FIXME: Unix Net Work Programing v1 p129: the unactive socket should active in next time, if we do not use FD_* macro, we should active the socket which did not close mannualy.
+			// So if the socket A in fd_set did not active this time, we should add it to the fd set again for wait the next active.
 			for (int type = EVENT_READ; type <= EVENT_EXCEPTION; type++) {
 				std::vector<SOCKET> temp_vec;
 				fd_set* fdset = (fd_set*)socketset[type];
