@@ -182,7 +182,7 @@ namespace GT {
 
                     if (client_addr.sin_port == udp_port_) {
                         GT_LOG_DEBUG("get exit flag, service will exit!");
-                        break;;
+                        break;
                     }
 
                     if (!ret || ret == SOCKET_ERROR) {
@@ -278,6 +278,7 @@ namespace GT {
                     for (auto&item : closed_client_need_clean_[(EVENT_TYPE)type]) {     /* the socket need remove from the socket set */
 						if (fdset->fd_array[sock_index] == item)
 							unclean_index.push_back(sock_index);
+						closesocket(item);
                     }
                 }
 				if (unclean_index.size() > new_added_client_vec_.size()) {
