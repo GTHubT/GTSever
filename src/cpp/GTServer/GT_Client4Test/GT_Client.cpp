@@ -150,7 +150,7 @@ namespace GT {
 
         void GT_Client::StartTestByContinuous_(std::atomic_bool& end_thread) {
             while (!end_thread) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                 sock_pack client_;
 				client_.use_times_ = 0;
                 client_.sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);

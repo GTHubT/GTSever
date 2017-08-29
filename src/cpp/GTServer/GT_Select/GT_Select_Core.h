@@ -50,11 +50,11 @@ namespace GT {
 
 		private:
 			fd_set_pri* socketset[3];		/* 0: read set, 1: write set, 2: exp set*/
-			int	socket_set_pos_[3];			/* record the position of the used socket in set: 0 for read , 1 for write , 2 for exp */
+			//int	socket_set_pos_[3];			/* record the position of the used socket in set: 0 for read , 1 for write , 2 for exp */
 			int	socket_set_total_size_[3];	/* record the total size of the socket set */
 
-            std::map<EVENT_TYPE, std::set<SOCKET>>  new_added_client_vec_;
             std::map<EVENT_TYPE, std::set<SOCKET>>  closed_client_need_clean_;
+			std::map<EVENT_TYPE, std::vector<SOCKET>> client_socket_vec_;
 
         private:
 			internal_call_back	select_cb_func_;

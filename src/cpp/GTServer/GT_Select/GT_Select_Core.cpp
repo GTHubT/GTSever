@@ -15,9 +15,6 @@ namespace GT {
 
         GT_Select_Core::GT_Select_Core():end_thread_(false)
         {
-			for (auto& i : socket_set_pos_) {
-				i = 0;
-			}
 			for (auto&i : socket_set_total_size_) {
 				i = 0;
 			}
@@ -127,26 +124,34 @@ namespace GT {
 					GT_LOG_DEBUG("select returned may got timeout!");
 					continue;
 				}
-
-				if (readset->fd_array[0] > 1000)
-					printf("test\n");
-
+				int index = 0;
 				for (auto& iter : readset->fd_array) {
+					if (index > readset->fd_count)
+						break;
 					if (FD_ISSET(iter, readset)) {
 						ProcessReadEvent_(iter);    /* in process event, do not change the address of each fd set */
 					}
+					index++;
 				}
 
+				index = 0;
 				for (auto& iter : writeset->fd_array) {
+					if (index > readset->fd_count)
+						break;
 					if (FD_ISSET(iter, writeset)) {
 						ProcessWriteEvent_(iter);
 					}
+					index++;
 				}
 
+				index = 0;
 				for (auto& iter : expset->fd_array) {
+					if (index > readset->fd_count)
+						break;
 					if (FD_ISSET(iter, expset)) {
 						ProcessExpEvent_(iter);
 					}
+					index++;
 				}
 
                 RefreshFDSet_();
@@ -208,7 +213,7 @@ namespace GT {
 		}
 
 		void GT_Select_Core::AddEvent_(EVENT_TYPE type, SOCKET s) {
-            new_added_client_vec_[type].insert(s);
+			client_socket_vec_[type].push_back(s);
 			//if (socket_set_total_size_[type] == (*socketset)[type].sock_count) {	/* socket pos record the next used socket position */
 			//	GrowSet_(type);
 			//}
@@ -220,11 +225,13 @@ namespace GT {
                 GrowSet_(EVENT_READ);
             }
             (*socketset)[EVENT_READ].fd_sock_array[(*socketset)[EVENT_READ].sock_count++] = s;
+			client_socket_vec_[EVENT_READ].push_back(s);
         }
 
 		void GT_Select_Core::GrowSet_(EVENT_TYPE type, int grow_size) {
 			//GT_TRACE_FUNCTION;
 			if (socketset[type] == nullptr) {
+				delete[](char*)socketset[type];
 				socketset[type] = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*(grow_size -1)]); /* the fd_set have already get one */
 				socket_set_total_size_[type] = grow_size;
 				socketset[type]->sock_count = 0;
@@ -266,56 +273,23 @@ namespace GT {
 			// FIXME: Unix Net Work Programing v1 p129: the unactive socket should active in next time, if we do not use FD_* macro, we should active the socket which did not close mannualy.
 			// So if the socket A in fd_set did not active this time, we should add it to the fd set again for wait the next active.
 			for (int type = EVENT_READ; type <= EVENT_EXCEPTION; type++) {
-				std::vector<SOCKET> temp_vec;
-				fd_set* fdset = (fd_set*)socketset[type];
-				std::vector<int> unclean_index;
-				if (closed_client_need_clean_[(EVENT_TYPE)type].empty() && new_added_client_vec_[(EVENT_TYPE)type].empty()) {
-                        break;
+				if (!client_socket_vec_[(EVENT_TYPE)type].empty()) {
+					socketset[(EVENT_TYPE)type] = nullptr;
+					GrowSet_((EVENT_TYPE)type, client_socket_vec_[(EVENT_TYPE)type].size() - closed_client_need_clean_[(EVENT_TYPE)type].size());
 				}
-				if (socket_set_total_size_[type] == fdset->fd_count) {	/* socket position record the next used socket position */
-					GrowSet_((EVENT_TYPE)type);
-					fd_set* fdset = (fd_set*)socketset[type];
-				}
-                for (int sock_index = 0; sock_index < fdset->fd_count ; sock_index++) {
-                    for (auto&item : closed_client_need_clean_[(EVENT_TYPE)type]) {     /* the socket need remove from the socket set */
-						if (fdset->fd_array[sock_index] == item)
-							unclean_index.push_back(sock_index);
-						closesocket(item);
-                    }
-                }
-				if (unclean_index.size() > new_added_client_vec_.size()) {
-					for (auto& item : new_added_client_vec_[(EVENT_TYPE)type]) {
-						fdset->fd_array[fdset->fd_count++] = item;
+				for (auto iter = client_socket_vec_[(EVENT_TYPE)type].begin(); iter != client_socket_vec_[(EVENT_TYPE)type].end(); ) {
+					if (closed_client_need_clean_[(EVENT_TYPE)type].find(*iter) != closed_client_need_clean_[(EVENT_TYPE)type].end()) {
+						closesocket(*iter);
+						iter = client_socket_vec_[(EVENT_TYPE)type].erase(iter);
 					}
+					else {
+						socketset[(EVENT_TYPE)type]->fd_sock_array[socketset[(EVENT_TYPE)type]->sock_count++] = *iter;
+						iter++;
+					}
+				}
 
-					for (auto in : unclean_index) {
-						if ((fdset->fd_count - 1) != in) {
-							fdset->fd_array[in] = fdset->fd_array[fdset->fd_count - 1];
-						}
-						if (fdset->fd_count == 1)			/* it is a walk around, and should dive into select again */
-							fdset->fd_array[0] = listen_socket_;
-						else
-							fdset->fd_count--;
-					}
-				}
-				else {
-					for (auto in : unclean_index) {
-						if (in == 0)
-							printf("");
-						fdset->fd_array[in] = *new_added_client_vec_[(EVENT_TYPE)type].begin();
-						new_added_client_vec_[(EVENT_TYPE)type].erase(new_added_client_vec_[(EVENT_TYPE)type].begin());
-					}
-
-					for (auto& item : new_added_client_vec_[(EVENT_TYPE)type]) {
-						if (socket_set_total_size_[type] == fdset->fd_count) {	/* socket position record the next used socket position */
-							GrowSet_((EVENT_TYPE)type);
-						}
-						fdset->fd_array[fdset->fd_count++] = item;
-					}
-				}
+				closed_client_need_clean_[(EVENT_TYPE)type].clear();
             }
-            new_added_client_vec_.clear();
-            closed_client_need_clean_.clear();
         }
 
 		void GT_Select_Core::RegisterCallback(internal_call_back cb) {
