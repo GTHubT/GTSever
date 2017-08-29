@@ -11,7 +11,7 @@
 namespace GT {
 
 	namespace CLIENT {
-
+#define MAX_CLIENT_USED_TIME    20
 		GT_Client::GT_Client()
 		{
 			stop_thread_ = false;
@@ -79,13 +79,21 @@ namespace GT {
 		}
 
 
-		void GT_Client::StartTest() {
+		void GT_Client::StartTest(std::string test_mode) {
 			GT_TRACE_FUNCTION;
-			client_test_thread_ = std::thread(&GT_Client::TestFunc_, this, std::ref(stop_thread_));
-			printf("client test thread started!\n");
+            if (test_mode == "continuous") {
+                GT_LOG_INFO("start test by Continuous mode");
+                client_test_thread_ = std::thread(&GT_Client::StartTestByContinuous_, this, std::ref(stop_thread_));
+                printf("start test by Continuous mode!\n");
+            }
+            else {
+                GT_LOG_INFO("start test by Continuous mode");
+                client_test_thread_ = std::thread(&GT_Client::StartTestByUnContinuous_, this, std::ref(stop_thread_));
+                printf("start test by Continuous mode!\n");
+            }
 		}
 
-		void GT_Client::TestFunc_(std::atomic_bool& end_thread) {
+		void GT_Client::StartTestByContinuous_(std::atomic_bool& end_thread) {
 			while(!end_thread){
 				//std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 
@@ -143,6 +151,43 @@ namespace GT {
 				//	Waitable timer
 			}
 		}
+
+        void GT_Client::StartTestByUnContinuous_(std::atomic_bool& end_thread) {
+            while (!end_thread) {
+                //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+                sock_pack client_;
+                client_.sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+                if (client_.sock_ == INVALID_SOCKET) {
+                    GT_LOG_ERROR("client socket init failed!");
+                    closesocket((HANDLE)client_.sock_);
+                    continue;
+                }
+
+                printf("client socket = %d \n", (int)client_.sock_);
+
+                SOCKADDR_IN client_addr_;
+                client_addr_.sin_family = AF_INET;
+                client_addr_.sin_addr.S_un.S_addr = inet_addr(GT_READ_CFG_STRING("server_cfg", "server_address", "127.0.0.2").c_str());
+                client_addr_.sin_port = htons(GT_READ_CFG_INT("server_cfg", "server_port", 5000));
+
+                int ret = connect(client_.sock_, (sockaddr*)&client_addr_, sizeof(client_addr_));
+                if (ret != 0) {
+                    GT_LOG_ERROR("connect error, error code = " << WSAGetLastError());
+                    closesocket(client_.sock_);
+                    continue;
+                }
+                connect_sock_.push_back(client_);
+                GT_LOG_INFO("connect server success!");
+
+                std::string msg = "hello GTServer!";
+                int num = send(client_.sock_, msg.c_str(), msg.length(), 0);
+                if (num == SOCKET_ERROR) {
+                    GT_LOG_ERROR("send data error, err code = " << WSAGetLastError());
+                    closesocket(client_.sock_);
+                }
+                               
+            }
+        }
 
 
 		void GT_Client::StopTest() {
