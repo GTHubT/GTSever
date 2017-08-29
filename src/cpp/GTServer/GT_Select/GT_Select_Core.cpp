@@ -231,7 +231,6 @@ namespace GT {
 		void GT_Select_Core::GrowSet_(EVENT_TYPE type, int grow_size) {
 			//GT_TRACE_FUNCTION;
 			if (socketset[type] == nullptr) {
-				delete[](char*)socketset[type];
 				socketset[type] = (fd_set_pri*)(new char[sizeof(fd_set_pri) + sizeof(SOCKET)*(grow_size -1)]); /* the fd_set have already get one */
 				socket_set_total_size_[type] = grow_size;
 				socketset[type]->sock_count = 0;
@@ -274,6 +273,7 @@ namespace GT {
 			// So if the socket A in fd_set did not active this time, we should add it to the fd set again for wait the next active.
 			for (int type = EVENT_READ; type <= EVENT_EXCEPTION; type++) {
 				if (!client_socket_vec_[(EVENT_TYPE)type].empty()) {
+					delete[](char*)socketset[type];
 					socketset[(EVENT_TYPE)type] = nullptr;
 					GrowSet_((EVENT_TYPE)type, client_socket_vec_[(EVENT_TYPE)type].size() - closed_client_need_clean_[(EVENT_TYPE)type].size());
 				}
