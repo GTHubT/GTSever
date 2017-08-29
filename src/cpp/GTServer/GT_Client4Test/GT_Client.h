@@ -5,6 +5,10 @@
 #include <thread>
 #include <vector>
 
+#include <chrono>
+#include <WinSock2.h>
+
+#pragma  comment(lib, "Ws2_32.lib")
 #include "GT_IOCP/GT_Definition.h"
 
 namespace GT {
@@ -35,7 +39,7 @@ namespace GT {
 		private:
 			std::thread client_test_thread_;
 			std::atomic_bool stop_thread_;
-            std::vector<SOCKET> connect_sock_;
+            std::vector<sock_pack> connect_sock_;
 		};
 	}
 }

@@ -3,10 +3,6 @@
 #include "GTUtlity/GT_Util_GlogWrapper.h"
 #include "GTUtlity/GT_Util_CfgHelper.h"
 
-#include <chrono>
-#include <WinSock2.h>
-
-#pragma  comment(lib, "Ws2_32.lib")
 
 namespace GT {
 
@@ -87,13 +83,13 @@ namespace GT {
                 printf("start test by Continuous mode!\n");
             }
             else {
-                GT_LOG_INFO("start test by Continuous mode");
+                GT_LOG_INFO("start test by unContinuous mode");
                 client_test_thread_ = std::thread(&GT_Client::StartTestByUnContinuous_, this, std::ref(stop_thread_));
-                printf("start test by Continuous mode!\n");
+                printf("start test by unContinuous mode!\n");
             }
 		}
 
-		void GT_Client::StartTestByContinuous_(std::atomic_bool& end_thread) {
+		void GT_Client::StartTestByUnContinuous_(std::atomic_bool& end_thread) {
 			while(!end_thread){
 				//std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 
@@ -152,18 +148,18 @@ namespace GT {
 			}
 		}
 
-        void GT_Client::StartTestByUnContinuous_(std::atomic_bool& end_thread) {
+        void GT_Client::StartTestByContinuous_(std::atomic_bool& end_thread) {
             while (!end_thread) {
-                //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                 sock_pack client_;
+				client_.use_times_ = 0;
                 client_.sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
                 if (client_.sock_ == INVALID_SOCKET) {
                     GT_LOG_ERROR("client socket init failed!");
-                    closesocket((HANDLE)client_.sock_);
+                    closesocket(client_.sock_);
                     continue;
                 }
 
-                printf("client socket = %d \n", (int)client_.sock_);
 
                 SOCKADDR_IN client_addr_;
                 client_addr_.sin_family = AF_INET;
@@ -179,13 +175,30 @@ namespace GT {
                 connect_sock_.push_back(client_);
                 GT_LOG_INFO("connect server success!");
 
-                std::string msg = "hello GTServer!";
-                int num = send(client_.sock_, msg.c_str(), msg.length(), 0);
-                if (num == SOCKET_ERROR) {
-                    GT_LOG_ERROR("send data error, err code = " << WSAGetLastError());
-                    closesocket(client_.sock_);
-                }
-                               
+				for (auto iter = connect_sock_.begin(); iter < connect_sock_.end(); ) {
+					if (iter->use_times_ > MAX_CLIENT_USED_TIME) {
+						printf("client socket = %d \n", (int)iter->sock_);
+						printf("remove the socket that used too much time!\n");
+						closesocket(iter->sock_);
+						iter = connect_sock_.erase(iter);
+					}
+					else
+					{
+						char index[10];
+						_ltoa_s(iter->use_times_, index, 10);
+						std::string msg = "hello GTServer, this msg index = " + std::string(index);
+						printf("client socket = %d, send data = %s \n", (int)iter->sock_, msg.c_str());
+						int num = send(iter->sock_, msg.c_str(), msg.length(), 0);
+						if (num == SOCKET_ERROR) {
+							GT_LOG_ERROR("send data error, err code = " << WSAGetLastError());
+							closesocket(client_.sock_);
+							iter = connect_sock_.erase(iter);
+							continue;
+						}
+						iter->use_times_++;
+						iter++;
+					}
+				}
             }
         }
 

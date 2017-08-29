@@ -289,8 +289,6 @@ namespace GT {
 					}
 
 					for (auto in : unclean_index) {
-						if (in == 0)
-							printf("");
 						if ((fdset->fd_count - 1) != in) {
 							fdset->fd_array[in] = fdset->fd_array[fdset->fd_count - 1];
 						}

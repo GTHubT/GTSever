@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "GT_Client.h"
 #include "GTUtlity/GT_Util_OSInfo.h"
+#include "GTUtlity/GT_Util_CfgHelper.h"
 
 #include <iostream>
 
@@ -24,7 +25,8 @@ int main()
 		return 0;
 	}
 
-	client.StartTest();
+	std::string client_test_mode = GT_READ_CFG_STRING("client_test_mode","model","uncontinuous");
+	client.StartTest(client_test_mode);
 
 	while (true) {
 		char c = '0';
