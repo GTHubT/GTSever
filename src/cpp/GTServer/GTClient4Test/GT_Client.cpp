@@ -7,7 +7,7 @@
 namespace GT {
 
 	namespace CLIENT {
-#define MAX_CLIENT_USED_TIME    20
+#define MAX_CLIENT_USED_TIME    1200
 		GT_Client::GT_Client()
 		{
 			stop_thread_ = false;

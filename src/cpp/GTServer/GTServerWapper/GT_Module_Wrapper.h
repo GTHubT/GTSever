@@ -2,9 +2,9 @@
 #define GT_MODULE_WRAPPER_H_
 
 
-#include "GT_IOCP/GTIOCP.h"
-#include "GT_Select/GT_Select.h"
-#include "GT_IOCP/GT_Definition.h"
+#include "GTIOCP/GTIOCP.h"
+#include "GTSelect/GT_Select.h"
+#include "GTIOCP/GT_Definition.h"
 #include "GTUtlity/GT_Util_GlogWrapper.h"
 
 #include <string>

@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include "GT_Util_GlogWrapper.h"
-#include "GT_IOCP/GT_Definition.h"
+#include "GTIOCP/GT_Definition.h"
 #include "GT_Util_FileHelper.h"
 #include "GT_Util_OSInfo.h"
 #include "GT_Util_CfgHelper.h"

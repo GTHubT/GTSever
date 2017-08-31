@@ -9,7 +9,7 @@
 #include <WinSock2.h>
 
 #pragma  comment(lib, "Ws2_32.lib")
-#include "GT_IOCP/GT_Definition.h"
+#include "GTIOCP/GT_Definition.h"
 
 namespace GT {
 

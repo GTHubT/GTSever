@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{883588CA-E832-46BC-81A8-E7D4D7BE4CB9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>GT_Client4Test</RootNamespace>
+    <RootNamespace>GTClient4Test</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
