@@ -21,6 +21,20 @@ void thredfunc() {
 	while (1);
 }
 
+
+static void CALLBACK worker_func(
+	_Inout_     PTP_CALLBACK_INSTANCE Instance,
+	_Inout_opt_ PVOID                 Context,
+	_Inout_     PTP_WORK              Work) {
+	printf("I am a thread worker!\n");
+}
+
+
+void test_windows_thread_pool() {
+	auto pool = CreateThreadpoolWork(worker_func, NULL, NULL);
+}
+
+
 void testmove() {
 	std::vector<std::thread> threadpool_;
 	std::deque<std::thread> threadque_;
@@ -101,7 +115,10 @@ void test_map() {
 
 int main()
 {
-    test_map();
+	test_windows_thread_pool();
+	PTP_CALLBACK_INSTANCE instance = nullptr;
+	worker_func(instance, NULL, NULL);
+   /* test_map();
 	test_stl_set();
 	GT::UTIL::GT_Util_GlogWrapper gt = GT::UTIL::GT_Util_GlogWrapper::GetInstance();
 	gt.GT_LogInitialize("test.log", GT_LOG_LEVEL_WARNING, 1);
@@ -110,7 +127,7 @@ int main()
 	GT_LOG_ERROR("this is a test " << 2);
 	GT_LOG_WARN("this is a test " << 3);
     testreadfile();
-	testmove();
+	testmove();*/
 	char c = 'c';
 	std::cin >> c;
     return 0;
