@@ -19,16 +19,34 @@
 
 //GTSERVER_API GT_ERROR_CODE GTIOCP_InitLogService(std::string cfg_path);
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GTSERVER_API GT_ERROR_CODE GTIOCP_Initialize(std::string cfg_path);
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GTSERVER_API GT_ERROR_CODE GTIOCP_StartService();
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GTSERVER_API GT_ERROR_CODE GTIOCP_Uninitialize();
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GTSERVER_API GT_ERROR_CODE GTIOCP_RegisterEventCallBack(IO_EVENT_TYPE, GT::NET::CallBackFunc call_back);
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GTSERVER_API GT_ERROR_CODE GTIOCP_UnRegisterEventCallBack(IO_EVENT_TYPE);
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GTSERVER_API void GTIOCP_WriteMessage(PULONG_PTR, char*, size_t);
 
 

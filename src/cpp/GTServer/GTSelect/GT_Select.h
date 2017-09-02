@@ -14,12 +14,27 @@
 
 #include <string>
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GT_SELECT_API bool	GTSelect_Initialize(std::string cfg_path);
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GT_SELECT_API void	GTSelect_StartGTService();
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GT_SELECT_API bool	GTSelect_Finalize();
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GT_SELECT_API void	GTSelect_RegisterCallBack(EVENT_TYPE, gt_event_callback);
 
+#ifdef __cplusplus
+extern "C"
+#endif
 GT_SELECT_API void	GTSelect_UnRegisterCallBack(EVENT_TYPE);
