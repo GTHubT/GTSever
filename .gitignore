@@ -14,8 +14,6 @@ src/cpp/GTServer/ipch/*
 *.ilk
 *.exp
 *.db
-*.lib
-*.lib
 *.exe
 *.ilk
 *.dll
@@ -32,7 +30,6 @@ src/cpp/GTServer/Build/x64/Debug/GTUnitTest.exe
 src/cpp/GTServer/Build/x64/Debug/GTUtlity.lib
 src/cpp/GTServer/GTServer.VC.db
 *.ipch
-*.lib
 *.exe
 src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.db
