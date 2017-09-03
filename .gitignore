@@ -23,7 +23,6 @@ src/cpp/GTServer/ipch/*
 *.tlog
 *.log
 *.idb
-*.lib
 *.dll
 *.exe
 src/cpp/GTServer/Build/x64/Debug/GTUnitTest.exe
