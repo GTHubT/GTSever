@@ -9,14 +9,3 @@
 #else
 #define GT_LIBEVENT_API __declspec(dllimport)
 #endif
-
-// This class is exported from the GT_Libevent.dll
-class GT_LIBEVENT_API CGT_Libevent {
-public:
-	CGT_Libevent(void);
-	// TODO: add your methods here.
-};
-
-extern GT_LIBEVENT_API int nGT_Libevent;
-
-GT_LIBEVENT_API int fnGT_Libevent(void);
