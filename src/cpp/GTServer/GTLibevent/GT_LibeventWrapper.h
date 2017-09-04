@@ -1,8 +1,8 @@
 #ifndef GT_NET_LIBEVENT_H_
 #define GT_NET_LIBEVENT_H_
 
-#include "GTLibevent/libevent/libevent_header/event.h"
-#include "GTLibevent/libevent/libevent_header/util.h"
+#include "GTLibevent/libevent/libevent_header/event2/event.h"
+#include "GTLibevent/libevent/libevent_header/event2/util.h"
 
 #include "GTUtlity/GT_Util_CfgHelper.h"
 
