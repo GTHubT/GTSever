@@ -136,7 +136,7 @@ namespace GT {
 
 				index = 0;
 				for (auto& iter : writeset->fd_array) {
-					if (index > readset->fd_count)
+					if (index > writeset->fd_count)
 						break;
 					if (FD_ISSET(iter, writeset)) {
 						ProcessWriteEvent_(iter);
@@ -146,7 +146,7 @@ namespace GT {
 
 				index = 0;
 				for (auto& iter : expset->fd_array) {
-					if (index > readset->fd_count)
+					if (index > expset->fd_count)
 						break;
 					if (FD_ISSET(iter, expset)) {
 						ProcessExpEvent_(iter);
