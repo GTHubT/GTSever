@@ -37,7 +37,11 @@ namespace GT {
 			if (io_buffer_manager_inited_) {
 				GT_LOG_INFO("IO Buffer Manager already init!");
 				return true;
-			}
+            }
+
+            pre_allocate_size_ = GT_READ_CFG_INT("io_buffer_cfg", "pre_allocate_size", 2000);
+            io_buffer_size_ = GT_READ_CFG_INT("io_buffer_cfg", "buffer_size", 4 * 1024);
+            re_allocate_size_ = GT_READ_CFG_INT("io_buffer_cfg", "reallocate_size", 1000);
 
 			GT_LOG_INFO("Now init IO Buffer Manager");
 			bool ret = PreAllocateSomeIOBuffer_();
@@ -47,10 +51,6 @@ namespace GT {
 			else {
 				io_buffer_manager_inited_ = true;
 			}
-
-			pre_allocate_size_	= GT_READ_CFG_INT("io_buffer_cfg", "pre_allocate_size", 2000);
-			io_buffer_size_		= GT_READ_CFG_INT("io_buffer_cfg", "buffer_size", 4 * 1024);
-			re_allocate_size_	= GT_READ_CFG_INT("io_buffer_cfg", "reallocate_size", 1000);
 
 			return ret;
 		}
