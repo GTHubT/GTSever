@@ -161,6 +161,11 @@ namespace GT {
                 serveraddr_.sin_port     = htons(GT_READ_CFG_INT("server_cfg","server_port",5555));
                 serveraddr_.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
 
+                // set socket options for socket security:https://msdn.microsoft.com/en-us/library/windows/desktop/ms740621.aspx
+                int opvalue = true;
+                int oplen = sizeof(int);
+                setsockopt(*(listen_socket_ptr_.get()), SOL_SOCKET, SO_EXCLUSIVEADDRUSE, (const char*)&opvalue, oplen);
+
                 // bind socket to server IP
                 if (SOCKET_ERROR == bind(*(listen_socket_ptr_.get()), (SOCKADDR*)(&serveraddr_), sizeof(SOCKADDR_IN))) {
                     int err = WSAGetLastError();

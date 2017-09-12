@@ -61,6 +61,11 @@ namespace GT {
 				/* create listen socket */
 				listen_socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
+                // set socket options for socket security:https://msdn.microsoft.com/en-us/library/windows/desktop/ms740621.aspx
+                int opvalue = true;
+                int oplen = sizeof(int);
+                setsockopt(listen_socket_, SOL_SOCKET, SO_EXCLUSIVEADDRUSE, (const char*)&opvalue, oplen);
+
 				/* bind local address */
 				SOCKADDR_IN server_sock_addr;
 				memset(&server_sock_addr, 0, sizeof(SOCKADDR_IN));
