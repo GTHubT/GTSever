@@ -1,5 +1,5 @@
 
-typedef void(*gtepoll_callback)(void* data, unsigned int datalen)
+typedef void(*gtepoll_callback)(void* data, unsigned int datalen);
 
 enum GTEPOLL_ERRORCODE{
 	GTERROR_FAILED = -1,
