@@ -1,0 +1,3 @@
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/rebuild_cache.dir
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/edit_cache.dir
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/GTEpoll.dir

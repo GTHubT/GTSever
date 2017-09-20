@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollDefine.h
+
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_MemoryCtrl.cpp
+
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_SocketPool.cpp
+
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_Utility.cpp
+GTEpool_Utility.h
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpool_Utility.h
+
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpool_Utility.h
+sys/socket.h
+-
+fcntl.h
+-
+
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Interface.cpp
+GTEpollDefine.h
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollDefine.h
+iostream
+-
+
