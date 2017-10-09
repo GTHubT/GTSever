@@ -231,6 +231,33 @@ GTEpoll_Interface.cpp.s:
 	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/GTEpoll_Interface.cpp.s
 .PHONY : GTEpoll_Interface.cpp.s
 
+GTEpoll_Wrapper.o: GTEpoll_Wrapper.cpp.o
+
+.PHONY : GTEpoll_Wrapper.o
+
+# target to build an object file
+GTEpoll_Wrapper.cpp.o:
+	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/GTEpoll_Wrapper.cpp.o
+.PHONY : GTEpoll_Wrapper.cpp.o
+
+GTEpoll_Wrapper.i: GTEpoll_Wrapper.cpp.i
+
+.PHONY : GTEpoll_Wrapper.i
+
+# target to preprocess a source file
+GTEpoll_Wrapper.cpp.i:
+	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/GTEpoll_Wrapper.cpp.i
+.PHONY : GTEpoll_Wrapper.cpp.i
+
+GTEpoll_Wrapper.s: GTEpoll_Wrapper.cpp.s
+
+.PHONY : GTEpoll_Wrapper.s
+
+# target to generate assembly for a file
+GTEpoll_Wrapper.cpp.s:
+	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/GTEpoll_Wrapper.cpp.s
+.PHONY : GTEpoll_Wrapper.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -252,6 +279,9 @@ help:
 	@echo "... GTEpoll_Interface.o"
 	@echo "... GTEpoll_Interface.i"
 	@echo "... GTEpoll_Interface.s"
+	@echo "... GTEpoll_Wrapper.o"
+	@echo "... GTEpoll_Wrapper.i"
+	@echo "... GTEpoll_Wrapper.s"
 .PHONY : help
 
 
