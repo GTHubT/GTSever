@@ -7,6 +7,11 @@
 #pragma comment(lib, "psapi.lib")
 #endif
 
+#ifdef LINUX
+#include <sys/sysinfo.h>
+#include <stdlib.h>
+#endif
+
 #include <string>
 namespace GT {
     namespace UTIL {

@@ -14,6 +14,9 @@ namespace GT {
             GetSystemInfo(&si);
             cpu_num = si.dwNumberOfProcessors;
 #endif
+#ifdef LINUX
+	    cpu_num = get_nprocs();
+#endif
             return cpu_num;
         }
 
@@ -24,6 +27,14 @@ namespace GT {
 			GetModuleFileNameA(NULL, path, MAX_PATH);
 			path_ = std::string(path);
 			path_ = path_.substr(0,path_.rfind("\\")) + "\\";
+#endif
+
+#ifdef LINUX
+			
+			char path[PATH_MAX];
+			getcwd(path, PATH_MAX);
+			path_ = std::string(path);
+			path_ = path_.substr(0, path_.rfind("/"))+"/"
 #endif
 			return path_;
 		}
@@ -36,14 +47,19 @@ namespace GT {
         }
 
 		long long GT_Util_OSInfo::Win_GetCurrentMemorySize() {
+	#ifdef _WIN
 			HANDLE handle = GetCurrentProcess();
 			PROCESS_MEMORY_COUNTERS pmc;
 			GetProcessMemoryInfo(handle, &pmc, sizeof(pmc));
 			return pmc.WorkingSetSize;
+	#endif
+			return 0;
 		}
 
 		void GT_Util_OSInfo::Try2CollectProcessMem() {
+#ifdef _WIN
 			EmptyWorkingSet(GetCurrentProcess());
+#endif
 		}
 
     }
