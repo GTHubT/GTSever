@@ -32,3 +32,7 @@ src/cpp/GTServer/GTServer.VC.db
 *.exe
 src/cpp/GTServer/.vs/GTServer/v14/.suo
 *.db
+src/cpp/GTServer/GTEpoll/CMakeFiles/*
+src/cpp/GTServer/GTEpoll/test/CMakeFiles/*
+src/cpp/GTServer/GTEpoll/test/test_client/CMakeFiles/*
+src/cpp/GTServer/GTEpoll/test/test_server/CMakeFiles/*
