@@ -12,14 +12,20 @@ project(GTEpoll)
 
 # include header
 include_directories(.)
+include_directories(./GTEpollUtility/)
+
+# add sub directory
+add_subdirectory(./test/test_client ./test/test_client/build)
+add_subdirectory(./test/test_server ./test/test_server/build)
 
 # add source file
 aux_source_directory(. DIR_SRC)
 aux_source_directory(./GTEpollResourceControl DIR_SRC_RSRC)
 aux_source_directory(./GTEpollUtility DIR_SRC_Util)
 
+
 # set target
-add_library(GTEpoll STATIC ${DIR_SRC} ${DIR_SRC_RSRC} ${DIR_SRC_Util})
+add_library(GTEpoll STATIC ${DIR_SRC} ${DIR_SRC_RSRC} ${DIR_SRC_Util} ${DIR_SRC_test})
 
 # set output path
 set(LIBRARY_OUTPUT_PATH ./build)
