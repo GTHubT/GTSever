@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="GTEpoll"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\test\;CMake Files\test\test_client\;CMake Files\test\test_server\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="GTEpoll">
+				<Option output="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/build/libGTEpoll.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/."/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 GTEpoll"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="GTEpoll/fast">
+				<Option output="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/build/libGTEpoll.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/."/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 GTEpoll/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_client">
+				<Option output="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/build/test_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="./build"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/."/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/."/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/Makefile&quot;  VERBOSE=1 test_client"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_client/fast">
+				<Option output="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/build/test_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="./build"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/."/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/."/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/Makefile&quot;  VERBOSE=1 test_client/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_server">
+				<Option output="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/build/test_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="./build"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/."/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/."/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/Makefile&quot;  VERBOSE=1 test_server"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_server/fast">
+				<Option output="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/build/test_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="./build"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/."/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/."/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/Makefile&quot;  VERBOSE=1 test_server/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_MemoryCtrl.cpp">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_MemoryCtrl.h">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_SocketPool.cpp">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_SocketPool.h">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_Utility.cpp">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_Utility.h">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Interface.cpp">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Interface.h">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Wrapper.cpp">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Wrapper.h">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/GTEpoll_test_thunder_herd_client.cpp">
+			<Option target="test_client"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/GTEpoll_test_thunder_herd.cpp">
+			<Option target="test_server"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\test_client\"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\test_client\"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\test_server\"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\test_server\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

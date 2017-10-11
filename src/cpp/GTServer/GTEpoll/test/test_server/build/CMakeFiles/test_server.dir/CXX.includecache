@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/GTEpoll_test_thunder_herd.cpp
+sys/epoll.h
+-
+sys/socket.h
+-
+sys/fcntl.h
+-
+arpa/inet.h
+-
+unistd.h
+-
+stdio.h
+-
+netinet/in.h
+-
+string.h
+-
+errno.h
+-
+time.h
+-
+sys/types.h
+-
+iostream
+-
+

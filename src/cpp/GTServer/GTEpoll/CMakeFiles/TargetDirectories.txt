@@ -1,3 +1,9 @@
 /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/rebuild_cache.dir
 /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/edit_cache.dir
 /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/GTEpoll.dir
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/CMakeFiles/rebuild_cache.dir
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/CMakeFiles/edit_cache.dir
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build/CMakeFiles/test_client.dir
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/CMakeFiles/rebuild_cache.dir
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/CMakeFiles/edit_cache.dir
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/build/CMakeFiles/test_server.dir

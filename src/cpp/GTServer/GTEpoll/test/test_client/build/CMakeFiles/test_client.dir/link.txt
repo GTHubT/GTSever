@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/test_client.dir/GTEpoll_test_thunder_herd_client.cpp.o  -o build/test_client 

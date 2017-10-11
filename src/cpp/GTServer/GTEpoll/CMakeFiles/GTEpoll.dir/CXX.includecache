@@ -1,4 +1,4 @@
-#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
 
 #IncludeRegexScan: ^.*$
 
@@ -13,10 +13,10 @@
 /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_SocketPool.cpp
 
 /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_Utility.cpp
-GTEpool_Utility.h
-/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpool_Utility.h
+GTEpoll_Utility.h
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_Utility.h
 
-/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpool_Utility.h
+/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_Utility.h
 sys/socket.h
 -
 fcntl.h
