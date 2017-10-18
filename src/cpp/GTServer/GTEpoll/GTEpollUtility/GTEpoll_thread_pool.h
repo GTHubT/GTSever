@@ -14,21 +14,16 @@
 namespace GTUTIL {
 
     struct thread_{
-        std::thread t_;
-        std::thread::id tid_;
-        std::atomic<bool> stop_;
-        std::thread::id get_tid(){return tid_;}
+        std::thread th;
+        std::thread::id tid;
+        std::atomic<bool> stop;
 
-        explicit thread_(std::thread& t){
-            t_ = std::move(t);
-            tid_ = t_.get_id();
-            stop_ = false;
-        };
+        thread_():stop(false){
+        }
 
-        explicit thread_(thread_&& t){
-            t_ = std::move(t.t_);
-            tid_ = t.tid_;
-            stop_ = t.stop_.load();
+        thread_(thread_&& t)noexcept:stop(t.stop.load()){
+            th = std::move(t.th);
+            tid = t.tid;
         }
         ~thread_()= default{};
     };

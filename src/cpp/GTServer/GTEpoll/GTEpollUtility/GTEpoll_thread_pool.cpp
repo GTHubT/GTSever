@@ -23,7 +23,9 @@ namespace GTUTIL{
 
     void GTEpoll_thread_pool::start() {
         for(int i=0; i < default_thread_num_; i++){
-            thread_ t()
+            thread_ t;
+            t.th = std::move(std::thread(start_internal_, t.stop));
+            thread_vec_.push_back(std::move(t));
         }
     }
 
@@ -31,10 +33,15 @@ namespace GTUTIL{
         while (!stop_thread){
             thread_func_();
         }
-
     }
 
     void GTEpoll_thread_pool::stop() {
-
+        for (auto& iter: thread_vec_){
+            iter.stop = true;
+        }
+        for (auto& iter: thread_vec_){
+            iter.th.join();
+        }
+        return;
     }
 }
