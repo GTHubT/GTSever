@@ -9,6 +9,7 @@
 #include <thread>
 #include <atomic>
 #include <vector>
+#include <memory>
 
 
 namespace GTUTIL {
@@ -25,14 +26,14 @@ namespace GTUTIL {
             th = std::move(t.th);
             tid = t.tid;
         }
-        ~thread_()= default{};
+        ~thread_(){};
     };
 
     class GTEpoll_thread_pool {
     public:
-        explicit GTEpoll_thread_pool(std::function<void>);
-        GTEpoll_thread_pool(int thread_num, std::function<void>);
-        ~GTEpoll_thread_pool()= default;
+        explicit GTEpoll_thread_pool(std::function<void()>);
+        GTEpoll_thread_pool(int thread_num, std::function<void()>);
+        ~GTEpoll_thread_pool();
 
         void start();
         void stop();
@@ -42,8 +43,8 @@ namespace GTUTIL {
 
     private:
         int  default_thread_num_;
-        std::function<void> thread_func_;
-        std::vector<thread_> thread_vec_;
+        std::function<void()> thread_func_;
+        std::vector<std::shared_ptr<thread_>> thread_vec_;
     };
 }
 
