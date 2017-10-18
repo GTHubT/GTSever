@@ -190,8 +190,9 @@ namespace GT {
 															int cycle_time_) {
 			GT_TRACE_FUNCTION;
             std::unique_lock<std::mutex> lk(source_mutex_);	/* this lock is for condition variable */
-			while (!end_thread_ && source_cv_.wait_for(lk, std::chrono::milliseconds(cycle_time_)) == std::cv_status::timeout) {
-				func_();
+			while (!end_thread_) {
+                if (source_cv_.wait_for(lk, std::chrono::milliseconds(cycle_time_)) == std::cv_status::timeout) // incase of condition variable spurious wakeup
+				    func_();
 			}
 			GT_LOG_INFO("Resource Collector worker exit!");
 			printf("Resource Collector worker exit!\n");
@@ -249,7 +250,7 @@ namespace GT {
 			std::unique_lock<std::mutex> lk(mu);
 			while (!end_thread)
 			{
-                if (cv.wait_for(lk, std::chrono::microseconds(check_interval)) == std::cv_status::timeout) {
+                if (cv.wait_for(lk, std::chrono::microseconds(check_interval)) == std::cv_status::timeout) { // incase of spurious wakeup
 					//GT_LOG_WARN("before resource collect, process memory size = " << GT::UTIL::GT_Util_OSInfo::Win_GetCurrentMemorySize() << "B");
                     func();
 					//GT::UTIL::GT_Util_OSInfo::Try2CollectProcessMem();
