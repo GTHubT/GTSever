@@ -31,8 +31,8 @@ namespace GTUTIL {
 
     class GTEpoll_thread_pool {
     public:
-        explicit GTEpoll_thread_pool(std::function<void()>);
-        GTEpoll_thread_pool(int thread_num, std::function<void()>);
+        explicit GTEpoll_thread_pool(std::function<void()>&);
+        GTEpoll_thread_pool(int thread_num, std::function<void()>&);
         ~GTEpoll_thread_pool();
 
         void start();

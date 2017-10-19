@@ -7,13 +7,13 @@
 
 namespace GTUTIL{
 
-    GTEpoll_thread_pool::GTEpoll_thread_pool(std::function<void()> func) {
-        thread_func_ = func;
+    GTEpoll_thread_pool::GTEpoll_thread_pool(std::function<void()>& func) {
+        thread_func_ = std::move(func);
         default_thread_num_ = std::thread::hardware_concurrency();
     }
 
-    GTEpoll_thread_pool::GTEpoll_thread_pool(int thread_num, std::function<void()> func) {
-        thread_func_ = func;
+    GTEpoll_thread_pool::GTEpoll_thread_pool(int thread_num, std::function<void()>& func) {
+        thread_func_ = std::move(func);
         default_thread_num_ = thread_num;
     }
 
