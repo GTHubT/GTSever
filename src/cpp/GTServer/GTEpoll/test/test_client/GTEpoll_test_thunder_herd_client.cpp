@@ -4,7 +4,7 @@
 
 #include <sys/socket.h>
 #include <iostream>
-#include <string.h>
+#include <cstring>
 #include <netinet/in.h>
 
 
@@ -13,7 +13,7 @@ int main(){
     sockaddr_in servaddr;
     bzero(&servaddr, sizeof(sockaddr_in));
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(5000);
+    servaddr.sin_port = htons(30000);
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     int ret = connect(clifd, (sockaddr*)&servaddr, sizeof(sockaddr_in));

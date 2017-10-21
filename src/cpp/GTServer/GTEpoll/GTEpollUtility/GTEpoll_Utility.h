@@ -6,7 +6,8 @@ namespace GT{
 	namespace EpollUtil{
 		class GTEpoll_Util{
 		public:
-			static void setsocket2noblock(int sockfd);
+			static bool setsocket2noblock(int sockfd);
+			static bool setsockreuseaddr(int sockfd, int);
 		};		
 
 	}

@@ -3,13 +3,14 @@
 #include <sys/fcntl.h>   /* fcntl */
 #include <arpa/inet.h>   /* inet_ntop */
 #include <unistd.h>      /* fork */
-#include <stdio.h>       /* printf */
+#include <cstdio>       /* printf */
 #include <netinet/in.h>  /* htons */
-#include <string.h>      /* memset */
-#include <errno.h>	 /* errno */
-#include <time.h>	 /* sleep */
-#include <sys/types.h>
+#include <cstring>      /* memset */
+#include <cerrno>	 /* errno */
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include <sys/wait.h>
 
 #define PROCESS_NUM	7
 #define MAX_EPOLLEVENT	10
@@ -21,7 +22,7 @@ bool setnoblocksock(int fd){
 		return false;
 	}
 	flag |= O_NONBLOCK;
-	if ((flag = (fcntl(fd, F_SETFL, 0)))<0){
+	if ((fcntl(fd, F_SETFL, flag))<0){
 		printf("set socket nonblock failed!");
 		return false;
 	}
@@ -29,10 +30,11 @@ bool setnoblocksock(int fd){
 }
 
 int main(){
+    std::vector<pid_t> pid_vec;
 	sockaddr_in server_addr;
 	bzero(&server_addr, sizeof(sockaddr_in));
 	int listen_fd = socket(AF_INET, IPPROTO_TCP,0);
-	server_addr.sin_port = htons(5000);
+	server_addr.sin_port = htons(30000);
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
@@ -41,9 +43,16 @@ int main(){
 	do {
 		if (!setnoblocksock(listen_fd))
 			break;
+        bool reuseaddr = true;
+        if (!setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(bool))){
+            printf("set socket to reuse socket addr failed!");
+            break;
+        } else{
+            printf("set reuse addr success!\n");
+        }
 
 		if ((ret = bind(listen_fd, (sockaddr*)&server_addr, sizeof(sockaddr))) !=0 ){
-			printf("bind listen_fd socket to addr failed! error code = %d\n", errno);
+			printf("bind listen_fd socket to addr failed! bind port = %d, error code = %d\n", htons(5000), errno);
 			break;
 		}
 
@@ -59,6 +68,7 @@ int main(){
 	}
     for (int i = 0; i < PROCESS_NUM; i++){
         int pid = fork();
+        pid_vec.push_back(pid);
         if (pid == 0){
             /* now create epoll */
             int epfd = epoll_create(1);
@@ -71,7 +81,6 @@ int main(){
             //ev.events |= EPOLLIN|EPOLLET|EPOLLEXCLUSIVE;
             ev.events |= EPOLLIN|EPOLLET;
             ev.data.fd = listen_fd;
-
             if (epoll_ctl(epfd, EPOLL_CTL_ADD, listen_fd, &ev) == -1){
                 printf("add listen fd to epoll failed!\n");
                 return -1;
@@ -89,7 +98,7 @@ int main(){
 			for (int j = 0; j <  ready_num; j++){
 				if (evlist[j].data.fd == listen_fd){ /* the ready event is listen fd */
 					printf("now process %d get the new connect, and will process it!\n", getpid());
-					sleep(2);
+					//sleep(2);
 					sockaddr_in cli_addr;
 					socklen_t addr_len = sizeof(cli_addr);
 					int new_conn = accept(listen_fd, (sockaddr*)&cli_addr, &addr_len);
@@ -100,6 +109,16 @@ int main(){
 			}
 		}
 	}
+
+    for (auto p : pid_vec){
+        int status = -1;
+        ret = waitpid(p, &status, WNOHANG);
+        if (ret == 0 && errno == ECHILD) {
+            printf("have no child : %d \n", p);
+        }else if(ret == -1 && errno != ECHILD){
+            printf("got error from waitpid, erron = %d\n", errno);
+        }
+    }
     char a = 'c';
     std::cin>>a;
 	return 0;

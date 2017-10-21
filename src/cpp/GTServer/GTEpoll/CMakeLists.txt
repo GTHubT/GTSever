@@ -25,11 +25,15 @@ else()
     message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+add_compile_options(-pthread)
+
 # include header
 include_directories(.)
 include_directories(./GTEpollUtility/)
 include_directories(./thirdparty)
 include_directories(../../GTServer/GTUtlity/)
+include_directories(../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include)
+include_directories(./thirdparty/Glog)
 
 # add source files
 set(UTIL_FILE_THIRDPARTY
@@ -51,7 +55,7 @@ link_libraries(./thirdparty/Glog/libglog.a)
 link_libraries(./thirdparty/JsonParser/libjsoncpp.a)
 
 # set target
-add_library(GTEpoll STATIC ${DIR_SRC} ${DIR_SRC_RSRC} ${DIR_SRC_Util} ${DIR_SRC_test} ${UTIL_FILR_THIRDPARTY})
+add_library(GTEpoll STATIC  ${DIR_SRC} ${DIR_SRC_RSRC} ${DIR_SRC_Util} ${DIR_SRC_test} ${UTIL_FILR_THIRDPARTY})
 
 # set output path
 set(LIBRARY_OUTPUT_PATH ./build)
