@@ -8,7 +8,6 @@
 #include <cstring>      /* memset */
 #include <cerrno>	 /* errno */
 #include <iostream>
-#include <vector>
 #include <algorithm>
 #include <sys/wait.h>
 
@@ -30,7 +29,6 @@ bool setnoblocksock(int fd){
 }
 
 int main(){
-    std::vector<pid_t> pid_vec;
 	sockaddr_in server_addr;
 	bzero(&server_addr, sizeof(sockaddr_in));
 	int listen_fd = socket(AF_INET, IPPROTO_TCP,0);
@@ -68,7 +66,6 @@ int main(){
 	}
     for (int i = 0; i < PROCESS_NUM; i++){
         int pid = fork();
-        pid_vec.push_back(pid);
         if (pid == 0){
             /* now create epoll */
             int epfd = epoll_create(1);
@@ -78,7 +75,7 @@ int main(){
             }
 
             struct epoll_event ev, evlist[MAX_EPOLLEVENT];
-            //ev.events |= EPOLLIN|EPOLLET|EPOLLEXCLUSIVE;
+            //ev.events |= EPOLLIN|EPOLLET|EPOLLEXCLUSIVE; // EXLUSIVE flag will help avoid thunder herd, but some time still have thunder herd, just depend on the realization, we can use ET mode, this will avoid thunder herd
             ev.events |= EPOLLIN|EPOLLET;
             ev.data.fd = listen_fd;
             if (epoll_ctl(epfd, EPOLL_CTL_ADD, listen_fd, &ev) == -1){
@@ -86,15 +83,14 @@ int main(){
                 return -1;
             }
             printf ("now fork some process to accept the new connect!\n");
-
-
+            
             printf("i am process %d \n", getpid());
 			int ready_num = epoll_wait(epfd, evlist, MAX_EPOLLEVENT, -1); /* -1 is use for block mode, 0 is just check ready list, >0 will wait for some time */
 			if (ready_num <=0){
 				printf("there are no ready event!\n");
-				continue;
+				exit(0);
 			}
-
+            printf("get ready event num = %d\n", ready_num);
 			for (int j = 0; j <  ready_num; j++){
 				if (evlist[j].data.fd == listen_fd){ /* the ready event is listen fd */
 					printf("now process %d get the new connect, and will process it!\n", getpid());
@@ -107,18 +103,13 @@ int main(){
 					}				
 				}
 			}
+            printf("now exit process %d\n", getpid());
+            exit(0);
 		}
 	}
 
-    for (auto p : pid_vec){
-        int status = -1;
-        ret = waitpid(p, &status, WNOHANG);
-        if (ret == 0 && errno == ECHILD) {
-            printf("have no child : %d \n", p);
-        }else if(ret == -1 && errno != ECHILD){
-            printf("got error from waitpid, erron = %d\n", errno);
-        }
-    }
+    int status = -1;
+    waitpid(0, &status, WUNTRACED);
     char a = 'c';
     std::cin>>a;
 	return 0;
