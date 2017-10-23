@@ -17,18 +17,18 @@ arpa/inet.h
 -
 unistd.h
 -
-stdio.h
+cstdio
 -
 netinet/in.h
 -
-string.h
+cstring
 -
-errno.h
--
-time.h
--
-sys/types.h
+cerrno
 -
 iostream
+-
+algorithm
+-
+sys/wait.h
 -
 

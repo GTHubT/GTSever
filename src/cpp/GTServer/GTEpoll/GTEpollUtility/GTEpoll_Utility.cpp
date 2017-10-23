@@ -21,7 +21,7 @@ namespace GT{
             return true;
 		}
 
-        bool GTEpoll_Util::setsockreuseaddr(int sockfd, int sockopname) {
+        bool GTEpoll_Util::setsockop(int sockfd, int sockopname) {
             bool sockop = true;
             int ret = setsockopt(sockfd, SOL_SOCKET, sockopname, &sockop, sizeof(bool));
             if (ret !=0){

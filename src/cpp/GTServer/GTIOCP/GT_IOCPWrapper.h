@@ -7,7 +7,7 @@
 
 #include "GTUtlity/GT_Util_ThreadPool.h"
 #include "GT_Resource_Manager.h"
-#include "GT_Definition.h"
+#include "GTUtlity/GT_Definition.h"
 
 #include <mutex>
 #include <vector>

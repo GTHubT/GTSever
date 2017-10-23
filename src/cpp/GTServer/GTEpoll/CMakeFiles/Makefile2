@@ -66,7 +66,7 @@ CMAKE_BINARY_DIR = /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll
 CMakeFiles/GTEpoll.dir/all:
 	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/depend
 	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target GTEpoll"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target GTEpoll"
 .PHONY : CMakeFiles/GTEpoll.dir/all
 
 # Include target in all.
@@ -76,7 +76,7 @@ all: CMakeFiles/GTEpoll.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/GTEpoll.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles 7
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/GTEpoll.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles 0
 .PHONY : CMakeFiles/GTEpoll.dir/rule
@@ -121,7 +121,7 @@ test/test_client/build/preinstall:
 test/test_client/build/CMakeFiles/test_client.dir/all:
 	$(MAKE) -f test/test_client/build/CMakeFiles/test_client.dir/build.make test/test_client/build/CMakeFiles/test_client.dir/depend
 	$(MAKE) -f test/test_client/build/CMakeFiles/test_client.dir/build.make test/test_client/build/CMakeFiles/test_client.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=7,8 "Built target test_client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=8,9 "Built target test_client"
 .PHONY : test/test_client/build/CMakeFiles/test_client.dir/all
 
 # Include target in all.
@@ -176,7 +176,7 @@ test/test_server/build/preinstall:
 test/test_server/build/CMakeFiles/test_server.dir/all:
 	$(MAKE) -f test/test_server/build/CMakeFiles/test_server.dir/build.make test/test_server/build/CMakeFiles/test_server.dir/depend
 	$(MAKE) -f test/test_server/build/CMakeFiles/test_server.dir/build.make test/test_server/build/CMakeFiles/test_server.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=9,10 "Built target test_server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=10,11 "Built target test_server"
 .PHONY : test/test_server/build/CMakeFiles/test_server.dir/all
 
 # Include target in all.

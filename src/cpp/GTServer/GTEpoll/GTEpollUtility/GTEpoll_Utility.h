@@ -7,7 +7,7 @@ namespace GT{
 		class GTEpoll_Util{
 		public:
 			static bool setsocket2noblock(int sockfd);
-			static bool setsockreuseaddr(int sockfd, int);
+			static bool setsockop(int sockfd, int);
 		};		
 
 	}

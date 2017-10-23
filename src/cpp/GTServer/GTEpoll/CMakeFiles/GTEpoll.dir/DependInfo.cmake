@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_MemoryCtrl.cpp" "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_MemoryCtrl.cpp.o"
   "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollResourceControl/GTEpoll_SocketPool.cpp" "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_SocketPool.cpp.o"
   "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_Utility.cpp" "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_Utility.cpp.o"
+  "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_thread_pool.cpp" "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o"
   "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Interface.cpp" "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/GTEpoll.dir/GTEpoll_Interface.cpp.o"
   "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Wrapper.cpp" "/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles/GTEpoll.dir/GTEpoll_Wrapper.cpp.o"
   )
@@ -18,6 +19,8 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "./GTEpollUtility"
   "./thirdparty"
   "../../GTServer/GTUtlity"
+  "../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include"
+  "./thirdparty/Glog"
   )
 
 # Targets to which this target links.

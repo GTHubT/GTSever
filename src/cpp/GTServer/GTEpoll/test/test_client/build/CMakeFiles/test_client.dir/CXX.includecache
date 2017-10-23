@@ -11,7 +11,7 @@ sys/socket.h
 -
 iostream
 -
-string.h
+cstring
 -
 netinet/in.h
 -

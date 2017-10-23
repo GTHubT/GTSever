@@ -14,6 +14,8 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "./GTEpollUtility"
   "./thirdparty"
   "../../GTServer/GTUtlity"
+  "../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include"
+  "./thirdparty/Glog"
   "test/test_client/."
   )
 

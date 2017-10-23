@@ -23,24 +23,30 @@ namespace GT {
 
             bool Initialize(std::string cfgpath);
 
-            void CreateListenSock();
-
             void RegisterCallBack(GTEPOLL_CALLBACK_TYPE type, gtepoll_callback cb);
 
-            bool UnRegisterCallBack(GTEPOLL_CALLBACK_TYPE type);
+            void UnRegisterCallBack(GTEPOLL_CALLBACK_TYPE type);
 
             bool StartService();
 
             bool StopService();
 
         private:
-            bool InitializeCfgAndLog();
+            bool InitializeCfgAndLog_();
+
+            bool CreateListenSock_();
+
+            void CreateEpoll_();
 
         private:
+            bool use_multi_process_;
             int listen_fd_;
-            int listen_port_;
+            u_short listen_port_;
             std::string cfg_path_;
 
+            gtepoll_callback read_cb_;
+            gtepoll_callback write_cb_;
+            gtepoll_callback conn_cb_;
         };
     }
 }

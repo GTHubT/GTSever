@@ -48,6 +48,8 @@
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty/Glog"/>
 					<Add directory="/usr/include/c++/5"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
 					<Add directory="/usr/include/c++/5/backward"/>
@@ -75,6 +77,8 @@
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty/Glog"/>
 					<Add directory="/usr/include/c++/5"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
 					<Add directory="/usr/include/c++/5/backward"/>
@@ -102,6 +106,8 @@
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty/Glog"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/."/>
 					<Add directory="/usr/include/c++/5"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
@@ -130,6 +136,8 @@
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty/Glog"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/."/>
 					<Add directory="/usr/include/c++/5"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
@@ -158,6 +166,8 @@
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty/Glog"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/."/>
 					<Add directory="/usr/include/c++/5"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
@@ -186,6 +196,8 @@
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollUtility"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/GTUtlity"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include"/>
+					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./thirdparty/Glog"/>
 					<Add directory="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_server/."/>
 					<Add directory="/usr/include/c++/5"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
@@ -220,6 +232,12 @@
 			<Option target="GTEpoll"/>
 		</Unit>
 		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_Utility.h">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_thread_pool.cpp">
+			<Option target="GTEpoll"/>
+		</Unit>
+		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_thread_pool.h">
 			<Option target="GTEpoll"/>
 		</Unit>
 		<Unit filename="/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Interface.cpp">
