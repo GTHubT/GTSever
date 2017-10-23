@@ -2,8 +2,8 @@
 #include "../GTUtlity/GT_Util_GlogWrapper.h"
 #include "../GTUtlity/GT_Util_CfgHelper.h"
 #include "./GTEpollUtility/GTEpoll_Utility.h"
+#include "./GTEpollUtility/GTEpoll_thread_pool.h"
 #include <stdio.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h> // for bzero
 
@@ -12,7 +12,9 @@ namespace GT{
 
     namespace EPOLL{
 
-        GTEpollWrapper::GTEpollWrapper():listen_fd_(0),listen_port_(0),use_multi_process_(false){
+        GTEpollWrapper::GTEpollWrapper():listen_fd_(0),
+                                         listen_port_(0),
+                                         use_multi_process_(false){
 
         }
 
@@ -95,7 +97,6 @@ namespace GT{
 
             listen_fd_ = socket(AF_INET, IPPROTO_TCP, 0);
 
-            struct sockaddr_in sock_addr_ = {0};
             bzero(&sock_addr_, sizeof(sockaddr_in));
             sock_addr_.sin_family = AF_INET;
             sock_addr_.sin_port = htons(listen_port_);
@@ -133,6 +134,14 @@ namespace GT{
         }
 
         bool GTEpollWrapper::StopService() {
+
+        }
+
+        void GTEpollWrapper::StartByMultiprocess_() {
+
+        }
+
+        void GTEpollWrapper::StartByMultithread_() {
 
         }
 

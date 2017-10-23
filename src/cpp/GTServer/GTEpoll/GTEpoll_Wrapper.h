@@ -6,6 +6,7 @@
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <string>
+#include <netinet/in.h>
 
 namespace GT {
 
@@ -36,13 +37,17 @@ namespace GT {
 
             bool CreateListenSock_();
 
-            void CreateEpoll_();
+            void StartByMultiprocess_();
+
+            void StartByMultithread_();
 
         private:
-            bool use_multi_process_;
             int listen_fd_;
             u_short listen_port_;
+            u_int max_events_num_;
             std::string cfg_path_;
+            bool use_multi_process_;
+            struct sockaddr_in sock_addr_;
 
             gtepoll_callback read_cb_;
             gtepoll_callback write_cb_;
