@@ -25,7 +25,7 @@ namespace GT {
         public:
             ~GT_Util_GlogWrapper();
 			static GT_Util_GlogWrapper& GetInstance();
-
+			bool GT_DefaultLogInitialize();
 			bool GT_LogInitialize(std::string logname, GT_LOG_LEVEL level, int logsize);
 			bool GT_LogUnintialize();
 			bool GT_SetLoglevel(GT_LOG_LEVEL level);

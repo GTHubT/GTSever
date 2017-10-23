@@ -103,6 +103,7 @@ int main(){
 					}				
 				}
 			}
+            close(epfd);
             printf("now exit process %d\n", getpid());
             exit(0);
 		}

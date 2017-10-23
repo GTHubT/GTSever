@@ -28,6 +28,28 @@ namespace GT {
 			return log_instance_;
 		}
 
+		bool GT_Util_GlogWrapper::GT_DefaultLogInitialize(){
+			LOG_LOCK_THIS_SCOPE;
+
+			if (is_log_initted_)
+				return true;
+
+			per_log_size_ = 50;
+			log_level_ = GT_LOG_LEVEL_ALL;
+			google::LogSeverity loglevel_ = GT_Loglevel2GoogleLoglevel_(log_level_);
+
+			log_path_ = GT_Util_OSInfo::GetCurrentFolder() + "gtserver.log";
+			google::InitGoogleLogging("GTServer");
+			
+			GT_SetLoglevelDestination_();
+			GT_SetGlogFlags_();
+
+			is_log_initted_ = true;
+			printf("GLOG Environment Init Success!\n");
+			return is_log_initted_;
+
+		}
+
 		bool GT_Util_GlogWrapper::GT_LogInitialize(std::string logname, GT_LOG_LEVEL level, int maxlogsize) {
 			LOG_LOCK_THIS_SCOPE;
 
