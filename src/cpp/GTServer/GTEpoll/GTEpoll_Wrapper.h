@@ -28,26 +28,29 @@ namespace GT {
 
             void UnRegisterCallBack(GTEPOLL_CALLBACK_TYPE type);
 
-            bool StartService();
+            void StartService();
 
             bool StopService();
 
         private:
             bool InitializeCfgAndLog_();
 
-            bool CreateListenSock_();
+            int CreateListenSock_();
 
             void StartByMultiprocess_();
 
             void StartByMultithread_();
 
+            void WorkerFunc_();
+
+            bool AddNewConn2Epoll_(int newconn, int epfd);
+
         private:
-            int listen_fd_;
+            int thread_or_proc_num_;
             u_short listen_port_;
-            u_int max_events_num_;
+            int max_events_num_;
             std::string cfg_path_;
             bool use_multi_process_;
-            struct sockaddr_in sock_addr_;
 
             gtepoll_callback read_cb_;
             gtepoll_callback write_cb_;

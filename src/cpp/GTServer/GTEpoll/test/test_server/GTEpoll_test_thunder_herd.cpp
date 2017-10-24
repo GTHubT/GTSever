@@ -110,7 +110,9 @@ int main(){
 	}
 
     int status = -1;
-    waitpid(0, &status, WUNTRACED);
+    while(waitpid(0, &status, WUNTRACED)>0){
+
+	}
     char a = 'c';
     std::cin>>a;
 	return 0;
