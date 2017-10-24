@@ -3,14 +3,17 @@
 #include "../GTUtlity/GT_Util_CfgHelper.h"
 #include "./GTEpollUtility/GTEpoll_Utility.h"
 #include "./GTEpollUtility/GTEpoll_thread_pool.h"
+
 #include <stdio.h>
 #include <arpa/inet.h>
 #include <string.h> // for bzero
-#include <thread>
 #include <signal.h>
 #include <errno.h>
 #include <unistd.h>
 #include <wait.h>
+#include <algorithm>
+#include <vector>
+#include <thread>
 
 
 static void sig_handle(int sig, siginfo_t* siginfo, void* ucontext){
@@ -186,6 +189,11 @@ namespace GT{
 
         void GTEpollWrapper::StartByMultithread_() {
             GT_TRACE_FUNCTION;
+            std::vector<std::thread> th_vec;
+            for (int i=0; i<thread_or_proc_num_;i++){
+                th_vec.push_back(std::thread(&GTEpollWrapper::WorkerFunc_, this));
+            }
+            std::for_each(th_vec.begin(),th_vec.end(), [](std::thread &x)->void{x.join();});
         }
 
         void GTEpollWrapper::WorkerFunc_() { // worker function
