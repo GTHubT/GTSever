@@ -152,8 +152,12 @@ IF(JSONCPP_WITH_CMAKE_PACKAGE)
                 FILE        jsoncppConfig.cmake)
 ENDIF()
 
+# add compile option fPIC
+add_compile_options(-fPIC)
+
 # Build the different applications
 ADD_SUBDIRECTORY( src )
 
 #install the includes
 ADD_SUBDIRECTORY( include )
+

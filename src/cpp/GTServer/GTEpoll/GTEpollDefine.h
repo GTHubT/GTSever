@@ -1,3 +1,6 @@
+#ifndef GT_EPOLL_DEFINITION_H_
+#define GT_EPOLL_DEFINITION_H_
+
 
 typedef void(*gtepoll_callback)(void* data, unsigned int datalen);
 
@@ -11,3 +14,5 @@ enum GTEPOLL_CALLBACK_TYPE{
 	GTEPOLL_WRITE = 1,
     GTEPOLL_CONN = 2
 };
+
+#endif

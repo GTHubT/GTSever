@@ -1,0 +1,11 @@
+libGTEpoll.so
+{
+	global:
+		Initialize;
+		StartService;
+		StopService;
+		Register;
+		UnRegister;
+	local:
+		*;
+};

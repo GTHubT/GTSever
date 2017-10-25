@@ -50,6 +50,8 @@ SET( PUBLIC_HEADERS
     ${JSONCPP_INCLUDE_DIR}/json/version.h
     )
 
+ADD_COMPILE_OPTIONS(-fPIC)
+
 SOURCE_GROUP( "Public API" FILES ${PUBLIC_HEADERS} )
 
 SET(jsoncpp_sources

@@ -136,7 +136,11 @@ namespace GT {
 			}
 
 			char line_[32];
-			_itoa_s(line, line_, 10);
+#ifdef _WIN32
+			itoa(line, line_, 10);
+#else
+            snprintf(line_, 10, "%d", line);
+#endif
 			logevent = logevent + " [" + std::string(filename) + ":" + std::string(line_) + "]";
 
 			switch (level)
