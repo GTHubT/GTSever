@@ -15,14 +15,20 @@ namespace GT {
     namespace EPOLL {
 
         struct sock_state{
-            int     client_fd_;
-            bool    is_read_finished_;
-            bool    is_write_finished_;
-            int     offset_;        // if the op is not finished, offset record the position of the op
-            void*   content_;       // record the content need to send but not send complete
-            int     content_len_;
-            sock_state():client_fd_(-1),is_read_finished_(-1),is_write_finished_(-1),offset_(-1),content_(nullptr),content_len_(-1){
+            bool                is_read_finished_;
+            bool                is_write_finished_;
+            int                 client_fd_;
+            unsigned int        content_remain_len_;
+            short               port;
+            char                ip[20];
+            void*               content_;       // record the content need to send but not send complete
+            sock_state():client_fd_(-1),is_read_finished_(-1),is_write_finished_(-1),content_(nullptr),content_remain_len_(-1){
 
+            }
+            ~sock_state(){
+                if(content_){
+                    delete[] content_;
+                }
             }
         };
 
@@ -61,7 +67,7 @@ namespace GT {
 
             bool addNewConn2Epoll_(int newconn, int epfd, sockaddr_in*);
 
-            void push2ClientMap(int fd);
+            void push2ClientMap(int fd, char*, short);
 
             void rmClientFromMap(int fd);
 

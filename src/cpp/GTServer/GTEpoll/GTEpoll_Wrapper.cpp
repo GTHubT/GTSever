@@ -15,6 +15,7 @@
 #include <vector>
 #include <thread>
 #include <string>
+#include <sys/types.h>
 
 
 static void sig_handle(int sig, siginfo_t* siginfo, void* ucontext){
@@ -221,6 +222,7 @@ namespace GT{
                             struct sockaddr_in client_addr_;
                             socklen_t sock_add_len =  sizeof(sockaddr);
                             int new_conn = accept(listen_fd, (sockaddr*)&client_addr_, &sock_add_len);
+                            GT::EpollUtil::GTEpoll_Util::setsocket2noblock(new_conn);
                             bool rt = addNewConn2Epoll_(new_conn, epfd, &client_addr_);
                             conn_cb_((void*)&new_conn, sizeof(new_conn), nullptr);
                             if(!rt){
@@ -228,11 +230,15 @@ namespace GT{
                                 continue;
                             }
                         }else if(ev[i].events&EPOLLIN){
+                            int fd = ev[i].data.fd;
                             std::string recv_content_;
                             char* rvbuffer = new char[MAX_BUFFER];
                             for(;;){
-                                ssize_t rl = read(ev[i].data.fd, rvbuffer, MAX_BUFFER);
-                                if (rl == EAGAIN || rl == EWOULDBLOCK){
+                                ssize_t rl = recv(fd, rvbuffer, MAX_BUFFER, 0);
+                                if (rl < MAX_BUFFER || errno == EAGAIN || errno == EWOULDBLOCK){
+                                    if(client_state_.find(fd) != client_state_.end()){
+                                        client_state_[fd]->is_read_finished_ = true;
+                                    }
                                     break;
                                 }
                                 recv_content_.append(rvbuffer, rl);
@@ -263,7 +269,28 @@ namespace GT{
         }
 
         void GTEpollWrapper::sendData(int fd, void* data, unsigned long len){
-
+            GT_TRACE_FUNCTION;
+            if (len<=0 || data == nullptr){
+                GT_LOG_WARN("data len or data content is not invalid!");
+                return;
+            }
+            if (client_state_.find(fd) != client_state_.end()){
+                ssize_t sl = send(fd, data, len, 0);
+                if (sl == len){
+                    GT_LOG_DEBUG("all data was send to client:" << client_state_[fd]->ip << ", port = " << client_state_[fd]->port);
+                    client_state_[fd]->is_write_finished_ = true;
+                }else if(errno == EAGAIN){  // if not send all the data, we will record the offset for the next send when the socket send buffer is available
+                    client_state_[fd]->is_write_finished_ = false;
+                    client_state_[fd]->content_remain_len_ = len - sl;
+                    if (client_state_[fd]->content_ )
+                        delete[] client_state_[fd]->content_;
+                    client_state_[fd]->content_ = new char[len-sl];
+                    memcpy(client_state_[fd]->content_, data + sl, len-sl);
+                    GT_LOG_DEBUG("client " << client_state_[fd]->ip << ", did not send all the data and need send next time. send len = " << sl);
+                }else{
+                    GT_LOG_ERROR("client"<< client_state_[fd]->ip << " send data failed, errno = "<< errno);
+                }
+            }
         }
 
         bool GTEpollWrapper::addNewConn2Epoll_(int newconn, int epfd, sockaddr_in* addr){
@@ -279,15 +306,17 @@ namespace GT{
             char client_ip[20];
             inet_ntop(AF_INET,&addr->sin_addr,client_ip, sizeof(client_ip));
             GT_LOG_DEBUG("get new connect from:" << client_ip << ", port = " << ntohs(addr->sin_port));
-            push2ClientMap(newconn);
+            push2ClientMap(newconn, client_ip, addr->sin_port);
             return true;
         }
 
-        void GTEpollWrapper::push2ClientMap(int fd) {
+        void GTEpollWrapper::push2ClientMap(int fd, char* ip, short port) {
             GT_TRACE_FUNCTION;
             if (client_state_.find(fd) != client_state_.end()){
                 std::shared_ptr<sock_state> ss(new sock_state());
                 ss->client_fd_ = fd;
+                memcpy(ss->ip, ip, sizeof(ss->ip));
+                ss->port = port;
                 client_state_.insert(std::make_pair(fd, ss));
             }else{
                 GT_LOG_DEBUG("Did not find the sock fd in map!");
@@ -306,7 +335,7 @@ namespace GT{
             GT_TRACE_FUNCTION;
             if(client_state_.find(fd) != client_state_.end()){
                 if (!client_state_[fd]->is_write_finished_){
-
+                    sendData(fd, client_state_[fd]->content_, client_state_[fd]->content_remain_len_);
                 }
             }
         }
