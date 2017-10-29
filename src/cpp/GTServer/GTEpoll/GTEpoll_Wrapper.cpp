@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <vector>
 #include <thread>
+#include <string>
 
 
 static void sig_handle(int sig, siginfo_t* siginfo, void* ucontext){
@@ -21,6 +22,7 @@ static void sig_handle(int sig, siginfo_t* siginfo, void* ucontext){
     printf("siginfo content killed pid = %d\n", siginfo->si_pid);
 }
 
+#define MAX_BUFFER 2048
 
 namespace GT{
 
@@ -36,14 +38,14 @@ namespace GT{
 
         }
 
-        GTEpollWrapper& GTEpollWrapper::GetInstance() {
+        GTEpollWrapper& GTEpollWrapper::getInstance() {
             static GTEpollWrapper gtepoll_instance_;
             return gtepoll_instance_;
         }
 
-        bool GTEpollWrapper::Initialize(std::string cfgpath) {
+        bool GTEpollWrapper::initialize(std::string cfgpath) {
             cfg_path_ = cfgpath;
-            bool ret = InitializeCfgAndLog_();
+            bool ret = initializeCfgAndLog_();
 
             // add signal process function, and use sigaction with SA_SIGINFO parameter to get more detail info
             struct sigaction sigact;
@@ -57,7 +59,7 @@ namespace GT{
             return ret;
         }
 
-        bool GTEpollWrapper::InitializeCfgAndLog_() {
+        bool GTEpollWrapper::initializeCfgAndLog_() {
             bool ret = GT::UTIL::GT_Util_CfgHelper::LoadCfg(cfg_path_);
             if (!ret){
                 printf("get cfg failed!\n");
@@ -75,15 +77,11 @@ namespace GT{
             return ret;
         }
 
-        void GTEpollWrapper::RegisterCallBack(GTEPOLL_CALLBACK_TYPE type, gtepoll_callback cb) {
+        void GTEpollWrapper::registerCallBack(GTEPOLL_CALLBACK_TYPE type, gtepoll_callback cb) {
             GT_TRACE_FUNCTION;
             switch (type){
                 case GTEPOLL_READ:
                     GT_LOG_DEBUG("set read callback");
-                    read_cb_ = cb;
-                    break;
-                case GTEPOLL_WRITE:
-                    GT_LOG_DEBUG("set write callback");
                     read_cb_ = cb;
                     break;
                 case GTEPOLL_CONN:
@@ -96,28 +94,24 @@ namespace GT{
             }
         }
 
-        void GTEpollWrapper::UnRegisterCallBack(GTEPOLL_CALLBACK_TYPE type) {
+        void GTEpollWrapper::unRegisterCallBack(GTEPOLL_CALLBACK_TYPE type) {
             GT_TRACE_FUNCTION;
             switch (type){
                 case GTEPOLL_READ:
-                GT_LOG_DEBUG("set read callback");
-                    read_cb_ = nullptr;
-                    break;
-                case GTEPOLL_WRITE:
-                GT_LOG_DEBUG("set write callback");
+                    GT_LOG_DEBUG("set read callback");
                     read_cb_ = nullptr;
                     break;
                 case GTEPOLL_CONN:
-                GT_LOG_DEBUG("set connect callback");
+                    GT_LOG_DEBUG("set connect callback");
                     conn_cb_ = nullptr;
                     break;
                 default:
-                GT_LOG_DEBUG("unknow register type!");
+                    GT_LOG_DEBUG("unknow register type!");
                     break;
             }
         }
 
-        int GTEpollWrapper::CreateListenSock_() {
+        int GTEpollWrapper::createListenSock_() {
             GT_TRACE_FUNCTION;
 
             int listen_fd = socket(AF_INET, IPPROTO_TCP, 0);
@@ -163,21 +157,21 @@ namespace GT{
             return listen_fd;
         }
 
-        void GTEpollWrapper::StartService() {
+        void GTEpollWrapper::startService() {
             GT_TRACE_FUNCTION;
-            use_multi_process_?StartByMultiprocess_():StartByMultithread_();
+            use_multi_process_?startByMultiprocess_():startByMultithread_();
         }
 
-        bool GTEpollWrapper::StopService() {
+        bool GTEpollWrapper::stopService() {
             GT_TRACE_FUNCTION;
         }
 
-        void GTEpollWrapper::StartByMultiprocess_() {
+        void GTEpollWrapper::startByMultiprocess_() {
             GT_TRACE_FUNCTION;
             for(int i =0;i< thread_or_proc_num_;i++){
                 pid_t pid = fork();
                 if (pid == 0){
-                    WorkerFunc_();
+                    workerFunc_();
                 }
             }
 
@@ -187,17 +181,17 @@ namespace GT{
             }
         }
 
-        void GTEpollWrapper::StartByMultithread_() {
+        void GTEpollWrapper::startByMultithread_() {
             GT_TRACE_FUNCTION;
             std::vector<std::thread> th_vec;
             for (int i=0; i<thread_or_proc_num_;i++){
-                th_vec.push_back(std::thread(&GTEpollWrapper::WorkerFunc_, this));
+                th_vec.push_back(std::thread(&GTEpollWrapper::workerFunc_, this));
             }
             std::for_each(th_vec.begin(),th_vec.end(), [](std::thread &x)->void{x.join();});
         }
 
-        void GTEpollWrapper::WorkerFunc_() { // worker function
-            int listen_fd = CreateListenSock_();
+        void GTEpollWrapper::workerFunc_() { // worker function
+            int listen_fd = createListenSock_();
 
             // create epoll fd
             int epfd = epoll_create(1); // 1 is not use in the kernal
@@ -207,7 +201,6 @@ namespace GT{
 
             int ret = epoll_ctl(epfd, EPOLL_CTL_ADD, listen_fd, &nev);
             if (!ret){
-                GT_LOG_ERROR("add listen fd to epfd failed, err = " << errno);
                 goto ctl_err;
             }
 
@@ -225,22 +218,35 @@ namespace GT{
                     GT_LOG_DEBUG("get event, num = " << ret);
                     for (int i = 0; i < ret; i++){
                         if(ev[i].data.fd == listen_fd && ev[i].events&EPOLLIN){
-                            GT_LOG_DEBUG("get new connect");
-                            conn_cb_((void*)&ev[i], 1);
-                            int new_conn = accept(listen_fd, nullptr, 0);
-                            bool rt = AddNewConn2Epoll_(new_conn, epfd);
+                            struct sockaddr_in client_addr_;
+                            socklen_t sock_add_len =  sizeof(sockaddr);
+                            int new_conn = accept(listen_fd, (sockaddr*)&client_addr_, &sock_add_len);
+                            bool rt = addNewConn2Epoll_(new_conn, epfd, &client_addr_);
+                            conn_cb_((void*)&new_conn, sizeof(new_conn), nullptr);
                             if(!rt){
                                 GT_LOG_ERROR("add new connect to epoll failed!");
                                 continue;
                             }
                         }else if(ev[i].events&EPOLLIN){
-                            read_cb_((void*)&ev[i],1);
+                            std::string recv_content_;
+                            char* rvbuffer = new char[MAX_BUFFER];
+                            for(;;){
+                                ssize_t rl = read(ev[i].data.fd, rvbuffer, MAX_BUFFER);
+                                if (rl == EAGAIN || rl == EWOULDBLOCK){
+                                    break;
+                                }
+                                recv_content_.append(rvbuffer, rl);
+                                bzero(rvbuffer, MAX_BUFFER);
+                            }
+                            delete[] rvbuffer;
+                            read_cb_((void*)recv_content_.c_str(),recv_content_.length(), nullptr);
                         }else if(ev[i].events&EPOLLOUT){
-                            write_cb_((void*)&ev[i],1);
+                            procSendEvents(ev[i].data.fd);
                         }else if(ev[i].events&EPOLLERR | ev[i].events&EPOLLHUP){
                             shutdown(ev[i].data.fd, 2);
                             close(ev[i].data.fd);
-                            GT_LOG_DEBUG("get err events!")
+                            rmClientFromMap(ev[i].data.fd);
+                            GT_LOG_DEBUG("get err events!");
                             continue;
                         }else{
                             GT_LOG_DEBUG("unknown event type");
@@ -250,14 +256,19 @@ namespace GT{
             }
 
             ctl_err:
+                GT_LOG_ERROR("add listen fd to epfd failed, err = " << errno);
                 close(listen_fd);
                 close(epfd);
 
         }
 
-        bool GTEpollWrapper::AddNewConn2Epoll_(int newconn, int epfd){
+        void GTEpollWrapper::sendData(int fd, void* data, unsigned long len){
+
+        }
+
+        bool GTEpollWrapper::addNewConn2Epoll_(int newconn, int epfd, sockaddr_in* addr){
             epoll_event ev = {0};
-            ev.events |= EPOLLIN|EPOLLET|EPOLLRDHUP;  // EPOLLRDHUP means other side close the socket
+            ev.events |= EPOLLIN|EPOLLET;  // EPOLLRDHUP means other side close the socket
             ev.data.fd = newconn;
             int ret = epoll_ctl(epfd, EPOLL_CTL_ADD, newconn, &ev);
             if (!ret){
@@ -265,7 +276,39 @@ namespace GT{
                 close(newconn);
                 return false;
             }
+            char client_ip[20];
+            inet_ntop(AF_INET,&addr->sin_addr,client_ip, sizeof(client_ip));
+            GT_LOG_DEBUG("get new connect from:" << client_ip << ", port = " << ntohs(addr->sin_port));
+            push2ClientMap(newconn);
             return true;
+        }
+
+        void GTEpollWrapper::push2ClientMap(int fd) {
+            GT_TRACE_FUNCTION;
+            if (client_state_.find(fd) != client_state_.end()){
+                std::shared_ptr<sock_state> ss(new sock_state());
+                ss->client_fd_ = fd;
+                client_state_.insert(std::make_pair(fd, ss));
+            }else{
+                GT_LOG_DEBUG("Did not find the sock fd in map!");
+            }
+        }
+
+        void GTEpollWrapper::rmClientFromMap(int fd) {
+            GT_TRACE_FUNCTION;
+            if (client_state_.find(fd) != client_state_.end()){
+                client_state_[fd].reset();
+                client_state_.erase(fd);
+            }
+        }
+
+        void GTEpollWrapper::procSendEvents(int fd) {   // when the EPOLLOUT event setup, it means that the send buffer is now available to send more data
+            GT_TRACE_FUNCTION;
+            if(client_state_.find(fd) != client_state_.end()){
+                if (!client_state_[fd]->is_write_finished_){
+
+                }
+            }
         }
 
     }

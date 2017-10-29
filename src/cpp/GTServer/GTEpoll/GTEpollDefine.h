@@ -2,7 +2,7 @@
 #define GT_EPOLL_DEFINITION_H_
 
 
-typedef void(*gtepoll_callback)(void* data, unsigned int datalen);
+typedef void(*gtepoll_callback)(void* data, unsigned long datalen, void* reserve);
 
 enum GTEPOLL_ERRORCODE{
 	GTERROR_FAILED = -1,
@@ -11,8 +11,7 @@ enum GTEPOLL_ERRORCODE{
 
 enum GTEPOLL_CALLBACK_TYPE{
 	GTEPOLL_READ = 0,
-	GTEPOLL_WRITE = 1,
-    GTEPOLL_CONN = 2
+    GTEPOLL_CONN = 1
 };
 
 #endif
