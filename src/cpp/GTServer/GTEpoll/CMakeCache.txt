@@ -176,28 +176,16 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 GTEpoll_BINARY_DIR:STATIC=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll
 
 //Dependencies for the target
-GTEpoll_LIB_DEPENDS:STATIC=general;./thirdparty/Glog/libglog.a;general;./thirdparty/JsonParser/libjsoncpp.a;
+GTEpoll_LIB_DEPENDS:STATIC=general;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/thirdparty/glog/libglog.a;general;/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/thirdparty/JsonParser/libjsoncpp.a;general;-lpthread;
 
 //Value Computed by CMake
 GTEpoll_SOURCE_DIR:STATIC=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll
-
-//Value Computed by CMake
-GTEpoll_test_BINARY_DIR:STATIC=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/gtepolltest.out
-
-//Value Computed by CMake
-GTEpoll_test_SOURCE_DIR:STATIC=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test
 
 //Path to a program.
 ProcessorCount_cmd_getconf:FILEPATH=/usr/bin/getconf
 
 //Path to a program.
 ProcessorCount_cmd_sysctl:FILEPATH=/sbin/sysctl
-
-//Value Computed by CMake
-test_BINARY_DIR:STATIC=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/build/test/test.out
-
-//Value Computed by CMake
-test_SOURCE_DIR:STATIC=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test
 
 //Value Computed by CMake
 test_client_BINARY_DIR:STATIC=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/test/test_client/build

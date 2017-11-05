@@ -201,6 +201,102 @@ CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o.provides: CMakeF
 CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o.provides.build: CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o
 
 
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o: CMakeFiles/GTEpoll.dir/flags.make
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o: /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o -c /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp > CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.i
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp -o CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.s
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o.requires:
+
+.PHONY : CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o.requires
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o.provides: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o.requires
+	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o.provides.build
+.PHONY : CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o.provides
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o.provides.build: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o
+
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o: CMakeFiles/GTEpoll.dir/flags.make
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o: /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o -c /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp > CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.i
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp -o CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.s
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o.requires:
+
+.PHONY : CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o.requires
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o.provides: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o.requires
+	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o.provides.build
+.PHONY : CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o.provides
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o.provides.build: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o
+
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o: CMakeFiles/GTEpoll.dir/flags.make
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o: /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o -c /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp > CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.i
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp -o CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.s
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o.requires:
+
+.PHONY : CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o.requires
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o.provides: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o.requires
+	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o.provides.build
+.PHONY : CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o.provides
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o.provides.build: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o
+
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o: CMakeFiles/GTEpoll.dir/flags.make
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o: /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o -c /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp > CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.i
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp -o CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.s
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o.requires:
+
+.PHONY : CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o.requires
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o.provides: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o.requires
+	$(MAKE) -f CMakeFiles/GTEpoll.dir/build.make CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o.provides.build
+.PHONY : CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o.provides
+
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o.provides.build: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o
+
+
 # Object files for target GTEpoll
 GTEpoll_OBJECTS = \
 "CMakeFiles/GTEpoll.dir/GTEpoll_Interface.cpp.o" \
@@ -208,25 +304,34 @@ GTEpoll_OBJECTS = \
 "CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_MemoryCtrl.cpp.o" \
 "CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_SocketPool.cpp.o" \
 "CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_Utility.cpp.o" \
-"CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o"
+"CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o" \
+"CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o" \
+"CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o" \
+"CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o" \
+"CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o"
 
 # External object files for target GTEpoll
 GTEpoll_EXTERNAL_OBJECTS =
 
-build/libGTEpoll.a: CMakeFiles/GTEpoll.dir/GTEpoll_Interface.cpp.o
-build/libGTEpoll.a: CMakeFiles/GTEpoll.dir/GTEpoll_Wrapper.cpp.o
-build/libGTEpoll.a: CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_MemoryCtrl.cpp.o
-build/libGTEpoll.a: CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_SocketPool.cpp.o
-build/libGTEpoll.a: CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_Utility.cpp.o
-build/libGTEpoll.a: CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o
-build/libGTEpoll.a: CMakeFiles/GTEpoll.dir/build.make
-build/libGTEpoll.a: CMakeFiles/GTEpoll.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library build/libGTEpoll.a"
-	$(CMAKE_COMMAND) -P CMakeFiles/GTEpoll.dir/cmake_clean_target.cmake
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/GTEpoll_Interface.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/GTEpoll_Wrapper.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_MemoryCtrl.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_SocketPool.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_Utility.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/build.make
+build/libGTEpoll.so: thirdparty/glog/libglog.a
+build/libGTEpoll.so: thirdparty/JsonParser/libjsoncpp.a
+build/libGTEpoll.so: CMakeFiles/GTEpoll.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX shared library build/libGTEpoll.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/GTEpoll.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-CMakeFiles/GTEpoll.dir/build: build/libGTEpoll.a
+CMakeFiles/GTEpoll.dir/build: build/libGTEpoll.so
 
 .PHONY : CMakeFiles/GTEpoll.dir/build
 
@@ -236,6 +341,10 @@ CMakeFiles/GTEpoll.dir/requires: CMakeFiles/GTEpoll.dir/GTEpollResourceControl/G
 CMakeFiles/GTEpoll.dir/requires: CMakeFiles/GTEpoll.dir/GTEpollResourceControl/GTEpoll_SocketPool.cpp.o.requires
 CMakeFiles/GTEpoll.dir/requires: CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_Utility.cpp.o.requires
 CMakeFiles/GTEpoll.dir/requires: CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o.requires
+CMakeFiles/GTEpoll.dir/requires: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o.requires
+CMakeFiles/GTEpoll.dir/requires: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o.requires
+CMakeFiles/GTEpoll.dir/requires: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o.requires
+CMakeFiles/GTEpoll.dir/requires: CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o.requires
 
 .PHONY : CMakeFiles/GTEpoll.dir/requires
 

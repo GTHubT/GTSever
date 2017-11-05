@@ -28,8 +28,16 @@ CMakeFiles/GTEpoll.dir/GTEpollUtility/GTEpoll_thread_pool.cpp.o
  /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_thread_pool.cpp
  /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollUtility/GTEpoll_thread_pool.h
 CMakeFiles/GTEpoll.dir/GTEpoll_Interface.cpp.o
+ ./thirdparty/glog/log_severity.h
+ ./thirdparty/glog/logging.h
+ ./thirdparty/glog/vlog_is_on.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/./GTEpollDefine.h
  /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpollDefine.h
  /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Interface.cpp
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Interface.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTEpoll/GTEpoll_Wrapper.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Definition.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.h
 CMakeFiles/GTEpoll.dir/GTEpoll_Wrapper.cpp.o
  ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/allocator.h
  ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/autolink.h
@@ -52,3 +60,36 @@ CMakeFiles/GTEpoll.dir/GTEpoll_Wrapper.cpp.o
  /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Definition.h
  /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.h
  /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.h
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp.o
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/allocator.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/autolink.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/config.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/features.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/forwards.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/json.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/reader.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/value.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/version.h
+ ../../GTServer/third_party/JSONParser/jsoncpp-1.8.1/include/json/writer.h
+ ./thirdparty/glog/log_severity.h
+ ./thirdparty/glog/logging.h
+ ./thirdparty/glog/vlog_is_on.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Definition.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.cpp
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_CfgHelper.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.h
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp.o
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.cpp
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_FileHelper.h
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp.o
+ ./thirdparty/glog/log_severity.h
+ ./thirdparty/glog/logging.h
+ ./thirdparty/glog/vlog_is_on.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Definition.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.cpp
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_GlogWrapper.h
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.h
+CMakeFiles/GTEpoll.dir/home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp.o
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.cpp
+ /home/parallels/GitHub/GTSever/src/cpp/GTServer/GTUtlity/GT_Util_OSInfo.h
